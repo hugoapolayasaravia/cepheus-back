@@ -1,0 +1,39 @@
+﻿// src/Cepheus.Application/Features/Logistica/Transacciones/Importaciones/CreateImportacionDetalle/CreateImportacionDetalleCommandValidator.cs
+using Cepheus.Application.Comun.Interfaces.UnitOfWork;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+
+namespace Cepheus.Application.Features.Logistica.Transacciones.Importaciones.CreateImportacionDetalle
+{
+    public class CreateImportacionDetalleCommandValidator : AbstractValidator<CreateImportacionDetalleCommand>
+    {
+        public CreateImportacionDetalleCommandValidator(IUnitOfWork uow)
+        {
+            RuleFor(x => x.PlantaCode).NotEmpty();
+            RuleFor(x => x.ImportacionCode).NotEmpty();
+
+            RuleFor(x => x.ProveedorCode).Cascade(CascadeMode.Stop).NotEmpty()
+                .MustAsync(async (c, ct) => await uow.Logistica.Maestros.Proveedores.Query().AnyAsync(p => p.Code == c.Trim().ToUpper(), ct))
+                .WithMessage("El proveedor indicado no existe.");
+
+            RuleFor(x => x.ArticuloCode).Cascade(CascadeMode.Stop).NotEmpty()
+                .MustAsync(async (c, ct) => await uow.Logistica.Maestros.Articulos.Query().AnyAsync(a => a.Code == c.Trim().ToUpper(), ct))
+                .WithMessage("El artículo indicado no existe.");
+
+            RuleFor(x => x.ComprobantePagoCode).Cascade(CascadeMode.Stop)
+                .MustAsync(async (code, ct) => await uow.Comunes.ComprobantesPago.Query().AnyAsync(c => c.Code == code.Trim().ToUpper(), ct))
+                .WithMessage("El comprobante de pago indicado no existe.");
+
+            RuleFor(x => x.NumeroDocumento).NotEmpty().MaximumLength(15)
+                .WithMessage("Serie y número del documento es obligatorio (máx. 15).");
+
+            RuleFor(x => x.FechaEmision).NotEmpty();
+
+            // Legacy: la cantidad no puede ser cero ni negativa.
+            RuleFor(x => x.Cantidad).GreaterThan(0);
+            RuleFor(x => x.ValorFob).GreaterThanOrEqualTo(0);
+            RuleFor(x => x.Flete).GreaterThanOrEqualTo(0);
+            RuleFor(x => x.Seguro).GreaterThanOrEqualTo(0);
+        }
+    }
+}

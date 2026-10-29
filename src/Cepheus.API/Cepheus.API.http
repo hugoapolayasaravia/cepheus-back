@@ -1,0 +1,6 @@
+@Cepheus.API_HostAddress = http://localhost:5177
+
+GET {{Cepheus.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

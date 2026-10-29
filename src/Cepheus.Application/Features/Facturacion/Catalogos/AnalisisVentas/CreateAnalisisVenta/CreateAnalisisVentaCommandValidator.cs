@@ -1,0 +1,39 @@
+﻿using Cepheus.Application.Comun.Interfaces.UnitOfWork;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+
+namespace Cepheus.Application.Features.Facturacion.Catalogos.AnalisisVentas.CreateAnalisisVenta
+{
+    public class CreateAnalisisVentaCommandValidator : AbstractValidator<CreateAnalisisVentaCommand>
+    {
+        private readonly IUnitOfWork _uow;
+
+        public CreateAnalisisVentaCommandValidator(IUnitOfWork uow)
+        {
+            _uow = uow;
+
+            RuleFor(x => x.Name)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty().WithMessage("El nombre del análisis de ventas es obligatorio.")
+                .MaximumLength(40).WithMessage("El nombre no puede exceder los 40 caracteres.")
+                .MustAsync(BeUniqueName).WithMessage("Ya existe un análisis de ventas con ese nombre.");
+
+            RuleFor(x => x.ShortName)
+                .MaximumLength(8).WithMessage("El nombre corto no puede exceder los 8 caracteres.");
+
+            RuleFor(x => x.SegmentoVentasCode)
+                .Cascade(CascadeMode.Stop)
+                .Length(2).WithMessage("El código de segmento de ventas debe tener 2 caracteres.")
+                .MustAsync(SegmentoVentasExists).WithMessage("El segmento de ventas indicado no existe.")
+                .When(x => !string.IsNullOrWhiteSpace(x.SegmentoVentasCode));
+        }
+
+        private async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
+            => !await _uow.Facturacion.Catalogos.AnalisisVentas.Query()
+                .AnyAsync(a => a.Name.ToLower() == name.Trim().ToLower(), cancellationToken);
+
+        private async Task<bool> SegmentoVentasExists(string? code, CancellationToken cancellationToken)
+            => await _uow.Facturacion.Catalogos.SegmentosVentas.Query()
+                .AnyAsync(s => s.Code == code!.Trim().ToUpper(), cancellationToken);
+    }
+}

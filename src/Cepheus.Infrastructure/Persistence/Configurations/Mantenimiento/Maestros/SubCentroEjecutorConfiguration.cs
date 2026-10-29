@@ -1,0 +1,46 @@
+using Cepheus.Domain.Mantenimiento.Maestros;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Cepheus.Infrastructure.Persistence.Configurations.Mantenimiento.Maestros
+{
+    public class SubCentroEjecutorConfiguration : IEntityTypeConfiguration<SubCentroEjecutor>
+    {
+        public void Configure(EntityTypeBuilder<SubCentroEjecutor> builder)
+        {
+            builder.ToTable("SubCentrosEjecutores", schema: "mantenimiento");
+
+            builder.HasKey(x => x.Code);
+
+            builder.Property(x => x.Code)
+                .IsRequired()
+                 .HasColumnType("char(4)");
+
+            builder.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            builder.Property(x => x.CentroEjecutorCode)
+                .IsRequired()
+                .HasMaxLength(2);
+
+            builder.HasOne(x => x.CentroEjecutor)
+                .WithMany()
+                .HasForeignKey(x => x.CentroEjecutorCode)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(x => x.IsActive)
+                .IsRequired()
+                .HasDefaultValue(true);
+
+            builder.Property(x => x.CreatedBy)
+                .HasMaxLength(250);
+
+            builder.Property(x => x.UpdatedBy)
+                .HasMaxLength(250);
+
+            builder.Property(x => x.RowVersion)
+                .IsRowVersion();
+        }
+    }
+}
