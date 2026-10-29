@@ -28,12 +28,11 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
                     InvertsOnCreditNote = l.InvertsOnCreditNote,
                     IsDestination = l.IsDestination,
                     AccountingType = l.AccountingType,
-                    ValeTypeCode = l.ValeTypeCode
+                    ValeTypeCode = l.ValeTypeCode,
+                    CurrencyCode = l.CurrencyCode
                 }).ToList(),
             CreatedAt = e.CreatedAt,
             UpdatedAt = e.UpdatedAt,
-            CreatedBy = e.CreatedBy,
-            UpdatedBy = e.UpdatedBy,
             RowVersion = e.RowVersion
         };
     }

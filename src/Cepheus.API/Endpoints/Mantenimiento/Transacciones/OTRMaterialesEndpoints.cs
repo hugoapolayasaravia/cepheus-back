@@ -1,7 +1,7 @@
-using Cepheus.Application.Features.Mantenimiento.Transacciones.OTRMateriales.CreateOTRMaterial;
-using Cepheus.Application.Features.Mantenimiento.Transacciones.OTRMateriales.DeleteOTRMaterial;
-using Cepheus.Application.Features.Mantenimiento.Transacciones.OTRMateriales.GetOTRMaterialesByOrdenTrabajo;
-using Cepheus.Application.Features.Mantenimiento.Transacciones.OTRMateriales.UpdateOTRMaterial;
+using Cepheus.Application.Features.Mantenimiento.Transacciones.OrdenesTrabajo.OTRMateriales.CreateOTRMaterial;
+using Cepheus.Application.Features.Mantenimiento.Transacciones.OrdenesTrabajo.OTRMateriales.DeleteOTRMaterial;
+using Cepheus.Application.Features.Mantenimiento.Transacciones.OrdenesTrabajo.OTRMateriales.GetOTRMaterialesByOrdenTrabajo;
+using Cepheus.Application.Features.Mantenimiento.Transacciones.OrdenesTrabajo.OTRMateriales.UpdateOTRMaterial;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Mantenimiento.Transacciones

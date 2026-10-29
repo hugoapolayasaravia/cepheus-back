@@ -30,6 +30,8 @@ namespace Cepheus.Application.Features.Mantenimiento.Maestros.VerbosActividad.Ge
                     IsActive = v.IsActive,
                     CreatedAt = v.CreatedAt,
                     UpdatedAt = v.UpdatedAt,
+                    CreatedBy = v.CreatedBy,
+                    UpdatedBy = v.UpdatedBy,
                     RowVersion = v.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);

@@ -15,6 +15,8 @@ public static class FacturacionTransaccionesEndpointsExtensions
         app.MapHojasCorteEndpoints();
         app.MapSolicitudesNotaCreditoEndpoints();
         app.MapNotasCreditoVentaEndpoints();
+        app.MapNotasDebitoVentaEndpoints();
+        app.MapChequesVentaEndpoints();
         app.MapOrdenesTrabajoVentaEndpoints();
         app.MapProgramacionesConcretoEndpoints();
         app.MapProgramacionesOtrosEndpoints();

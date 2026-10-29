@@ -1,4 +1,3 @@
-using Cepheus.Application.Comun.Interfaces;
 using Cepheus.Application.Comun.Interfaces.UnitOfWork;
 using Cepheus.Application.Features.Mantenimiento.Maestros.SubCentrosEjecutores.Common;
 using Cepheus.Domain.Mantenimiento.Maestros;

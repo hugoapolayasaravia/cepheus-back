@@ -200,6 +200,7 @@ app.MapLogisticaReportesEndpoints();
 app.MapMantenimientoCatalogosEndpoints();
 app.MapMantenimientoMaestrosEndpoints();
 app.MapMantenimientoTransaccionesEndpoints();
+app.MapMantenimientoReportesEndpoints();
 
 // Recursos Humanos
 app.MapRrhhCatalogosEndpoints();

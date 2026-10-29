@@ -11,6 +11,9 @@ public static class MantenimientoTransaccionesEndpointsExtensions
         app.MapOTResponsablesEndpoints();
         app.MapOTRMaquinasEndpoints();
         app.MapOTRMaterialesEndpoints();
+        app.MapUnidadesParadaEndpoints();
+        app.MapUnidadesHorometroEndpoints();
+        app.MapOrdenesPreventivasEndpoints();
 
         return app;
     }

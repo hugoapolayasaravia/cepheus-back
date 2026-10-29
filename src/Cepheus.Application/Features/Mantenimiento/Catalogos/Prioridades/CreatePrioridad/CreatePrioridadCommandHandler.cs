@@ -40,6 +40,8 @@ namespace Cepheus.Application.Features.Mantenimiento.Catalogos.Prioridades.Creat
             IsActive = prioridad.IsActive,
             CreatedAt = prioridad.CreatedAt,
             UpdatedAt = prioridad.UpdatedAt,
+            CreatedBy = prioridad.CreatedBy,
+            UpdatedBy = prioridad.UpdatedBy,
             RowVersion = prioridad.RowVersion
         };
     }

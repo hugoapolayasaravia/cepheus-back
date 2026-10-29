@@ -42,6 +42,8 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.TiposValorizacion.C
             IsActive = tipoValorizacion.IsActive,
             CreatedAt = tipoValorizacion.CreatedAt,
             UpdatedAt = tipoValorizacion.UpdatedAt,
+            CreatedBy = tipoValorizacion.CreatedBy,
+            UpdatedBy = tipoValorizacion.UpdatedBy,
             RowVersion = tipoValorizacion.RowVersion
         };
     }

@@ -57,6 +57,8 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.TiposCliente.Update
                 IsActive = tipoCliente.IsActive,
                 CreatedAt = tipoCliente.CreatedAt,
                 UpdatedAt = tipoCliente.UpdatedAt,
+                CreatedBy = tipoCliente.CreatedBy,
+                UpdatedBy = tipoCliente.UpdatedBy,
                 RowVersion = tipoCliente.RowVersion
             };
         }

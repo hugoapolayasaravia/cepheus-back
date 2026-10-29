@@ -61,6 +61,8 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.FormasPagoVenta.Upd
                 IsActive = formaPagoVenta.IsActive,
                 CreatedAt = formaPagoVenta.CreatedAt,
                 UpdatedAt = formaPagoVenta.UpdatedAt,
+                CreatedBy = formaPagoVenta.CreatedBy,
+                UpdatedBy = formaPagoVenta.UpdatedBy,
                 RowVersion = formaPagoVenta.RowVersion
             };
         }

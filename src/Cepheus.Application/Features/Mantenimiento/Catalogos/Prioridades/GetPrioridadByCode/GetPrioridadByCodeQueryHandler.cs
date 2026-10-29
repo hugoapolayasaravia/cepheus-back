@@ -30,6 +30,8 @@ namespace Cepheus.Application.Features.Mantenimiento.Catalogos.Prioridades.GetPr
                     IsActive = p.IsActive,
                     CreatedAt = p.CreatedAt,
                     UpdatedAt = p.UpdatedAt,
+                    CreatedBy = p.CreatedBy,
+                    UpdatedBy = p.UpdatedBy,
                     RowVersion = p.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);

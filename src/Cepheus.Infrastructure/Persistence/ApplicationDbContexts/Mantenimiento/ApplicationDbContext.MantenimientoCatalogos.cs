@@ -13,4 +13,5 @@ public partial class ApplicationDbContext
     public DbSet<Prioridad> Prioridades => Set<Prioridad>();
     public DbSet<TipoOrden> TiposOrden => Set<TipoOrden>();
     public DbSet<Maquina> Maquinas => Set<Maquina>();
+    public DbSet<Falla> Fallas => Set<Falla>();
 }

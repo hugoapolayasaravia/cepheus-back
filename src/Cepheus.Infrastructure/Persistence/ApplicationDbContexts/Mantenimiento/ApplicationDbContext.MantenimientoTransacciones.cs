@@ -11,4 +11,7 @@ public partial class ApplicationDbContext
     public DbSet<OTRMaquina> OTRMaquinas => Set<OTRMaquina>();
     public DbSet<OTRMaterial> OTRMateriales => Set<OTRMaterial>();
 
+    public DbSet<UnidadParada> UnidadesParada => Set<UnidadParada>();
+    public DbSet<UnidadHorometro> UnidadesHorometro => Set<UnidadHorometro>();
+
 }

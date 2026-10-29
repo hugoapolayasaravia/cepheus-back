@@ -57,6 +57,8 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.ClasificacionesClie
                 IsActive = clasificacionCliente.IsActive,
                 CreatedAt = clasificacionCliente.CreatedAt,
                 UpdatedAt = clasificacionCliente.UpdatedAt,
+                CreatedBy = clasificacionCliente.CreatedBy,
+                UpdatedBy = clasificacionCliente.UpdatedBy,
                 RowVersion = clasificacionCliente.RowVersion
             };
         }

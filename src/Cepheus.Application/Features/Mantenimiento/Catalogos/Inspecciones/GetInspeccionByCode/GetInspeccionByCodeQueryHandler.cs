@@ -29,6 +29,8 @@ namespace Cepheus.Application.Features.Mantenimiento.Catalogos.Inspecciones.GetI
                     IsActive = i.IsActive,
                     CreatedAt = i.CreatedAt,
                     UpdatedAt = i.UpdatedAt,
+                    CreatedBy = i.CreatedBy,
+                    UpdatedBy = i.UpdatedBy,
                     RowVersion = i.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);

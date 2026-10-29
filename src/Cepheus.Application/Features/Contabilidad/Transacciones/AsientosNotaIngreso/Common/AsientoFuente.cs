@@ -9,6 +9,11 @@
         public string? ComprobantePagoCode { get; init; }
         public bool EsNotaCredito { get; init; }
 
+        /// <summary>Moneda (ISO 4217) del documento. Solo provisión de ventas: filtra las líneas de la plantilla por moneda.</summary>
+        public string? MonedaCode { get; init; }
+        /// <summary>Cliente del documento de venta (solo provisión de ventas).</summary>
+        public string? ClienteCode { get; init; }
+
         public string? ProveedorCode { get; init; }
         public string? ProveedorNombre { get; init; }
         /// <summary>Cuenta por pagar del proveedor según la moneda del documento (solo provisión).</summary>

@@ -95,6 +95,14 @@ namespace Cepheus.Infrastructure.Persistence.UnitOfWorks
         private IRepository<NotaCreditoVentaDetalle>? _notasCreditoVentaDetalle;
         public IRepository<NotaCreditoVentaDetalle> NotasCreditoVentaDetalle => _notasCreditoVentaDetalle ??= new Repository<NotaCreditoVentaDetalle>(_context);
 
-    
+        private IRepository<NotaDebitoVenta>? _notasDebitoVenta;
+        public IRepository<NotaDebitoVenta> NotasDebitoVenta => _notasDebitoVenta ??= new Repository<NotaDebitoVenta>(_context);
+
+        private IRepository<NotaDebitoVentaDetalle>? _notasDebitoVentaDetalle;
+        public IRepository<NotaDebitoVentaDetalle> NotasDebitoVentaDetalle => _notasDebitoVentaDetalle ??= new Repository<NotaDebitoVentaDetalle>(_context);
+
+        private IRepository<ChequeVenta>? _chequesVenta;
+        public IRepository<ChequeVenta> ChequesVenta => _chequesVenta ??= new Repository<ChequeVenta>(_context);
+
     }
 }

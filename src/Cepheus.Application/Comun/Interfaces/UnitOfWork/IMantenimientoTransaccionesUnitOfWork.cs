@@ -9,7 +9,8 @@ namespace Cepheus.Application.Comun.Interfaces.UnitOfWork
         IRepository<OTResponsable> OTResponsables { get; }
         IRepository<OTRMaquina> OTRMaquinas { get; }
         IRepository<OTRMaterial> OTRMateriales { get; }
-
+        IRepository<UnidadParada> UnidadesParada { get; }
+        IRepository<UnidadHorometro> UnidadesHorometro { get; }
 
     }
 }

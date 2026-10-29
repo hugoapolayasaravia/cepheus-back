@@ -58,6 +58,8 @@ namespace Cepheus.Application.Features.Mantenimiento.Catalogos.Oportunidades.Upd
                 IsActive = oportunidad.IsActive,
                 CreatedAt = oportunidad.CreatedAt,
                 UpdatedAt = oportunidad.UpdatedAt,
+                CreatedBy = oportunidad.CreatedBy,
+                UpdatedBy = oportunidad.UpdatedBy,
                 RowVersion = oportunidad.RowVersion
             };
         }

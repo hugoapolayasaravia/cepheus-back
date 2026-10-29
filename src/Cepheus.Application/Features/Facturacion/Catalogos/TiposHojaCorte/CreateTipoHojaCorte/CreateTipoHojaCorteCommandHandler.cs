@@ -40,6 +40,8 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.TiposHojaCorte.Crea
             IsActive = tipoHojaCorte.IsActive,
             CreatedAt = tipoHojaCorte.CreatedAt,
             UpdatedAt = tipoHojaCorte.UpdatedAt,
+            CreatedBy = tipoHojaCorte.CreatedBy,
+            UpdatedBy = tipoHojaCorte.UpdatedBy,
             RowVersion = tipoHojaCorte.RowVersion
         };
     }

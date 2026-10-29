@@ -59,6 +59,8 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.ElementosConcreto.U
                 IsActive = elementoConcreto.IsActive,
                 CreatedAt = elementoConcreto.CreatedAt,
                 UpdatedAt = elementoConcreto.UpdatedAt,
+                CreatedBy = elementoConcreto.CreatedBy,
+                UpdatedBy = elementoConcreto.UpdatedBy,
                 RowVersion = elementoConcreto.RowVersion
             };
         }

@@ -15,7 +15,6 @@
   <ItemGroup>
     <Folder Include="Features\Contabilidad\Reportes\" />
     <Folder Include="Features\Facturacion\Reportes\" />
-    <Folder Include="Features\Mantenimiento\Reportes\" />
     <Folder Include="Features\Rrhh\Reportes\" />
     <Folder Include="Features\Rrhh\Transacciones\" />
   </ItemGroup>

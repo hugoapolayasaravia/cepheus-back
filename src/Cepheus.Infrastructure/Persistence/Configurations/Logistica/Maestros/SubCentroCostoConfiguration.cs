@@ -38,6 +38,10 @@ namespace Cepheus.Infrastructure.Persistence.Configurations.Logistica.Maestros
             builder.Property(x => x.ParentCode)
                 .HasMaxLength(6);
 
+            builder.Property(x => x.IsUnit)
+                .IsRequired()
+                .HasDefaultValue(false);
+
             builder.Property(x => x.IsActive)
                 .IsRequired()
                 .HasDefaultValue(true);

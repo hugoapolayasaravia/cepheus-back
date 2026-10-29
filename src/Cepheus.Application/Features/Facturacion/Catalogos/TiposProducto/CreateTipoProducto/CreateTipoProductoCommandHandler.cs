@@ -20,14 +20,6 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.TiposProducto.Creat
             CreateTipoProductoCommand request,
             CancellationToken cancellationToken)
         {
-            //var code = await SequentialCodeGenerator.NextAsync(
-            //    _uow.Facturacion.Catalogos.TiposProducto
-            //        .Query()
-            //        .Select(t => t.Code),
-            //    length: 2,
-            //    entityLabel: "Tipos de Producto",
-            //    cancellationToken);
-
             var tipoProducto = new TipoProducto
             {
                 Code = request.Code.Trim().ToUpperInvariant(),

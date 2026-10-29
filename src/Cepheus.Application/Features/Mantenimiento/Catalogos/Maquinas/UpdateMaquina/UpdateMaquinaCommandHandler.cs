@@ -58,6 +58,8 @@ namespace Cepheus.Application.Features.Mantenimiento.Catalogos.Maquinas.UpdateMa
                 IsActive = maquina.IsActive,
                 CreatedAt = maquina.CreatedAt,
                 UpdatedAt = maquina.UpdatedAt,
+                CreatedBy = maquina.CreatedBy,
+                UpdatedBy = maquina.UpdatedBy,
                 RowVersion = maquina.RowVersion
             };
         }

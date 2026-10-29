@@ -7,6 +7,7 @@ using Cepheus.Infrastructure.Persistence.UnitOfWorks.Contabilidad;
 using Cepheus.Infrastructure.Persistence.UnitOfWorks.Facturacion;
 using Cepheus.Infrastructure.Persistence.UnitOfWorks.Logistica;
 using Cepheus.Infrastructure.Persistence.UnitOfWorks.Mantenimiento;
+using Cepheus.Infrastructure.Persistence.UnitOfWorks.Rrhh;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 

@@ -13,6 +13,7 @@ public static class MantenimientoCatalogosEndpointsExtensions
         app.MapPrioridadesEndpoints();
         app.MapTiposOrdenEndpoints();
         app.MapMaquinasEndpoints();
+        app.MapFallasEndpoints();
 
         return app;
     }

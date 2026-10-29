@@ -62,6 +62,8 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.NotasCotizacionPlan
                 IsActive = nota.IsActive,
                 CreatedAt = nota.CreatedAt,
                 UpdatedAt = nota.UpdatedAt,
+                CreatedBy = nota.CreatedBy,
+                UpdatedBy = nota.UpdatedBy,
                 RowVersion = nota.RowVersion
             };
         }

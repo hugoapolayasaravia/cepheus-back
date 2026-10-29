@@ -57,6 +57,8 @@ namespace Cepheus.Application.Features.Mantenimiento.Catalogos.Inspecciones.Upda
                 IsActive = inspeccion.IsActive,
                 CreatedAt = inspeccion.CreatedAt,
                 UpdatedAt = inspeccion.UpdatedAt,
+                CreatedBy = inspeccion.CreatedBy,
+                UpdatedBy = inspeccion.UpdatedBy,
                 RowVersion = inspeccion.RowVersion
             };
         }

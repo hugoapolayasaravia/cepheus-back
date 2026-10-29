@@ -41,6 +41,13 @@ namespace Cepheus.Domain.Contabilidad.Maestros
         public TipoContabilidad AccountingType { get; set; } = TipoContabilidad.Todos;
 
         /// <summary>
+        /// Moneda (ISO 4217) del documento a la que aplica la línea. Si es null la línea aplica a cualquier moneda.
+        /// Reemplaza a las cuentas por moneda que el legacy escribía en el programa (por ejemplo cliente
+        /// 12110101 en soles y 12110102 en dólares): se definen dos líneas, una por moneda.
+        /// </summary>
+        public string? CurrencyCode { get; set; }
+
+        /// <summary>
         /// Solo DetalleVale: tipo de vale al que aplica la línea (por ejemplo "TRA" = transferencia). Las líneas sin tipo
         /// son las generales: se usan para los vales cuyo tipo no tiene una línea propia.
         /// </summary>

@@ -62,7 +62,10 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
                     AccountingType = line.AccountingType,
                     ValeTypeCode = string.IsNullOrWhiteSpace(line.ValeTypeCode)
                         ? null
-                        : line.ValeTypeCode.Trim().ToUpperInvariant()
+                        : line.ValeTypeCode.Trim().ToUpperInvariant(),
+                    CurrencyCode = string.IsNullOrWhiteSpace(line.CurrencyCode)
+                        ? null
+                        : line.CurrencyCode.Trim().ToUpperInvariant()
                 });
             }
 

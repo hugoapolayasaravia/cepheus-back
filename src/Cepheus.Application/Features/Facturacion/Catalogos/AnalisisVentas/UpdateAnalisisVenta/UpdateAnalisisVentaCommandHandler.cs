@@ -61,6 +61,8 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.AnalisisVentas.Upda
                 IsActive = analisisVenta.IsActive,
                 CreatedAt = analisisVenta.CreatedAt,
                 UpdatedAt = analisisVenta.UpdatedAt,
+                CreatedBy = analisisVenta.CreatedBy,
+                UpdatedBy = analisisVenta.UpdatedBy,
                 RowVersion = analisisVenta.RowVersion
             };
         }

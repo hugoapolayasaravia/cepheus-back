@@ -27,6 +27,9 @@ namespace Cepheus.Domain.Logistica.Maestros
     ///                       criterio que UnidadNegocio: SÍ editable en
     ///                       Update, porque reubicar en la jerarquía es el
     ///                       caso de uso normal del campo)
+    ///   Unidad_SN       -> IsUnit ('S'/'N' -> bool; marca al subcentro como
+    ///                       unidad/equipo con horómetro y paradas diarias,
+    ///                       ver Mantenimiento.UnidadHorometro/UnidadParada)
     /// </summary>
     public class SubCentroCosto : IAuditableEntity
     {
@@ -46,6 +49,8 @@ namespace Cepheus.Domain.Logistica.Maestros
         public string? ParentCode { get; set; }
         public SubCentroCosto? Parent { get; set; }
         public ICollection<SubCentroCosto> Children { get; set; } = new List<SubCentroCosto>();
+
+        public bool IsUnit { get; set; }
 
         public bool IsActive { get; set; } = true;
 

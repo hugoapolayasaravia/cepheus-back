@@ -18,12 +18,20 @@ namespace Cepheus.Infrastructure.Persistence.UnitOfWorks.Mantenimiento
 
         private IRepository<OrdenTrabajo>? _ordenesTrabajo;
         public IRepository<OrdenTrabajo> OrdenesTrabajo => _ordenesTrabajo ??= new Repository<OrdenTrabajo>(_context);
+        
         private IRepository<OTResponsable>? _otResponsables;
         public IRepository<OTResponsable> OTResponsables => _otResponsables ??= new Repository<OTResponsable>(_context);
+        
         private IRepository<OTRMaquina>? _otrMaquinas;
         public IRepository<OTRMaquina> OTRMaquinas => _otrMaquinas ??= new Repository<OTRMaquina>(_context);
+        
         private IRepository<OTRMaterial>? _otrMateriales;
         public IRepository<OTRMaterial> OTRMateriales => _otrMateriales ??= new Repository<OTRMaterial>(_context);
 
+        private IRepository<UnidadParada>? _unidadesParada;
+        public IRepository<UnidadParada> UnidadesParada => _unidadesParada ??= new Repository<UnidadParada>(_context);
+        
+        private IRepository<UnidadHorometro>? _unidadesHorometro;
+        public IRepository<UnidadHorometro> UnidadesHorometro => _unidadesHorometro ??= new Repository<UnidadHorometro>(_context);
     }
 }

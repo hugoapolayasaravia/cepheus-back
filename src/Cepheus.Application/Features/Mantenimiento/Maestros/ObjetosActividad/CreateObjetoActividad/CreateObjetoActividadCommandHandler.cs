@@ -40,6 +40,8 @@ namespace Cepheus.Application.Features.Mantenimiento.Maestros.ObjetosActividad.C
             IsActive = objetoActividad.IsActive,
             CreatedAt = objetoActividad.CreatedAt,
             UpdatedAt = objetoActividad.UpdatedAt,
+            CreatedBy = objetoActividad.CreatedBy,
+            UpdatedBy = objetoActividad.UpdatedBy,
             RowVersion = objetoActividad.RowVersion
         };
     }

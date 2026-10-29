@@ -100,6 +100,15 @@ namespace Cepheus.Application.Features.Contabilidad.Transacciones.AsientosNotaIn
                         anexoCode = fuente.ProveedorCode!.Trim();
                     }
                 }
+                else if (tl.AnnexSource == OrigenAnexoAsiento.Cliente)
+                {
+                    var tipoCuenta = (cuenta.TipoAnexoCode ?? string.Empty).Trim();
+                    if (tipoCuenta.Length == 3 && !string.IsNullOrWhiteSpace(fuente.ClienteCode))
+                    {
+                        anexoTipo = tipoCuenta;
+                        anexoCode = fuente.ClienteCode!.Trim();
+                    }
+                }
                 else if (tl.AnnexSource == OrigenAnexoAsiento.LineaDocumento
                          && !string.IsNullOrWhiteSpace(linea?.AnexoTipoCode)
                          && !string.IsNullOrWhiteSpace(linea?.AnexoCode))
@@ -146,6 +155,13 @@ namespace Cepheus.Application.Features.Contabilidad.Transacciones.AsientosNotaIn
 
             foreach (var tl in plantilla.Lines.OrderBy(l => l.Order))
             {
+                // Línea propia de una moneda: solo aplica a los documentos de esa moneda.
+                if (!string.IsNullOrWhiteSpace(tl.CurrencyCode)
+                    && !string.Equals(tl.CurrencyCode.Trim(), fuente.MonedaCode?.Trim(), StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
                 var naturaleza = tl.Nature;
                 if (tl.InvertsOnCreditNote && fuente.EsNotaCredito)
                 {

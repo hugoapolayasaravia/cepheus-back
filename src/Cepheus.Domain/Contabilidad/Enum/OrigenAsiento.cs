@@ -10,6 +10,7 @@
         Contabilidad = 1,
         CajaChica = 2,
         Logistica = 3,
-        Transferencia = 4
+        Transferencia = 4,
+        Ventas = 5
     }
 }

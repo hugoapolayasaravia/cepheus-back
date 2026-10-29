@@ -84,6 +84,9 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.U
                 target.ValeTypeCode = string.IsNullOrWhiteSpace(line.ValeTypeCode)
                     ? null
                     : line.ValeTypeCode.Trim().ToUpperInvariant();
+                target.CurrencyCode = string.IsNullOrWhiteSpace(line.CurrencyCode)
+                    ? null
+                    : line.CurrencyCode.Trim().ToUpperInvariant();
             }
 
             try

@@ -15,6 +15,7 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
         public bool IsDestination { get; set; }
         public TipoContabilidad AccountingType { get; set; }
         public string? ValeTypeCode { get; set; }
+        public string? CurrencyCode { get; set; }
     }
 
     public class PlantillaAsientoResponse
@@ -30,8 +31,6 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
         public List<PlantillaAsientoLineaResponse> Lines { get; set; } = new();
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public string? CreatedBy { get; set; }
-        public string? UpdatedBy { get; set; }
         public byte[] RowVersion { get; set; } = default!;
     }
 }

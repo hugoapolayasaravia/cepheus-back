@@ -32,4 +32,6 @@ public partial class ApplicationDbContext
     public DbSet<MotivoSolicitudNotaCredito> MotivosSolicitudNotaCredito => Set<MotivoSolicitudNotaCredito>();
 
     public DbSet<ElementoConcreto> ElementosConcreto => Set<ElementoConcreto>();
+
+    public DbSet<MotivoChequeRebote> MotivosChequeRebote => Set<MotivoChequeRebote>();
 }

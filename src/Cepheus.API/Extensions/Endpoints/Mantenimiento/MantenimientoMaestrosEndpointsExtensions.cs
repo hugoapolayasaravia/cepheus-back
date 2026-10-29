@@ -14,6 +14,8 @@ public static class MantenimientoMaestrosEndpointsExtensions
         app.MapVerbosActividadEndpoints();
         app.MapObjetosActividadEndpoints();
         app.MapActividadesEndpoints();
+        app.MapPlanesPreventivoEndpoints();
+        app.MapActividadesMantenimientoEndpoints();
 
         return app;
     }

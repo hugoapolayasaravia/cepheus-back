@@ -62,6 +62,8 @@ namespace Cepheus.Application.Features.Mantenimiento.Maestros.SubCentrosEjecutor
                 IsActive = subCentroEjecutor.IsActive,
                 CreatedAt = subCentroEjecutor.CreatedAt,
                 UpdatedAt = subCentroEjecutor.UpdatedAt,
+                CreatedBy = subCentroEjecutor.CreatedBy,
+                UpdatedBy = subCentroEjecutor.UpdatedBy,
                 RowVersion = subCentroEjecutor.RowVersion
             };
     }

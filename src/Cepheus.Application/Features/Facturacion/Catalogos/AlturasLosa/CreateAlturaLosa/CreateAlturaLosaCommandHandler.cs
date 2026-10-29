@@ -56,6 +56,8 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.AlturasLosa.CreateA
             IsActive = alturaLosa.IsActive,
             CreatedAt = alturaLosa.CreatedAt,
             UpdatedAt = alturaLosa.UpdatedAt,
+            CreatedBy = alturaLosa.CreatedBy,
+            UpdatedBy = alturaLosa.UpdatedBy,
             RowVersion = alturaLosa.RowVersion
         };
     }

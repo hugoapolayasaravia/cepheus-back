@@ -58,6 +58,8 @@ namespace Cepheus.Application.Features.Mantenimiento.Maestros.VerbosActividad.Up
                 IsActive = verboActividad.IsActive,
                 CreatedAt = verboActividad.CreatedAt,
                 UpdatedAt = verboActividad.UpdatedAt,
+                CreatedBy = verboActividad.CreatedBy,
+                UpdatedBy = verboActividad.UpdatedBy,
                 RowVersion = verboActividad.RowVersion
             };
         }

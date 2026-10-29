@@ -31,6 +31,14 @@
         /// Reversión / cancelación de caja chica de tipo fondo fijo o por rendir
         /// (legacy: co_asirev_cajachica, asiento tipo 05).
         /// </summary>
-        ReversionCajaChica = 7
+        ReversionCajaChica = 7,
+
+        /// <summary>
+        /// Provisión de un documento de venta por cobrar: factura (01), boleta (03), nota de crédito (07) o
+        /// nota de débito (08) (legacy: co_asipro_ventas, asiento tipo 03). Hoy lo usa la nota de débito.
+        /// Debe: cuenta del cliente (TotalDocumento). Haber: cuenta del producto de cada línea (DetalleDocumento)
+        /// e IGV (Igv). En nota de crédito las líneas invierten su naturaleza (InvertsOnCreditNote).
+        /// </summary>
+        ProvisionVenta = 8
     }
 }

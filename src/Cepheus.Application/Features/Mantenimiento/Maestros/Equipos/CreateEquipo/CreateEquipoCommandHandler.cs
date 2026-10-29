@@ -43,6 +43,8 @@ namespace Cepheus.Application.Features.Mantenimiento.Maestros.Equipos.CreateEqui
             IsActive = equipo.IsActive,
             CreatedAt = equipo.CreatedAt,
             UpdatedAt = equipo.UpdatedAt,
+            CreatedBy = equipo.CreatedBy,
+            UpdatedBy = equipo.UpdatedBy,
             RowVersion = equipo.RowVersion
         };
     }

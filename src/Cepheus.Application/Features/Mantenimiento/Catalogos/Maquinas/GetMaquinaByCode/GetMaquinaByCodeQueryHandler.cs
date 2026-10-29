@@ -30,6 +30,8 @@ namespace Cepheus.Application.Features.Mantenimiento.Catalogos.Maquinas.GetMaqui
                     IsActive = m.IsActive,
                     CreatedAt = m.CreatedAt,
                     UpdatedAt = m.UpdatedAt,
+                    CreatedBy = m.CreatedBy,
+                    UpdatedBy = m.UpdatedBy,
                     RowVersion = m.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);

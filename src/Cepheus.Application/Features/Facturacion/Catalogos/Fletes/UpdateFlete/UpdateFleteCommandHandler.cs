@@ -61,6 +61,8 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.Fletes.UpdateFlete
                 IsActive = flete.IsActive,
                 CreatedAt = flete.CreatedAt,
                 UpdatedAt = flete.UpdatedAt,
+                CreatedBy = flete.CreatedBy,
+                UpdatedBy = flete.UpdatedBy,
                 RowVersion = flete.RowVersion
             };
         }

@@ -57,6 +57,8 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.SegmentosVentas.Upd
                 IsActive = segmentoVentas.IsActive,
                 CreatedAt = segmentoVentas.CreatedAt,
                 UpdatedAt = segmentoVentas.UpdatedAt,
+                CreatedBy = segmentoVentas.CreatedBy,
+                UpdatedBy = segmentoVentas.UpdatedBy,
                 RowVersion = segmentoVentas.RowVersion
             };
         }

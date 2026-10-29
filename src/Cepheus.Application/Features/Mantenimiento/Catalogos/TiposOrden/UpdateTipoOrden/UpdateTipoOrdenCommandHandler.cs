@@ -58,6 +58,8 @@ namespace Cepheus.Application.Features.Mantenimiento.Catalogos.TiposOrden.Update
                 IsActive = tipoOrden.IsActive,
                 CreatedAt = tipoOrden.CreatedAt,
                 UpdatedAt = tipoOrden.UpdatedAt,
+                CreatedBy = tipoOrden.CreatedBy,
+                UpdatedBy = tipoOrden.UpdatedBy,
                 RowVersion = tipoOrden.RowVersion
             };
         }

@@ -82,6 +82,8 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.ResponsablesObra.Cr
             Position = r.Position,
             CreatedAt = r.CreatedAt,
             UpdatedAt = r.UpdatedAt,
+            CreatedBy = r.CreatedBy,
+            UpdatedBy = r.UpdatedBy,
             RowVersion = r.RowVersion
         };
     }

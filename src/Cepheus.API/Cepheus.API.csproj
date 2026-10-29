@@ -23,7 +23,6 @@
   <ItemGroup>
     <Folder Include="Endpoints\Contabilidad\Reportes\" />
     <Folder Include="Endpoints\Facturacion\Reportes\" />
-    <Folder Include="Endpoints\Mantenimiento\Reportes\" />
     <Folder Include="Endpoints\Rrhh\Reportes\" />
     <Folder Include="Endpoints\Rrhh\Transacciones\" />
   </ItemGroup>

@@ -57,6 +57,8 @@ namespace Cepheus.Application.Features.Mantenimiento.Maestros.Actividades.Create
                 IsActive = actividad.IsActive,
                 CreatedAt = actividad.CreatedAt,
                 UpdatedAt = actividad.UpdatedAt,
+                CreatedBy = actividad.CreatedBy,
+                UpdatedBy = actividad.UpdatedBy,
                 RowVersion = actividad.RowVersion
             };
         }

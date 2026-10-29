@@ -1,7 +1,7 @@
-using Cepheus.Application.Features.Mantenimiento.Transacciones.OTRMaquinas.CreateOTRMaquina;
-using Cepheus.Application.Features.Mantenimiento.Transacciones.OTRMaquinas.DeleteOTRMaquina;
-using Cepheus.Application.Features.Mantenimiento.Transacciones.OTRMaquinas.GetOTRMaquinasByOrdenTrabajo;
-using Cepheus.Application.Features.Mantenimiento.Transacciones.OTRMaquinas.UpdateOTRMaquina;
+using Cepheus.Application.Features.Mantenimiento.Transacciones.OrdenesTrabajo.OTRMaquinas.CreateOTRMaquina;
+using Cepheus.Application.Features.Mantenimiento.Transacciones.OrdenesTrabajo.OTRMaquinas.DeleteOTRMaquina;
+using Cepheus.Application.Features.Mantenimiento.Transacciones.OrdenesTrabajo.OTRMaquinas.GetOTRMaquinasByOrdenTrabajo;
+using Cepheus.Application.Features.Mantenimiento.Transacciones.OrdenesTrabajo.OTRMaquinas.UpdateOTRMaquina;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Mantenimiento.Transacciones

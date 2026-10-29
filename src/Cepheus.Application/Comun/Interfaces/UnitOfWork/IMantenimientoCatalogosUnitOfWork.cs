@@ -11,5 +11,6 @@ namespace Cepheus.Application.Comun.Interfaces.UnitOfWork
         IRepository<Prioridad> Prioridades { get; }
         IRepository<TipoOrden> TiposOrden { get; }
         IRepository<Maquina> Maquinas { get; }
+        IRepository<Falla> Fallas { get; }
     }
 }

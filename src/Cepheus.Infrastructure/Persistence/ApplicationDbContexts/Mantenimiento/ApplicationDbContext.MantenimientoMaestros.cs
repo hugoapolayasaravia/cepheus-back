@@ -12,5 +12,11 @@ public partial class ApplicationDbContext
     public DbSet<VerboActividad> VerbosActividad => Set<VerboActividad>();
     public DbSet<ObjetoActividad> ObjetosActividad => Set<ObjetoActividad>();
     public DbSet<Actividad> Actividades => Set<Actividad>();
+    public DbSet<PlanMantenimientoPreventivo> PlanesMantenimientoPreventivo => Set<PlanMantenimientoPreventivo>();
+    public DbSet<PlanMantenimientoPreventivoManoObra> PlanesMantenimientoPreventivoManoObra => Set<PlanMantenimientoPreventivoManoObra>();
+    public DbSet<PlanMantenimientoPreventivoMaterial> PlanesMantenimientoPreventivoMateriales => Set<PlanMantenimientoPreventivoMaterial>();
+    public DbSet<ActividadMantenimiento> ActividadesMantenimiento => Set<ActividadMantenimiento>();
+
+
 
 }

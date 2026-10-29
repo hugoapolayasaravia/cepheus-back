@@ -1,7 +1,7 @@
-using Cepheus.Application.Features.Mantenimiento.Transacciones.OTResponsables.CreateOTResponsable;
-using Cepheus.Application.Features.Mantenimiento.Transacciones.OTResponsables.DeleteOTResponsable;
-using Cepheus.Application.Features.Mantenimiento.Transacciones.OTResponsables.GetOTResponsablesByOrdenTrabajo;
-using Cepheus.Application.Features.Mantenimiento.Transacciones.OTResponsables.UpdateOTResponsable;
+using Cepheus.Application.Features.Mantenimiento.Transacciones.OrdenesTrabajo.OTResponsables.CreateOTResponsable;
+using Cepheus.Application.Features.Mantenimiento.Transacciones.OrdenesTrabajo.OTResponsables.DeleteOTResponsable;
+using Cepheus.Application.Features.Mantenimiento.Transacciones.OrdenesTrabajo.OTResponsables.GetOTResponsablesByOrdenTrabajo;
+using Cepheus.Application.Features.Mantenimiento.Transacciones.OrdenesTrabajo.OTResponsables.UpdateOTResponsable;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Mantenimiento.Transacciones

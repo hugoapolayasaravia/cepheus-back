@@ -13,6 +13,7 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
         bool InvertsOnCreditNote,
         bool IsDestination,
         TipoContabilidad AccountingType,
-        string? ValeTypeCode = null
+        string? ValeTypeCode = null,
+        string? CurrencyCode = null
     );
 }

@@ -30,6 +30,8 @@ namespace Cepheus.Application.Features.Mantenimiento.Maestros.CentrosEjecutores.
                     IsActive = c.IsActive,
                     CreatedAt = c.CreatedAt,
                     UpdatedAt = c.UpdatedAt,
+                    CreatedBy = c.CreatedBy,
+                    UpdatedBy = c.UpdatedBy,
                     RowVersion = c.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);

@@ -25,6 +25,11 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
             ConceptoAsiento.MontoNotaIngreso, ConceptoAsiento.NetoNotaIngreso
         };
 
+        private static readonly ConceptoAsiento[] ConceptosProvisionVenta =
+        {
+            ConceptoAsiento.TotalDocumento, ConceptoAsiento.DetalleDocumento, ConceptoAsiento.Igv
+        };
+
         private static readonly ConceptoAsiento[] ConceptosConsumo =
         {
             ConceptoAsiento.DetalleVale, ConceptoAsiento.TotalVales
@@ -34,11 +39,14 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
             p == ProcesoAsiento.ProvisionCompraNotaIngreso || p == ProcesoAsiento.ProvisionOrdenServicio
             || p == ProcesoAsiento.ProvisionCajaChica;
 
+        private static bool EsVenta(ProcesoAsiento p) => p == ProcesoAsiento.ProvisionVenta;
+
         private static bool EsTransferencia(ProcesoAsiento p) =>
             p == ProcesoAsiento.TransferenciaNotaIngreso || p == ProcesoAsiento.TransferenciaOrdenServicio;
 
         private static ConceptoAsiento[] ConceptosPermitidos(ProcesoAsiento p) =>
             p == ProcesoAsiento.ReversionCajaChica ? ConceptosReversionCajaChica
+            : EsVenta(p) ? ConceptosProvisionVenta
             : EsProvision(p) ? ConceptosProvision : EsTransferencia(p) ? ConceptosTransferencia : ConceptosConsumo;
 
         protected PlantillaAsientoValidator(IUnitOfWork uow)
@@ -124,6 +132,29 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
                     return found == codes.Count;
                 })
                 .WithMessage("Alguna cuenta fija de las líneas no existe o está inactiva.")
+                .When(x => x.Lines is { Count: > 0 });
+
+            RuleFor(x => x.Lines)
+                .MustAsync(async (lines, ct) =>
+                {
+                    var codes = lines
+                        .Where(l => !string.IsNullOrWhiteSpace(l.CurrencyCode))
+                        .Select(l => l.CurrencyCode!.Trim().ToUpper())
+                        .Distinct()
+                        .ToList();
+
+                    if (codes.Count == 0)
+                    {
+                        return true;
+                    }
+
+                    var found = await uow.Comunes.Monedas.Query()
+                        .Where(m => codes.Contains(m.Code) && m.IsActive)
+                        .CountAsync(ct);
+
+                    return found == codes.Count;
+                })
+                .WithMessage("Alguna moneda de las líneas no existe o está inactiva.")
                 .When(x => x.Lines is { Count: > 0 });
 
             RuleFor(x => x.Lines)
@@ -226,6 +257,21 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
                     context.AddFailure("Lines", $"{label}: el anexo de la línea del documento solo aplica al concepto DetalleDocumento.");
                 }
 
+                if (line.AccountSource == OrigenCuentaAsiento.CuentaPorPagarProveedor && EsVenta(process))
+                {
+                    context.AddFailure("Lines", $"{label}: la provisión de ventas no usa cuentas por pagar de proveedor (use una cuenta fija).");
+                }
+
+                if (line.AnnexSource == OrigenAnexoAsiento.Cliente && !EsVenta(process))
+                {
+                    context.AddFailure("Lines", $"{label}: el anexo del cliente solo aplica a la provisión de ventas.");
+                }
+
+                if (!string.IsNullOrWhiteSpace(line.CurrencyCode) && !EsVenta(process))
+                {
+                    context.AddFailure("Lines", $"{label}: la moneda de la línea solo aplica a la provisión de ventas.");
+                }
+
                 if (line.AnnexSource == OrigenAnexoAsiento.Proveedor && !EsProvision(process))
                 {
                     context.AddFailure("Lines", $"{label}: el anexo del proveedor solo aplica a la provisión de compras o de orden de servicio.");
@@ -251,6 +297,33 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
             if (!lines.Any(l => l.Nature == NaturalezaAsiento.Debe) || !lines.Any(l => l.Nature == NaturalezaAsiento.Haber))
             {
                 context.AddFailure("Lines", "La plantilla debe tener al menos una línea al Debe y una al Haber.");
+            }
+
+            if (EsVenta(process))
+            {
+                if (lines.Count(l => l.Concept == ConceptoAsiento.TotalDocumento) == 0)
+                {
+                    context.AddFailure("Lines", "La provisión de ventas necesita al menos una línea de concepto TotalDocumento (cuenta del cliente).");
+                }
+
+                if (lines.Count(l => l.Concept == ConceptoAsiento.DetalleDocumento) == 0)
+                {
+                    context.AddFailure("Lines", "La provisión de ventas necesita al menos una línea de concepto DetalleDocumento (cuenta del producto).");
+                }
+
+                // Cada moneda con línea propia no puede repetir el concepto TotalDocumento ni Igv.
+                foreach (var concepto in new[] { ConceptoAsiento.TotalDocumento, ConceptoAsiento.Igv })
+                {
+                    var porMoneda = lines
+                        .Where(l => l.Concept == concepto)
+                        .Select(l => (l.CurrencyCode ?? string.Empty).Trim().ToUpperInvariant())
+                        .ToList();
+
+                    if (porMoneda.Distinct().Count() != porMoneda.Count)
+                    {
+                        context.AddFailure("Lines", $"El concepto {concepto} no puede repetirse para la misma moneda.");
+                    }
+                }
             }
 
             if (process == ProcesoAsiento.ConsumoVales)

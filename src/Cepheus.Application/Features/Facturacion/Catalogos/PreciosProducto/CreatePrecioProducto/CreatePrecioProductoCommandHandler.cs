@@ -46,6 +46,8 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.PreciosProducto.Cre
             FreightAmount = p.FreightAmount,
             CreatedAt = p.CreatedAt,
             UpdatedAt = p.UpdatedAt,
+            CreatedBy = p.CreatedBy,
+            UpdatedBy = p.UpdatedBy,
             RowVersion = p.RowVersion
         };
     }

@@ -31,5 +31,6 @@ namespace Cepheus.Application.Comun.Interfaces.UnitOfWork
 
         IRepository<ElementoConcreto> ElementosConcreto { get; }
 
+        IRepository<MotivoChequeRebote> MotivosChequeRebote { get; }
     }
 }

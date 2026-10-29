@@ -17,6 +17,12 @@
         /// Anexo del enlace contable del artículo en el subcentro de la línea (ArticuloAnexo; si no hay, SubFamiliaAnexo),
         /// solo si la cuenta de la línea exige tipo de anexo (solo DetalleVale).
         /// </summary>
-        ArticuloSubCentro = 4
+        ArticuloSubCentro = 4,
+
+        /// <summary>
+        /// El cliente del documento de venta, solo si la cuenta de la línea exige tipo de anexo
+        /// (legacy: "if len(trim(tipo_anexo)) = 3 then anexo = cliente"). Solo ProvisionVenta.
+        /// </summary>
+        Cliente = 5
     }
 }

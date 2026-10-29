@@ -30,6 +30,8 @@ namespace Cepheus.Infrastructure.Persistence.Configurations.Contabilidad.Maestro
             builder.Property(x => x.IsDestination).IsRequired().HasDefaultValue(false);
             builder.Property(x => x.AccountingType).IsRequired().HasConversion<int>();
 
+            builder.Property(x => x.CurrencyCode).HasColumnType("char(3)");
+
             builder.Property(x => x.ValeTypeCode).HasColumnType("char(3)");
             builder.HasOne(x => x.ValeType).WithMany().HasForeignKey(x => x.ValeTypeCode)
                 .OnDelete(DeleteBehavior.Restrict);

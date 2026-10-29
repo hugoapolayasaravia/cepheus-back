@@ -34,6 +34,8 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.AlturasLosa.GetAltu
                     IsActive = t.IsActive,
                     CreatedAt = t.CreatedAt,
                     UpdatedAt = t.UpdatedAt,
+                    CreatedBy = t.CreatedBy,
+                    UpdatedBy = t.UpdatedBy,
                     RowVersion = t.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);
