@@ -8,6 +8,7 @@ namespace Cepheus.Application.Features.Administracion.Users.CreateUser
     /// para definir su propia contraseña. Si viene con valor, se usa tal cual (comportamiento anterior).
     /// </summary>
     public record CreateUserCommand(
+    string Login,
     string Email,
     string? Password,
     string FirstName,

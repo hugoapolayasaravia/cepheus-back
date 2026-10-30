@@ -8,6 +8,7 @@
     public class UserResponse
     {
         public int Id { get; set; }
+        public string Login { get; set; } = default!;
         public string Email { get; set; } = default!;
         public string FirstName { get; set; } = default!;
         public string LastName { get; set; } = default!;

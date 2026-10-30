@@ -52,6 +52,7 @@ namespace Cepheus.Application.Features.Administracion.Users.GetUsersPaginated
             var projected = sortedQuery.Select(u => new UserResponse
             {
                 Id = u.Id,
+                Login = u.Login,
                 Email = u.Email,
                 FirstName = u.FirstName,
                 LastName = u.LastName,

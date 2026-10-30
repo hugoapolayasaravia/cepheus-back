@@ -3,8 +3,10 @@ using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.ChangeEstadoP
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.CreatePedido;
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.GetPedidoByCode;
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.GetPedidosPaginated;
+using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.Impresion;
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.PedidoDetalles.CreatePedidoDetalle;
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.PedidoDetalles.DeletePedidoDetalle;
+using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.PedidoDetalles.GetPedidoDetalles;
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.PedidoDetalles.UpdatePedidoDetalle;
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.UpdatePedido;
 using MediatR;
@@ -121,6 +123,36 @@ namespace Cepheus.API.Endpoints.Logistica.Transacciones
             })
             .WithName("DeletePedidoDetalle")
             .RequireAuthorization("PEDIDOS.UPDATE");
+
+            group.MapGet("/{codigoPlanta}/{codigoPedido}/detalles", async (
+                    string codigoPlanta,
+                    string codigoPedido,
+                    ISender sender) =>
+                            {
+                                var result = await sender.Send(
+                                    new GetPedidoDetallesQuery(codigoPlanta, codigoPedido));
+
+                                return Results.Ok(result);
+                            })
+                .WithName("GetPedidoDetalles")
+                .RequireAuthorization("PEDIDOS.VIEW");
+
+
+            group.MapGet("/{codigoPlanta}/{codigoPedido}/impresion", async (
+                string codigoPlanta,
+                string codigoPedido,
+                ISender sender) =>
+                        {
+                            var result = await sender.Send(
+                                new GetPedidoImpresionQuery(codigoPlanta, codigoPedido));
+
+                            return result is null
+                                ? Results.NotFound()
+                                : Results.Ok(result);
+                        })
+            .WithName("GetPedidoImpresion")
+            .RequireAuthorization("PEDIDOS.VIEW");
+
         }
 
         public record ChangeEstadoBody(string NuevoEstado);

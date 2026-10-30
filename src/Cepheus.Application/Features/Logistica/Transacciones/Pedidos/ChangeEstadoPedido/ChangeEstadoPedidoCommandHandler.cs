@@ -64,7 +64,7 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.Pedidos.ChangeEst
 
             if (nuevoEstado == EstadoPedido.Aprobado)
             {
-                pedido.AprobadoPor = _currentUser.FullName;
+                pedido.AprobadoPor = _currentUser.Login;
                 pedido.FechaAprobacion = DateTime.UtcNow;
             }
             else if (nuevoEstado == EstadoPedido.EnCompra)

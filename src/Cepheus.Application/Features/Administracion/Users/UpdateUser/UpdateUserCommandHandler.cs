@@ -29,6 +29,7 @@ namespace Cepheus.Application.Features.Administracion.Users.UpdateUser
             var user = new User
             {
                 Id = request.Id,
+                Login = request.Login,
                 Email = request.Email.Trim().ToLowerInvariant(),
                 FirstName = request.FirstName.Trim(),
                 LastName = request.LastName.Trim(),
@@ -58,6 +59,7 @@ namespace Cepheus.Application.Features.Administracion.Users.UpdateUser
             return new UserResponse
             {
                 Id = user.Id,
+                Login = user.Login,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,

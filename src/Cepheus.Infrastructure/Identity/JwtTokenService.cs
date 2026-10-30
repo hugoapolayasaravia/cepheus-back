@@ -26,6 +26,7 @@ namespace Cepheus.Infrastructure.Identity
             var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new("login", user.Login),
             new(ClaimTypes.Name, user.Email),
             new(ClaimTypes.Email, user.Email),
             new(ClaimTypes.GivenName, user.FirstName),

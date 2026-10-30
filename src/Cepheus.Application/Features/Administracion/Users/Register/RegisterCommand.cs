@@ -10,6 +10,7 @@ namespace Cepheus.Application.Features.Administracion.Users.Register
     /// el resto de usuarios se crea vía CreateUser (protegido, admin-only).
     /// </summary>
     public record RegisterCommand(
+        string Login,
         string Email,
         string Password,
         string FirstName,

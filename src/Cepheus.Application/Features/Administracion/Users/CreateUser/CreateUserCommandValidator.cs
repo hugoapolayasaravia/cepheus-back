@@ -12,6 +12,12 @@ namespace Cepheus.Application.Features.Administracion.Users.CreateUser
         {
             _uow = uow;
 
+            RuleFor(x => x.Login)
+               .Cascade(CascadeMode.Stop)
+               .NotEmpty().WithMessage("El login es obligatorio.")
+               .MaximumLength(20).WithMessage("El máximo de longitud es 20 caracteres.")
+               .MustAsync(BeUniqueLogin).WithMessage("El login ya está registrado.");
+
             RuleFor(x => x.Email)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("El email es obligatorio.")
@@ -34,6 +40,11 @@ namespace Cepheus.Application.Features.Administracion.Users.CreateUser
                 .MaximumLength(100)
                 .MustAsync(BeUniqueFullName).WithMessage("Ya existe un usuario registrado con ese nombre y apellido.");
         }
+
+        private async Task<bool> BeUniqueLogin(string login, CancellationToken cancellationToken)
+             => !await _uow.Administracion.Users.Query()
+                .AnyAsync(u => u.Login == login.Trim().ToLower(), cancellationToken);
+
 
         private async Task<bool> BeUniqueEmail(string email, CancellationToken cancellationToken)
             => !await _uow.Administracion.Users.Query()

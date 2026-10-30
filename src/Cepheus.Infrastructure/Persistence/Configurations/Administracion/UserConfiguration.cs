@@ -12,6 +12,13 @@ namespace Cepheus.Infrastructure.Persistence.Configurations.Administracion
 
             builder.HasKey(x => x.Id);
 
+            builder.Property(u => u.Login)
+                .HasMaxLength(20)
+                .IsRequired();
+
+            builder.HasIndex(u => u.Login)
+                .IsUnique();
+
             builder.Property(x => x.Email)
                 .IsRequired()
                 .HasMaxLength(150);

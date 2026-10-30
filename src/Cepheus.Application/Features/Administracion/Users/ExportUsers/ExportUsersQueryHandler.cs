@@ -19,6 +19,7 @@ namespace Cepheus.Application.Features.Administracion.Users.ExportUsers
         private static readonly Dictionary<string, (string Encabezado, Func<UserResponse, object?> Valor)> Columnas =
             new(StringComparer.OrdinalIgnoreCase)
             {
+                ["login"] = ("Login", u => u.Login),
                 ["email"] = ("Correo", u => u.Email),
                 ["firstName"] = ("Nombre", u => u.FirstName),
                 ["lastName"] = ("Apellido", u => u.LastName),
@@ -80,6 +81,7 @@ namespace Cepheus.Application.Features.Administracion.Users.ExportUsers
                 .Select(u => new UserResponse
                 {
                     Id = u.Id,
+                    Login = u.Login,
                     Email = u.Email,
                     FirstName = u.FirstName,
                     LastName = u.LastName,

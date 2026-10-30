@@ -10,6 +10,9 @@
     public interface ICurrentUserService
     {
         int? UserId { get; }
+
+        string? Login { get; }
+
         string? Email { get; }
 
         /// <summary>

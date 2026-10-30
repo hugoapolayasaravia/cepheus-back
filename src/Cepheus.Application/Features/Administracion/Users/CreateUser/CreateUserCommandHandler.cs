@@ -38,6 +38,7 @@ namespace Cepheus.Application.Features.Administracion.Users.CreateUser
 
             var user = new User
             {
+                Login = request.Login.Trim(),
                 Email = request.Email.Trim().ToLowerInvariant(),
                 FirstName = request.FirstName.Trim(),
                 LastName = request.LastName.Trim(),
@@ -57,6 +58,7 @@ namespace Cepheus.Application.Features.Administracion.Users.CreateUser
             return new UserResponse
             {
                 Id = user.Id,
+                Login = user.Login,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,

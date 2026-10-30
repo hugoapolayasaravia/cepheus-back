@@ -15,6 +15,12 @@ namespace Cepheus.Application.Features.Administracion.Users.UpdateUser
             RuleFor(x => x.Id)
                 .GreaterThan(0);
 
+            RuleFor(x => x.Login)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty().WithMessage("El Login es obligatorio.")
+                .MaximumLength(20).WithMessage("El máximo de longitud es 20 caracteres.")
+                .MustAsync(BeUniqueLogin).WithMessage("El login ya está registrado.");
+
             RuleFor(x => x.Email)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("El email es obligatorio.")
@@ -43,6 +49,13 @@ namespace Cepheus.Application.Features.Administracion.Users.UpdateUser
                 .WithMessage("RowVersion es obligatorio para validar concurrencia.");
         }
 
+        private async Task<bool> BeUniqueLogin(UpdateUserCommand command, string login, CancellationToken cancellationToken)
+            => !await _uow.Administracion.Users.Query()
+                .AnyAsync(
+                    u => u.Login == login.Trim().ToLower() &&
+                         u.Id != command.Id,
+                    cancellationToken);
+
         private async Task<bool> BeValidTrabajadorCode(string? trabajadorCode, CancellationToken cancellationToken)
         {
             // Es opcional
@@ -53,10 +66,7 @@ namespace Cepheus.Application.Features.Administracion.Users.UpdateUser
                 .AnyAsync(t => t.Code == trabajadorCode.Trim(), cancellationToken);
         }
 
-        private async Task<bool> BeUniqueEmail(
-            UpdateUserCommand command,
-            string email,
-            CancellationToken cancellationToken)
+        private async Task<bool> BeUniqueEmail(UpdateUserCommand command, string email, CancellationToken cancellationToken)
             => !await _uow.Administracion.Users.Query()
                 .AnyAsync(
                     u => u.Email == email.Trim().ToLower() &&

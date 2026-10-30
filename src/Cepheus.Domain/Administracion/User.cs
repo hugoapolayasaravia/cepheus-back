@@ -6,6 +6,7 @@ namespace Cepheus.Domain.Administracion
     public class User : IAuditableEntity
     {
         public int Id { get; set; }
+        public string Login { get; set; } = default!;
         public string Email { get; set; } = default!;
         public string PasswordHash { get; set; } = default!;
         public string FirstName { get; set; } = default!;

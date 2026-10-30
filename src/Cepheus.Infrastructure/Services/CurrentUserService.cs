@@ -38,6 +38,10 @@ namespace Cepheus.Infrastructure.Services
             _httpContextAccessor.HttpContext?.User?
                 .FindFirstValue(ClaimTypes.Email);
 
+        public string? Login =>
+            _httpContextAccessor.HttpContext?.User?
+                .FindFirstValue("login");
+
         public string? FullName
         {
             get

@@ -75,8 +75,16 @@ namespace Cepheus.Infrastructure.Persistence.ApplicationDbContexts
                 return "System";
             }
 
-            var email = _currentUserService.Email;
-            return string.IsNullOrWhiteSpace(email) ? fullName : $"{fullName} ({email})";
+            //var email = _currentUserService.Email;
+            //return string.IsNullOrWhiteSpace(email) ? fullName : $"{fullName} ({email})";
+
+            var login = _currentUserService.Login;
+
+            if (string.IsNullOrWhiteSpace(login))
+            {
+                return "System";
+            }
+            return login;
         }
     }
 

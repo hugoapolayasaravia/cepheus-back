@@ -64,6 +64,7 @@ namespace Cepheus.Application.Features.Administracion.Users.Refresh
                 User = new UserResponse
                 {
                     Id = storedToken.User.Id,
+                    Login =storedToken.User.Login,
                     Email = storedToken.User.Email,
                     FirstName = storedToken.User.FirstName,
                     LastName = storedToken.User.LastName,

@@ -68,6 +68,7 @@ namespace Cepheus.Application.Features.Administracion.Users.Authenticate
                 User = new UserResponse
                 {
                     Id = user.Id,
+                    Login=user.Login,
                     Email = user.Email,
                     FirstName = user.FirstName,
                     LastName = user.LastName,

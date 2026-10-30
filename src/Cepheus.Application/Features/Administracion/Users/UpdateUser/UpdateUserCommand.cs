@@ -5,6 +5,7 @@ namespace Cepheus.Application.Features.Administracion.Users.UpdateUser
 {
     public record UpdateUserCommand(
         int Id,
+        string Login,
         string Email,
         string FirstName,
         string LastName,

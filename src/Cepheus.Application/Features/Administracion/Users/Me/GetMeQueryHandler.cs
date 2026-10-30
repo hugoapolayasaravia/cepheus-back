@@ -35,6 +35,7 @@ namespace Cepheus.Application.Features.Administracion.Users.Me
                 .Select(u => new MeResponse
                 {
                     Id = u.Id,
+                    Login = u.Login,
                     Email = u.Email,
                     FirstName = u.FirstName,
                     LastName = u.LastName,
