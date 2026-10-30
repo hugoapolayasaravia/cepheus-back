@@ -57,6 +57,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.SctrPensions.UpdateSctrPen
                 IsActive = sctrPension.IsActive,
                 CreatedAt = sctrPension.CreatedAt,
                 UpdatedAt = sctrPension.UpdatedAt,
+                CreatedBy = sctrPension.CreatedBy,
+                UpdatedBy = sctrPension.UpdatedBy,
                 RowVersion = sctrPension.RowVersion
             };
         }

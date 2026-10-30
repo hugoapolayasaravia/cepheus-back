@@ -62,6 +62,8 @@ namespace Cepheus.Application.Features.Rrhh.Maestros.Trabajadores.CreateTrabajad
             HasDisability = trabajador.HasDisability,
             CreatedAt = trabajador.CreatedAt,
             UpdatedAt = trabajador.UpdatedAt,
+            CreatedBy = trabajador.CreatedBy,
+            UpdatedBy = trabajador.UpdatedBy,
             RowVersion = trabajador.RowVersion
         };
     }

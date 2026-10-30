@@ -3,6 +3,7 @@ using Cepheus.Application.Comun.Interfaces.UnitOfWork;
 using Cepheus.Application.Features.Rrhh.Maestros.TrabajadorContratos.Common;
 using Cepheus.Domain.Rrhh.Maestros;
 using MediatR;
+using System.Diagnostics.Contracts;
 
 namespace Cepheus.Application.Features.Rrhh.Maestros.TrabajadorContratos.CreateTrabajadorContrato
 {
@@ -54,6 +55,8 @@ namespace Cepheus.Application.Features.Rrhh.Maestros.TrabajadorContratos.CreateT
             IsActive = e.IsActive,
             CreatedAt = e.CreatedAt,
             UpdatedAt = e.UpdatedAt,
+            CreatedBy = e.CreatedBy,
+            UpdatedBy = e.UpdatedBy,
             RowVersion = e.RowVersion
         };
     }

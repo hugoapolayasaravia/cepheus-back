@@ -54,6 +54,8 @@ namespace Cepheus.Application.Features.Rrhh.Maestros.TrabajadorSeguros.CreateTra
             IsActive = e.IsActive,
             CreatedAt = e.CreatedAt,
             UpdatedAt = e.UpdatedAt,
+            CreatedBy = e.CreatedBy,
+            UpdatedBy = e.UpdatedBy,
             RowVersion = e.RowVersion
         };
     }

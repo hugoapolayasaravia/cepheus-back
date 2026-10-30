@@ -1,6 +1,7 @@
 ﻿using Cepheus.Application.Comun.Interfaces;
 using Cepheus.Application.Comun.Interfaces.UnitOfWork;
 using Cepheus.Application.Features.Rrhh.Catalogos.NivelesEducativos.Common;
+using Cepheus.Domain.Rrhh.Catalogos;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +28,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.NivelesEducativos.GetNivel
                     IsActive = n.IsActive,
                     CreatedAt = n.CreatedAt,
                     UpdatedAt = n.UpdatedAt,
+                    CreatedBy = n.CreatedBy,
+                    UpdatedBy = n.UpdatedBy,
                     RowVersion = n.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);

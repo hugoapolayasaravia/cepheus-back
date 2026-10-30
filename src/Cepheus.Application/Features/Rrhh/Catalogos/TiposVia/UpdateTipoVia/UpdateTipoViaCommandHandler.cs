@@ -60,6 +60,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.TiposVia.UpdateTipoVia
                 IsActive = tipoVia.IsActive,
                 CreatedAt = tipoVia.CreatedAt,
                 UpdatedAt = tipoVia.UpdatedAt,
+                CreatedBy = tipoVia.CreatedBy,
+                UpdatedBy = tipoVia.UpdatedBy,
                 RowVersion = tipoVia.RowVersion
             };
         }

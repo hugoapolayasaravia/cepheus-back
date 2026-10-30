@@ -27,6 +27,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.EstadosTrabajador.GetEstad
                     IsActive = e.IsActive,
                     CreatedAt = e.CreatedAt,
                     UpdatedAt = e.UpdatedAt,
+                    CreatedBy = e.CreatedBy,
+                    UpdatedBy = e.UpdatedBy,
                     RowVersion = e.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);

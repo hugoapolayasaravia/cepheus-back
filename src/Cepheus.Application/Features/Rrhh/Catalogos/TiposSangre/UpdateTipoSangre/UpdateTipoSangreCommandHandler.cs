@@ -58,6 +58,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.TiposSangre.UpdateTipoSang
                 IsActive = tipoSangre.IsActive,
                 CreatedAt = tipoSangre.CreatedAt,
                 UpdatedAt = tipoSangre.UpdatedAt,
+                CreatedBy = tipoSangre.CreatedBy,
+                UpdatedBy = tipoSangre.UpdatedBy,
                 RowVersion = tipoSangre.RowVersion
             };
         }

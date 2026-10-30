@@ -59,6 +59,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.RegimenesPensionarios.Upda
                 IsActive = regimenPensionario.IsActive,
                 CreatedAt = regimenPensionario.CreatedAt,
                 UpdatedAt = regimenPensionario.UpdatedAt,
+                CreatedBy = regimenPensionario.CreatedBy,
+                UpdatedBy = regimenPensionario.UpdatedBy,
                 RowVersion = regimenPensionario.RowVersion
             };
         }

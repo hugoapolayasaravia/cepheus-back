@@ -58,6 +58,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.Cargos.UpdateCargo
                 IsActive = cargo.IsActive,
                 CreatedAt = cargo.CreatedAt,
                 UpdatedAt = cargo.UpdatedAt,
+                CreatedBy = cargo.CreatedBy,
+                UpdatedBy = cargo.UpdatedBy,
                 RowVersion = cargo.RowVersion
             };
         }

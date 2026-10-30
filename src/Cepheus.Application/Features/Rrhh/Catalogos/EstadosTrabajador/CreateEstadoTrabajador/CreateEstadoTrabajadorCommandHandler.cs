@@ -41,6 +41,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.EstadosTrabajador.CreateEs
             IsActive = estadoTrabajador.IsActive,
             CreatedAt = estadoTrabajador.CreatedAt,
             UpdatedAt = estadoTrabajador.UpdatedAt,
+            CreatedBy = estadoTrabajador.CreatedBy,
+            UpdatedBy = estadoTrabajador.UpdatedBy,
             RowVersion = estadoTrabajador.RowVersion
         };
     }

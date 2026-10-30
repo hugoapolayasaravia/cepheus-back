@@ -58,6 +58,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.Horarios.UpdateHorario
                 IsActive = horario.IsActive,
                 CreatedAt = horario.CreatedAt,
                 UpdatedAt = horario.UpdatedAt,
+                CreatedBy = horario.CreatedBy,
+                UpdatedBy = horario.UpdatedBy,
                 RowVersion = horario.RowVersion
             };
         }

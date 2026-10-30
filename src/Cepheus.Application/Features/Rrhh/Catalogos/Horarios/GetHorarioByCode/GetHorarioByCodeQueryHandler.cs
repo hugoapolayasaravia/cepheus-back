@@ -27,6 +27,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.Horarios.GetHorarioByCode
                     IsActive = h.IsActive,
                     CreatedAt = h.CreatedAt,
                     UpdatedAt = h.UpdatedAt,
+                    CreatedBy = h.CreatedBy,
+                    UpdatedBy = h.UpdatedBy,
                     RowVersion = h.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);

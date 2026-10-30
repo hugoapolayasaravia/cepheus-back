@@ -58,6 +58,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.EstadosCiviles.UpdateEstad
                 IsActive = estadoCivil.IsActive,
                 CreatedAt = estadoCivil.CreatedAt,
                 UpdatedAt = estadoCivil.UpdatedAt,
+                CreatedBy = estadoCivil.CreatedBy,
+                UpdatedBy = estadoCivil.UpdatedBy,
                 RowVersion = estadoCivil.RowVersion
             };
         }

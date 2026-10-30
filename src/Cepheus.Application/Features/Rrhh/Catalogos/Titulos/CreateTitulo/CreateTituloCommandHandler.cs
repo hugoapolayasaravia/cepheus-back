@@ -41,6 +41,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.Titulos.CreateTitulo
             IsActive = titulo.IsActive,
             CreatedAt = titulo.CreatedAt,
             UpdatedAt = titulo.UpdatedAt,
+            CreatedBy = titulo.CreatedBy,
+            UpdatedBy = titulo.UpdatedBy,
             RowVersion = titulo.RowVersion
         };
     }

@@ -41,6 +41,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.TiposSctr.CreateTipoSctr
             IsActive = tipoSctr.IsActive,
             CreatedAt = tipoSctr.CreatedAt,
             UpdatedAt = tipoSctr.UpdatedAt,
+            CreatedBy = tipoSctr.CreatedBy,
+            UpdatedBy = tipoSctr.UpdatedBy,
             RowVersion = tipoSctr.RowVersion
         };
     }

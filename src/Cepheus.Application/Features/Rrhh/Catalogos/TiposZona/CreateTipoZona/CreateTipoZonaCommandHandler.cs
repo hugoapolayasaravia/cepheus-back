@@ -41,6 +41,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.TiposZona.CreateTipoZona
             IsActive = tipoZona.IsActive,
             CreatedAt = tipoZona.CreatedAt,
             UpdatedAt = tipoZona.UpdatedAt,
+            CreatedBy = tipoZona.CreatedBy,
+            UpdatedBy = tipoZona.UpdatedBy,
             RowVersion = tipoZona.RowVersion
         };
     }

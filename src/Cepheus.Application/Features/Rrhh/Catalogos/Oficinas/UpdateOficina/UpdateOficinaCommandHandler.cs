@@ -58,6 +58,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.Oficinas.UpdateOficina
                 IsActive = oficina.IsActive,
                 CreatedAt = oficina.CreatedAt,
                 UpdatedAt = oficina.UpdatedAt,
+                CreatedBy = oficina.CreatedBy,
+                UpdatedBy = oficina.UpdatedBy,
                 RowVersion = oficina.RowVersion
             };
         }

@@ -41,6 +41,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.TiposTrabajador.CreateTipo
             IsActive = tipoTrabajador.IsActive,
             CreatedAt = tipoTrabajador.CreatedAt,
             UpdatedAt = tipoTrabajador.UpdatedAt,
+            CreatedBy = tipoTrabajador.CreatedBy,
+            UpdatedBy = tipoTrabajador.UpdatedBy,
             RowVersion = tipoTrabajador.RowVersion
         };
     }

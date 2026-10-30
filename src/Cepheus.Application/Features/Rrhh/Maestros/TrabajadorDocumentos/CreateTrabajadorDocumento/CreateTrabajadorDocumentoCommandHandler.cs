@@ -55,7 +55,9 @@ namespace Cepheus.Application.Features.Rrhh.Maestros.TrabajadorDocumentos.Create
             DocumentNumber = documento.DocumentNumber,
             IsPrimary = documento.IsPrimary,
             CreatedAt = documento.CreatedAt,
-            UpdatedAt = documento.UpdatedAt
+            UpdatedAt = documento.UpdatedAt,
+            CreatedBy = documento.CreatedBy,
+            UpdatedBy = documento.UpdatedBy
         };
     }
 }

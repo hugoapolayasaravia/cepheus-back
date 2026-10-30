@@ -57,6 +57,8 @@ namespace Cepheus.Application.Features.Rrhh.Maestros.TrabajadorContactos.CreateT
             ParentescoCode = contacto.ParentescoCode,
             IsPrimary = contacto.IsPrimary,
             CreatedAt = contacto.CreatedAt,
+            CreatedBy = contacto.CreatedBy,
+            UpdatedBy = contacto.UpdatedBy,
             UpdatedAt = contacto.UpdatedAt
         };
     }

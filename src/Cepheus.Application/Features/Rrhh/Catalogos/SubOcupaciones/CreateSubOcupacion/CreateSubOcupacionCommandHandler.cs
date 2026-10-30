@@ -41,6 +41,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.SubOcupaciones.CreateSubOc
             IsActive = subOcupacion.IsActive,
             CreatedAt = subOcupacion.CreatedAt,
             UpdatedAt = subOcupacion.UpdatedAt,
+            CreatedBy = subOcupacion.CreatedBy,
+            UpdatedBy = subOcupacion.UpdatedBy,
             RowVersion = subOcupacion.RowVersion
         };
     }

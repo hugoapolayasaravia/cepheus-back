@@ -57,6 +57,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.Especialidades.UpdateEspec
                 IsActive = especialidad.IsActive,
                 CreatedAt = especialidad.CreatedAt,
                 UpdatedAt = especialidad.UpdatedAt,
+                CreatedBy = especialidad.CreatedBy,
+                UpdatedBy = especialidad.UpdatedBy,
                 RowVersion = especialidad.RowVersion
             };
         }

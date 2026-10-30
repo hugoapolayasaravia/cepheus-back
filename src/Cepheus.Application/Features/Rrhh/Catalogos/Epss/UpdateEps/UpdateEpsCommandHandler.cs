@@ -57,6 +57,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.Epss.UpdateEps
                 IsActive = eps.IsActive,
                 CreatedAt = eps.CreatedAt,
                 UpdatedAt = eps.UpdatedAt,
+                CreatedBy = eps.CreatedBy,
+                UpdatedBy = eps.UpdatedBy,
                 RowVersion = eps.RowVersion
             };
         }

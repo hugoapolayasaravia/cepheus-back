@@ -26,6 +26,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.SctrPensions.GetSctrPensio
                     IsActive = s.IsActive,
                     CreatedAt = s.CreatedAt,
                     UpdatedAt = s.UpdatedAt,
+                    CreatedBy = s.CreatedBy,
+                    UpdatedBy = s.UpdatedBy,
                     RowVersion = s.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);

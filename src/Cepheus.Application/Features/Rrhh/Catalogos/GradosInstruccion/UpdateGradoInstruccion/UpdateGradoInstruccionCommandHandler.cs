@@ -58,6 +58,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.GradosInstruccion.UpdateGr
                 IsActive = gradoInstruccion.IsActive,
                 CreatedAt = gradoInstruccion.CreatedAt,
                 UpdatedAt = gradoInstruccion.UpdatedAt,
+                CreatedBy = gradoInstruccion.CreatedBy,
+                UpdatedBy = gradoInstruccion.UpdatedBy,
                 RowVersion = gradoInstruccion.RowVersion
             };
         }

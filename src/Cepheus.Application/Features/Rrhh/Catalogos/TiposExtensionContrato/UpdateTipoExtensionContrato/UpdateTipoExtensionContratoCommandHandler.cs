@@ -59,6 +59,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.TiposExtensionContrato.Upd
                 IsActive = tipoExtensionContrato.IsActive,
                 CreatedAt = tipoExtensionContrato.CreatedAt,
                 UpdatedAt = tipoExtensionContrato.UpdatedAt,
+                CreatedBy = tipoExtensionContrato.CreatedBy,
+                UpdatedBy = tipoExtensionContrato.UpdatedBy,
                 RowVersion = tipoExtensionContrato.RowVersion
             };
         }

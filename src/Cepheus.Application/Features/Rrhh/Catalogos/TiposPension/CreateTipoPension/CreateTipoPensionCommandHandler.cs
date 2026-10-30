@@ -41,6 +41,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.TiposPension.CreateTipoPen
             IsActive = tipoPension.IsActive,
             CreatedAt = tipoPension.CreatedAt,
             UpdatedAt = tipoPension.UpdatedAt,
+            CreatedBy = tipoPension.CreatedBy,
+            UpdatedBy = tipoPension.UpdatedBy,
             RowVersion = tipoPension.RowVersion
         };
     }

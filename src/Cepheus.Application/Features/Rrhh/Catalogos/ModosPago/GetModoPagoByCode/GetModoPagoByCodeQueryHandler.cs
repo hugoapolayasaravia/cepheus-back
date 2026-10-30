@@ -27,6 +27,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.ModosPago.GetModoPagoByCod
                     IsActive = m.IsActive,
                     CreatedAt = m.CreatedAt,
                     UpdatedAt = m.UpdatedAt,
+                    CreatedBy = m.CreatedBy,
+                    UpdatedBy = m.UpdatedBy,
                     RowVersion = m.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);

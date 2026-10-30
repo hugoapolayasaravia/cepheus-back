@@ -27,6 +27,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.Cargos.GetCargoByCode
                     IsActive = c.IsActive,
                     CreatedAt = c.CreatedAt,
                     UpdatedAt = c.UpdatedAt,
+                    CreatedBy = c.CreatedBy,
+                    UpdatedBy = c.UpdatedBy,
                     RowVersion = c.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);

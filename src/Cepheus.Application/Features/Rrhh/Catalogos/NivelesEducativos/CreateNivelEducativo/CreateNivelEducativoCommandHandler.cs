@@ -41,6 +41,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.NivelesEducativos.CreateNi
             IsActive = nivelEducativo.IsActive,
             CreatedAt = nivelEducativo.CreatedAt,
             UpdatedAt = nivelEducativo.UpdatedAt,
+            CreatedBy = nivelEducativo.CreatedBy,
+            UpdatedBy = nivelEducativo.UpdatedBy,
             RowVersion = nivelEducativo.RowVersion
         };
     }

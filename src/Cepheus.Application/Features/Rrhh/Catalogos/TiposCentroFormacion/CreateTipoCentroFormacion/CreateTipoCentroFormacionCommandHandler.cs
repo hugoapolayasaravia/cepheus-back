@@ -42,6 +42,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.TiposCentroFormacion.Creat
             IsActive = tipoCentroFormacion.IsActive,
             CreatedAt = tipoCentroFormacion.CreatedAt,
             UpdatedAt = tipoCentroFormacion.UpdatedAt,
+            CreatedBy = tipoCentroFormacion.CreatedBy,
+            UpdatedBy = tipoCentroFormacion.UpdatedBy,
             RowVersion = tipoCentroFormacion.RowVersion
         };
     }

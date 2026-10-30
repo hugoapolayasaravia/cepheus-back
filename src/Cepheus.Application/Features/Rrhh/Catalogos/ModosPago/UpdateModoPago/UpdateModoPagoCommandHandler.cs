@@ -58,6 +58,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.ModosPago.UpdateModoPago
                 IsActive = modoPago.IsActive,
                 CreatedAt = modoPago.CreatedAt,
                 UpdatedAt = modoPago.UpdatedAt,
+                CreatedBy = modoPago.CreatedBy,
+                UpdatedBy = modoPago.UpdatedBy,
                 RowVersion = modoPago.RowVersion
             };
         }

@@ -58,6 +58,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.TiposAfiliacion.UpdateTipo
                 IsActive = tipoAfiliacion.IsActive,
                 CreatedAt = tipoAfiliacion.CreatedAt,
                 UpdatedAt = tipoAfiliacion.UpdatedAt,
+                CreatedBy = tipoAfiliacion.CreatedBy,
+                UpdatedBy = tipoAfiliacion.UpdatedBy,
                 RowVersion = tipoAfiliacion.RowVersion
             };
         }

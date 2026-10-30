@@ -41,6 +41,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.SctrSaluds.CreateSctrSalud
             IsActive = sctrSalud.IsActive,
             CreatedAt = sctrSalud.CreatedAt,
             UpdatedAt = sctrSalud.UpdatedAt,
+            CreatedBy = sctrSalud.CreatedBy,
+            UpdatedBy = sctrSalud.UpdatedBy,
             RowVersion = sctrSalud.RowVersion
         };
     }

@@ -58,6 +58,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.Sexos.UpdateSexo
                 IsActive = sexo.IsActive,
                 CreatedAt = sexo.CreatedAt,
                 UpdatedAt = sexo.UpdatedAt,
+                CreatedBy = sexo.CreatedBy,
+                UpdatedBy = sexo.UpdatedBy,
                 RowVersion = sexo.RowVersion
             };
         }

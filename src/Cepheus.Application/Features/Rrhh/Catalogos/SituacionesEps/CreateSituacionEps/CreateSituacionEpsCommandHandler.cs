@@ -40,6 +40,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.SituacionesEps.CreateSitua
             IsActive = situacionEps.IsActive,
             CreatedAt = situacionEps.CreatedAt,
             UpdatedAt = situacionEps.UpdatedAt,
+            CreatedBy = situacionEps.CreatedBy,
+            UpdatedBy = situacionEps.UpdatedBy,
             RowVersion = situacionEps.RowVersion
         };
     }

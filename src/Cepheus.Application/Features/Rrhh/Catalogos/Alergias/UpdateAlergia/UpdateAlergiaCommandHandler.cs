@@ -58,6 +58,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.Alergias.UpdateAlergia
                 IsActive = alergia.IsActive,
                 CreatedAt = alergia.CreatedAt,
                 UpdatedAt = alergia.UpdatedAt,
+                CreatedBy = alergia.CreatedBy,
+                UpdatedBy = alergia.UpdatedBy,
                 RowVersion = alergia.RowVersion
             };
         }

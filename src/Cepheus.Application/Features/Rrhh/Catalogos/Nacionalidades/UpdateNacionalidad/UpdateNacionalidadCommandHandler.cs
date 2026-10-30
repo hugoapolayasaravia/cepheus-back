@@ -58,6 +58,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.Nacionalidades.UpdateNacio
                 IsActive = nacionalidad.IsActive,
                 CreatedAt = nacionalidad.CreatedAt,
                 UpdatedAt = nacionalidad.UpdatedAt,
+                CreatedBy = nacionalidad.CreatedBy,
+                UpdatedBy = nacionalidad.UpdatedBy,
                 RowVersion = nacionalidad.RowVersion
             };
         }

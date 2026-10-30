@@ -59,6 +59,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.ModalidadesFormativas.Upda
                 IsActive = modalidadFormativa.IsActive,
                 CreatedAt = modalidadFormativa.CreatedAt,
                 UpdatedAt = modalidadFormativa.UpdatedAt,
+                CreatedBy = modalidadFormativa.CreatedBy,
+                UpdatedBy = modalidadFormativa.UpdatedBy,
                 RowVersion = modalidadFormativa.RowVersion
             };
         }

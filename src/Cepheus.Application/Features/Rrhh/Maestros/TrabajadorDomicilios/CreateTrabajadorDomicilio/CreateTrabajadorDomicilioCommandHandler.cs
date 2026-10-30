@@ -67,7 +67,9 @@ namespace Cepheus.Application.Features.Rrhh.Maestros.TrabajadorDomicilios.Create
             UbigeoCode = domicilio.UbigeoCode,
             IsPrimary = domicilio.IsPrimary,
             CreatedAt = domicilio.CreatedAt,
-            UpdatedAt = domicilio.UpdatedAt
+            UpdatedAt = domicilio.UpdatedAt,
+            CreatedBy = domicilio.CreatedBy,
+            UpdatedBy = domicilio.UpdatedBy
         };
     }
 }

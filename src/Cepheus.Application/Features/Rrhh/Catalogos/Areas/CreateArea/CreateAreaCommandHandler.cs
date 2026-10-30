@@ -41,6 +41,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.Areas.CreateArea
             IsActive = area.IsActive,
             CreatedAt = area.CreatedAt,
             UpdatedAt = area.UpdatedAt,
+            CreatedBy = area.CreatedBy,
+            UpdatedBy = area.UpdatedBy,
             RowVersion = area.RowVersion
         };
     }

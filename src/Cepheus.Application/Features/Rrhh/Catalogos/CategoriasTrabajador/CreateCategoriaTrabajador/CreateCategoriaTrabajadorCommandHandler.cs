@@ -42,6 +42,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.CategoriasTrabajador.Creat
             IsActive = categoriaTrabajador.IsActive,
             CreatedAt = categoriaTrabajador.CreatedAt,
             UpdatedAt = categoriaTrabajador.UpdatedAt,
+            CreatedBy = categoriaTrabajador.CreatedBy,
+            UpdatedBy = categoriaTrabajador.UpdatedBy,
             RowVersion = categoriaTrabajador.RowVersion
         };
     }

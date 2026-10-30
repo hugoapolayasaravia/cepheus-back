@@ -58,6 +58,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.TiposCuenta.UpdateTipoCuen
                 IsActive = tipoCuenta.IsActive,
                 CreatedAt = tipoCuenta.CreatedAt,
                 UpdatedAt = tipoCuenta.UpdatedAt,
+                CreatedBy = tipoCuenta.CreatedBy,
+                UpdatedBy = tipoCuenta.UpdatedBy,
                 RowVersion = tipoCuenta.RowVersion
             };
         }

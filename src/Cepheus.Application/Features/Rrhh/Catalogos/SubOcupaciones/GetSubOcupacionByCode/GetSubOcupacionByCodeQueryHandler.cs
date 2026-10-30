@@ -27,6 +27,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.SubOcupaciones.GetSubOcupa
                     IsActive = s.IsActive,
                     CreatedAt = s.CreatedAt,
                     UpdatedAt = s.UpdatedAt,
+                    CreatedBy = s.CreatedBy,
+                    UpdatedBy = s.UpdatedBy,
                     RowVersion = s.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);

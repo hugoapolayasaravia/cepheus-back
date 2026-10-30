@@ -41,6 +41,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.RegimenesLaborales.CreateR
             IsActive = regimenLaboral.IsActive,
             CreatedAt = regimenLaboral.CreatedAt,
             UpdatedAt = regimenLaboral.UpdatedAt,
+            CreatedBy = regimenLaboral.CreatedBy,
+            UpdatedBy = regimenLaboral.UpdatedBy,
             RowVersion = regimenLaboral.RowVersion
         };
     }

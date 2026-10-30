@@ -27,6 +27,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.Nacionalidades.GetNacional
                     IsActive = n.IsActive,
                     CreatedAt = n.CreatedAt,
                     UpdatedAt = n.UpdatedAt,
+                    CreatedBy = n.CreatedBy,
+                    UpdatedBy = n.UpdatedBy,
                     RowVersion = n.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);

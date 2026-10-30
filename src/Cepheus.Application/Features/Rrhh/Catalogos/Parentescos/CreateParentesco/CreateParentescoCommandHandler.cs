@@ -41,6 +41,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.Parentescos.CreateParentes
             IsActive = parentesco.IsActive,
             CreatedAt = parentesco.CreatedAt,
             UpdatedAt = parentesco.UpdatedAt,
+            CreatedBy = parentesco.CreatedBy,
+            UpdatedBy = parentesco.UpdatedBy,
             RowVersion = parentesco.RowVersion
         };
     }

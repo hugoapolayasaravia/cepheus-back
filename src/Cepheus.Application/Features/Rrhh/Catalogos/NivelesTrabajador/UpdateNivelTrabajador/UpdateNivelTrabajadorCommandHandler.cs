@@ -59,6 +59,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.NivelesTrabajador.UpdateNi
                 IsActive = nivelTrabajador.IsActive,
                 CreatedAt = nivelTrabajador.CreatedAt,
                 UpdatedAt = nivelTrabajador.UpdatedAt,
+                CreatedBy = nivelTrabajador.CreatedBy,
+                UpdatedBy = nivelTrabajador.UpdatedBy,
                 RowVersion = nivelTrabajador.RowVersion
             };
         }

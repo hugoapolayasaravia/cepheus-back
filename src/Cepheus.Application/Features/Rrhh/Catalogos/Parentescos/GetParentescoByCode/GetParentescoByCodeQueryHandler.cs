@@ -27,6 +27,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.Parentescos.GetParentescoB
                     IsActive = p.IsActive,
                     CreatedAt = p.CreatedAt,
                     UpdatedAt = p.UpdatedAt,
+                    CreatedBy = p.CreatedBy,
+                    UpdatedBy = p.UpdatedBy,
                     RowVersion = p.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);

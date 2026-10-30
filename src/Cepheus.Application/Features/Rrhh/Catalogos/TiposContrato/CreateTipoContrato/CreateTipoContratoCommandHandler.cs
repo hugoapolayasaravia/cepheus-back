@@ -41,6 +41,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.TiposContrato.CreateTipoCo
             IsActive = tipoContrato.IsActive,
             CreatedAt = tipoContrato.CreatedAt,
             UpdatedAt = tipoContrato.UpdatedAt,
+            CreatedBy = tipoContrato.CreatedBy,
+            UpdatedBy = tipoContrato.UpdatedBy,
             RowVersion = tipoContrato.RowVersion
         };
     }

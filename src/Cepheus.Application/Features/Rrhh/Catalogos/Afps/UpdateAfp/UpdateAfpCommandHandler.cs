@@ -58,6 +58,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.Afps.UpdateAfp
                 IsActive = afp.IsActive,
                 CreatedAt = afp.CreatedAt,
                 UpdatedAt = afp.UpdatedAt,
+                CreatedBy = afp.CreatedBy,
+                UpdatedBy = afp.UpdatedBy,
                 RowVersion = afp.RowVersion
             };
         }

@@ -26,6 +26,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.GradosInstruccion.GetGrado
                     IsActive = g.IsActive,
                     CreatedAt = g.CreatedAt,
                     UpdatedAt = g.UpdatedAt,
+                    CreatedBy = g.CreatedBy,
+                    UpdatedBy = g.UpdatedBy,
                     RowVersion = g.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);

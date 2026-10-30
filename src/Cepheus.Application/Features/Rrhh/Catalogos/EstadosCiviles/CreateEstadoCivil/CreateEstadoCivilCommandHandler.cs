@@ -2,6 +2,7 @@
 using Cepheus.Application.Comun.Interfaces;
 using Cepheus.Application.Comun.Interfaces.UnitOfWork;
 using Cepheus.Application.Features.Rrhh.Catalogos.EstadosCiviles.Common;
+using Cepheus.Domain.Mantenimiento.Catalogos;
 using Cepheus.Domain.Rrhh.Catalogos;
 using MediatR;
 
@@ -41,6 +42,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.EstadosCiviles.CreateEstad
             IsActive = estadoCivil.IsActive,
             CreatedAt = estadoCivil.CreatedAt,
             UpdatedAt = estadoCivil.UpdatedAt,
+            CreatedBy = estadoCivil.CreatedBy,
+            UpdatedBy = estadoCivil.UpdatedBy,
             RowVersion = estadoCivil.RowVersion
         };
     }

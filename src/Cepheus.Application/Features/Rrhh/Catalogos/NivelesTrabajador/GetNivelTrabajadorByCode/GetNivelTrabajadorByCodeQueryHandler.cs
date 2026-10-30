@@ -28,6 +28,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.NivelesTrabajador.GetNivel
                     IsActive = n.IsActive,
                     CreatedAt = n.CreatedAt,
                     UpdatedAt = n.UpdatedAt,
+                    CreatedBy = n.CreatedBy,
+                    UpdatedBy = n.UpdatedBy,
                     RowVersion = n.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);

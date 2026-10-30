@@ -1,5 +1,6 @@
 using Cepheus.Application.Comun.Interfaces.UnitOfWork;
 using Cepheus.Application.Features.Rrhh.Maestros.TrabajadorAntecedentes.Common;
+using Cepheus.Domain.Rrhh.Catalogos;
 using Cepheus.Domain.Rrhh.Maestros;
 using MediatR;
 
@@ -39,6 +40,8 @@ namespace Cepheus.Application.Features.Rrhh.Maestros.TrabajadorAntecedentes.Crea
             IsActive = e.IsActive,
             CreatedAt = e.CreatedAt,
             UpdatedAt = e.UpdatedAt,
+            CreatedBy = e.CreatedBy,
+            UpdatedBy = e.UpdatedBy,
             RowVersion = e.RowVersion
         };
     }

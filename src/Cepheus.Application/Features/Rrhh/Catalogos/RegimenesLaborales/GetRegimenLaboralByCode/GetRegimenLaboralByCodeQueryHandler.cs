@@ -27,6 +27,8 @@ namespace Cepheus.Application.Features.Rrhh.Catalogos.RegimenesLaborales.GetRegi
                     IsActive = r.IsActive,
                     CreatedAt = r.CreatedAt,
                     UpdatedAt = r.UpdatedAt,
+                    CreatedBy = r.CreatedBy,
+                    UpdatedBy = r.UpdatedBy,
                     RowVersion = r.RowVersion
                 })
                 .FirstOrDefaultAsync(cancellationToken);
