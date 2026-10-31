@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Rrhh.Catalogos.RegimenesLaborales.GetRegimenL
 using Cepheus.Application.Features.Rrhh.Catalogos.RegimenesLaborales.GetRegimenesLaboralesPaginated;
 using Cepheus.Application.Features.Rrhh.Catalogos.RegimenesLaborales.ToggleRegimenLaboralStatus;
 using Cepheus.Application.Features.Rrhh.Catalogos.RegimenesLaborales.UpdateRegimenLaboral;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Catalogos.RegimenesLaborales.ExportRegimenesLaborales;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Catalogos
             })
             .WithName("GetRegimenesLaboralesPagedBody")
             .RequireAuthorization("REGIMENESLABORALES.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportRegimenesLaboralesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportRegimenesLaboralesExcel")
+            .RequireAuthorization("REGIMENESLABORALES.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportRegimenesLaboralesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportRegimenesLaboralesPdf")
+            .RequireAuthorization("REGIMENESLABORALES.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

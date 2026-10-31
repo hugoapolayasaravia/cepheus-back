@@ -2,6 +2,8 @@ using Cepheus.Application.Features.Mantenimiento.Maestros.ActividadesMantenimien
 using Cepheus.Application.Features.Mantenimiento.Maestros.ActividadesMantenimiento.DeleteActividadMantenimiento;
 using Cepheus.Application.Features.Mantenimiento.Maestros.ActividadesMantenimiento.GetActividadesMantenimientoPaginated;
 using Cepheus.Application.Features.Mantenimiento.Maestros.ActividadesMantenimiento.UpdateActividadMantenimiento;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Mantenimiento.Maestros.ActividadesMantenimiento.ExportActividadesMantenimiento;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Mantenimiento.Maestros
@@ -33,6 +35,30 @@ namespace Cepheus.API.Endpoints.Mantenimiento.Maestros
                 Results.Ok(await sender.Send(query)))
             .WithName("GetActividadesMantenimientoPagedBody")
             .RequireAuthorization("ACTIVIDADESMANTENIMIENTO.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportActividadesMantenimientoQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportActividadesMantenimientoExcel")
+            .RequireAuthorization("ACTIVIDADESMANTENIMIENTO.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportActividadesMantenimientoQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportActividadesMantenimientoPdf")
+            .RequireAuthorization("ACTIVIDADESMANTENIMIENTO.EXPORT_PDF");
 
             group.MapPut("/{actividadCode}/{actividadCubiertaCode}", async (
                 string actividadCode, string actividadCubiertaCode,

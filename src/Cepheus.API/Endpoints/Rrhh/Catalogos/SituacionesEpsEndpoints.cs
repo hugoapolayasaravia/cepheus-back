@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Rrhh.Catalogos.SituacionesEps.GetSituacionEps
 using Cepheus.Application.Features.Rrhh.Catalogos.SituacionesEps.GetSituacionesEpsPaginated;
 using Cepheus.Application.Features.Rrhh.Catalogos.SituacionesEps.ToggleSituacionEpsStatus;
 using Cepheus.Application.Features.Rrhh.Catalogos.SituacionesEps.UpdateSituacionEps;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Catalogos.SituacionesEps.ExportSituacionesEps;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Catalogos
             })
             .WithName("GetSituacionesEpsPagedBody")
             .RequireAuthorization("SITUACIONESEPS.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportSituacionesEpsQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportSituacionesEpsExcel")
+            .RequireAuthorization("SITUACIONESEPS.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportSituacionesEpsQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportSituacionesEpsPdf")
+            .RequireAuthorization("SITUACIONESEPS.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

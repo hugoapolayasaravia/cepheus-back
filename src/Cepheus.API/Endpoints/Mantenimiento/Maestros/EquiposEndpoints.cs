@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Mantenimiento.Maestros.Equipos.GetEquipoByCod
 using Cepheus.Application.Features.Mantenimiento.Maestros.Equipos.GetEquiposPaginated;
 using Cepheus.Application.Features.Mantenimiento.Maestros.Equipos.ToggleEquipoStatus;
 using Cepheus.Application.Features.Mantenimiento.Maestros.Equipos.UpdateEquipo;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Mantenimiento.Maestros.Equipos.ExportEquipos;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Mantenimiento.Maestros
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Mantenimiento.Maestros
             })
             .WithName("GetEquiposPagedBody")
             .RequireAuthorization("EQUIPOS.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportEquiposQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportEquiposExcel")
+            .RequireAuthorization("EQUIPOS.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportEquiposQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportEquiposPdf")
+            .RequireAuthorization("EQUIPOS.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

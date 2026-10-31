@@ -12,6 +12,8 @@ using Cepheus.Application.Features.Mantenimiento.Maestros.PlanesPreventivo.Mater
 using Cepheus.Application.Features.Mantenimiento.Maestros.PlanesPreventivo.Materiales.DeletePlanPreventivoMaterial;
 using Cepheus.Application.Features.Mantenimiento.Maestros.PlanesPreventivo.Materiales.GetPlanPreventivoMaterialByPlan;
 using Cepheus.Application.Features.Mantenimiento.Maestros.PlanesPreventivo.Materiales.UpdatePlanPreventivoMaterial;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Mantenimiento.Maestros.PlanesPreventivo.ExportPlanesPreventivo;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Mantenimiento.Maestros
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Mantenimiento.Maestros
                 Results.Ok(await sender.Send(query)))
             .WithName("GetPlanesPreventivoPagedBody")
             .RequireAuthorization("PLANESPREVENTIVO.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportPlanesPreventivoQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportPlanesPreventivoExcel")
+            .RequireAuthorization("PLANESPREVENTIVO.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportPlanesPreventivoQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportPlanesPreventivoPdf")
+            .RequireAuthorization("PLANESPREVENTIVO.EXPORT_PDF");
 
             group.MapGet("/{plantaCode}/{code}", async (string plantaCode, string code, ISender sender) =>
                 Results.Ok(await sender.Send(new GetPlanPreventivoByKeyQuery(plantaCode, code))))

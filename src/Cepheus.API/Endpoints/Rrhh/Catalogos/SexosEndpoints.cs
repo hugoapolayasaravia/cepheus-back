@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Rrhh.Catalogos.Sexos.GetSexoByCode;
 using Cepheus.Application.Features.Rrhh.Catalogos.Sexos.GetSexosPaginated;
 using Cepheus.Application.Features.Rrhh.Catalogos.Sexos.ToggleSexoStatus;
 using Cepheus.Application.Features.Rrhh.Catalogos.Sexos.UpdateSexo;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Catalogos.Sexos.ExportSexos;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Catalogos
             })
             .WithName("GetSexosPagedBody")
             .RequireAuthorization("SEXOS.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportSexosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportSexosExcel")
+            .RequireAuthorization("SEXOS.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportSexosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportSexosPdf")
+            .RequireAuthorization("SEXOS.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

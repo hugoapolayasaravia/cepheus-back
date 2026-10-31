@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Rrhh.Catalogos.TiposAfiliacion.GetTipoAfiliac
 using Cepheus.Application.Features.Rrhh.Catalogos.TiposAfiliacion.GetTiposAfiliacionPaginated;
 using Cepheus.Application.Features.Rrhh.Catalogos.TiposAfiliacion.ToggleTipoAfiliacionStatus;
 using Cepheus.Application.Features.Rrhh.Catalogos.TiposAfiliacion.UpdateTipoAfiliacion;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Catalogos.TiposAfiliacion.ExportTiposAfiliacion;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Catalogos
             })
             .WithName("GetTiposAfiliacionPagedBody")
             .RequireAuthorization("TIPOSAFILIACION.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportTiposAfiliacionQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportTiposAfiliacionExcel")
+            .RequireAuthorization("TIPOSAFILIACION.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportTiposAfiliacionQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportTiposAfiliacionPdf")
+            .RequireAuthorization("TIPOSAFILIACION.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

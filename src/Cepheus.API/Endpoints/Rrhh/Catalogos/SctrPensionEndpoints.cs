@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Rrhh.Catalogos.SctrPensions.GetSctrPensionByC
 using Cepheus.Application.Features.Rrhh.Catalogos.SctrPensions.GetSctrPensionPaginated;
 using Cepheus.Application.Features.Rrhh.Catalogos.SctrPensions.ToggleSctrPensionStatus;
 using Cepheus.Application.Features.Rrhh.Catalogos.SctrPensions.UpdateSctrPension;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Catalogos.SctrPensions.ExportSctrPensions;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Catalogos
             })
             .WithName("GetSctrPensionPagedBody")
             .RequireAuthorization("SCTRPENSION.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportSctrPensionsQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportSctrPensionsExcel")
+            .RequireAuthorization("SCTRPENSION.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportSctrPensionsQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportSctrPensionsPdf")
+            .RequireAuthorization("SCTRPENSION.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

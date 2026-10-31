@@ -2,6 +2,8 @@ using Cepheus.Application.Features.Mantenimiento.Maestros.Actividades.CreateActi
 using Cepheus.Application.Features.Mantenimiento.Maestros.Actividades.GetActividadByCode;
 using Cepheus.Application.Features.Mantenimiento.Maestros.Actividades.GetActividadesPaginated;
 using Cepheus.Application.Features.Mantenimiento.Maestros.Actividades.ToggleActividadStatus;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Mantenimiento.Maestros.Actividades.ExportActividades;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Mantenimiento.Maestros
@@ -41,6 +43,30 @@ namespace Cepheus.API.Endpoints.Mantenimiento.Maestros
             })
             .WithName("GetActividadesPagedBody")
             .RequireAuthorization("ACTIVIDADES.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportActividadesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportActividadesExcel")
+            .RequireAuthorization("ACTIVIDADES.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportActividadesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportActividadesPdf")
+            .RequireAuthorization("ACTIVIDADES.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

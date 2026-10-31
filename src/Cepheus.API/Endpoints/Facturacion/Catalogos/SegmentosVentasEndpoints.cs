@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Facturacion.Catalogos.SegmentosVentas.GetSegm
 using Cepheus.Application.Features.Facturacion.Catalogos.SegmentosVentas.GetSegmentosVentasPaginated;
 using Cepheus.Application.Features.Facturacion.Catalogos.SegmentosVentas.ToggleSegmentoVentasStatus;
 using Cepheus.Application.Features.Facturacion.Catalogos.SegmentosVentas.UpdateSegmentoVentas;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Facturacion.Catalogos.SegmentosVentas.ExportSegmentosVentas;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Facturacion.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Facturacion.Catalogos
             })
             .WithName("GetSegmentosVentasPagedBody")
             .RequireAuthorization("SEGMENTOSVENTAS.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportSegmentosVentasQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportSegmentosVentasExcel")
+            .RequireAuthorization("SEGMENTOSVENTAS.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportSegmentosVentasQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportSegmentosVentasPdf")
+            .RequireAuthorization("SEGMENTOSVENTAS.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

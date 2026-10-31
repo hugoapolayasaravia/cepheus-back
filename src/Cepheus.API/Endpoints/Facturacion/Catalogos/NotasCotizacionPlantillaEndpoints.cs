@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Facturacion.Catalogos.NotasCotizacionPlantill
 using Cepheus.Application.Features.Facturacion.Catalogos.NotasCotizacionPlantilla.GetNotasCotizacionPlantillaPaginated;
 using Cepheus.Application.Features.Facturacion.Catalogos.NotasCotizacionPlantilla.ToggleNotaCotizacionPlantillaStatus;
 using Cepheus.Application.Features.Facturacion.Catalogos.NotasCotizacionPlantilla.UpdateNotaCotizacionPlantilla;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Facturacion.Catalogos.NotasCotizacionPlantilla.ExportNotasCotizacionPlantilla;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Facturacion.Catalogos
@@ -43,6 +45,30 @@ namespace Cepheus.API.Endpoints.Facturacion.Catalogos
             })
             .WithName("GetNotasCotizacionPlantillaPagedBody")
             .RequireAuthorization("NOTASCOTIZAPLANTILLA.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportNotasCotizacionPlantillaQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportNotasCotizacionPlantillaExcel")
+            .RequireAuthorization("NOTASCOTIZAPLANTILLA.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportNotasCotizacionPlantillaQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportNotasCotizacionPlantillaPdf")
+            .RequireAuthorization("NOTASCOTIZAPLANTILLA.EXPORT_PDF");
 
             group.MapGet("/{negocioCodigo}/{codigo}", async (string negocioCodigo, string codigo, ISender sender) =>
             {

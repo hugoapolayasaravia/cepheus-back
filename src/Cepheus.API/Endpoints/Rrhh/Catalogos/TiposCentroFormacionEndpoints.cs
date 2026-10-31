@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Rrhh.Catalogos.TiposCentroFormacion.GetTipoCe
 using Cepheus.Application.Features.Rrhh.Catalogos.TiposCentroFormacion.GetTiposCentroFormacionPaginated;
 using Cepheus.Application.Features.Rrhh.Catalogos.TiposCentroFormacion.ToggleTipoCentroFormacionStatus;
 using Cepheus.Application.Features.Rrhh.Catalogos.TiposCentroFormacion.UpdateTipoCentroFormacion;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Catalogos.TiposCentroFormacion.ExportTiposCentroFormacion;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Catalogos
             })
             .WithName("GetTiposCentroFormacionPagedBody")
             .RequireAuthorization("TIPOSCENTROFORMACION.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportTiposCentroFormacionQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportTiposCentroFormacionExcel")
+            .RequireAuthorization("TIPOSCENTROFORMACION.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportTiposCentroFormacionQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportTiposCentroFormacionPdf")
+            .RequireAuthorization("TIPOSCENTROFORMACION.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Contabilidad.Catalogos.TiposCuentaContable.Ge
 using Cepheus.Application.Features.Contabilidad.Catalogos.TiposCuentaContable.GetTiposCuentaContablePaginated;
 using Cepheus.Application.Features.Contabilidad.Catalogos.TiposCuentaContable.ToggleTipoCuentaContableStatus;
 using Cepheus.Application.Features.Contabilidad.Catalogos.TiposCuentaContable.UpdateTipoCuentaContable;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Contabilidad.Catalogos.TiposCuentaContable.ExportTiposCuentaContable;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Contabilidad.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Contabilidad.Catalogos
             })
             .WithName("GetTiposCuentaContablePagedBody")
             .RequireAuthorization("TIPOSCUENTACONTABLE.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportTiposCuentaContableQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportTiposCuentaContableExcel")
+            .RequireAuthorization("TIPOSCUENTACONTABLE.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportTiposCuentaContableQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportTiposCuentaContablePdf")
+            .RequireAuthorization("TIPOSCUENTACONTABLE.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

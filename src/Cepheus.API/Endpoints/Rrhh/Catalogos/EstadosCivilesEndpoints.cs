@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Rrhh.Catalogos.EstadosCiviles.GetEstadoCivilB
 using Cepheus.Application.Features.Rrhh.Catalogos.EstadosCiviles.GetEstadosCivilesPaginated;
 using Cepheus.Application.Features.Rrhh.Catalogos.EstadosCiviles.ToggleEstadoCivilStatus;
 using Cepheus.Application.Features.Rrhh.Catalogos.EstadosCiviles.UpdateEstadoCivil;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Catalogos.EstadosCiviles.ExportEstadosCiviles;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Catalogos
             })
             .WithName("GetEstadosCivilesPagedBody")
             .RequireAuthorization("ESTADOSCIVILES.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportEstadosCivilesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportEstadosCivilesExcel")
+            .RequireAuthorization("ESTADOSCIVILES.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportEstadosCivilesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportEstadosCivilesPdf")
+            .RequireAuthorization("ESTADOSCIVILES.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

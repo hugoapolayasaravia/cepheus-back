@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.GetPl
 using Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.GetPlantillasAsientoPaginated;
 using Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.TogglePlantillaAsientoStatus;
 using Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.UpdatePlantillaAsiento;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.ExportPlantillasAsiento;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Contabilidad.Maestros
@@ -32,6 +34,30 @@ namespace Cepheus.API.Endpoints.Contabilidad.Maestros
                 Results.Ok(await sender.Send(query)))
             .WithName("GetPlantillasAsientoPagedBody")
             .RequireAuthorization("PLANTILLASASIENTO.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportPlantillasAsientoQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportPlantillasAsientoExcel")
+            .RequireAuthorization("PLANTILLASASIENTO.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportPlantillasAsientoQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportPlantillasAsientoPdf")
+            .RequireAuthorization("PLANTILLASASIENTO.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
                 Results.Ok(await sender.Send(new GetPlantillaAsientoByCodeQuery(codigo))))

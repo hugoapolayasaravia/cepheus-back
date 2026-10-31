@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Rrhh.Catalogos.TiposContrato.GetTipoContratoB
 using Cepheus.Application.Features.Rrhh.Catalogos.TiposContrato.GetTiposContratoPaginated;
 using Cepheus.Application.Features.Rrhh.Catalogos.TiposContrato.ToggleTipoContratoStatus;
 using Cepheus.Application.Features.Rrhh.Catalogos.TiposContrato.UpdateTipoContrato;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Catalogos.TiposContrato.ExportTiposContrato;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Catalogos
             })
             .WithName("GetTiposContratoPagedBody")
             .RequireAuthorization("TIPOSCONTRATO.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportTiposContratoQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportTiposContratoExcel")
+            .RequireAuthorization("TIPOSCONTRATO.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportTiposContratoQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportTiposContratoPdf")
+            .RequireAuthorization("TIPOSCONTRATO.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

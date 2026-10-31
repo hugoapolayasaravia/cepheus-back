@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Rrhh.Catalogos.EstadosTrabajador.GetEstadoTra
 using Cepheus.Application.Features.Rrhh.Catalogos.EstadosTrabajador.GetEstadosTrabajadorPaginated;
 using Cepheus.Application.Features.Rrhh.Catalogos.EstadosTrabajador.ToggleEstadoTrabajadorStatus;
 using Cepheus.Application.Features.Rrhh.Catalogos.EstadosTrabajador.UpdateEstadoTrabajador;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Catalogos.EstadosTrabajador.ExportEstadosTrabajador;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Catalogos
             })
             .WithName("GetEstadosTrabajadorPagedBody")
             .RequireAuthorization("ESTADOSTRABAJADOR.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportEstadosTrabajadorQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportEstadosTrabajadorExcel")
+            .RequireAuthorization("ESTADOSTRABAJADOR.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportEstadosTrabajadorQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportEstadosTrabajadorPdf")
+            .RequireAuthorization("ESTADOSTRABAJADOR.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Contabilidad.Maestros.PeriodosContables.Creat
 using Cepheus.Application.Features.Contabilidad.Maestros.PeriodosContables.GetPeriodoContableByCode;
 using Cepheus.Application.Features.Contabilidad.Maestros.PeriodosContables.GetPeriodosContablesPaginated;
 using Cepheus.Application.Features.Contabilidad.Maestros.PeriodosContables.ReopenPeriodoContable;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Contabilidad.Maestros.PeriodosContables.ExportPeriodosContables;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Contabilidad.Maestros
@@ -32,6 +34,30 @@ namespace Cepheus.API.Endpoints.Contabilidad.Maestros
                 Results.Ok(await sender.Send(query)))
             .WithName("GetPeriodosContablesPagedBody")
             .RequireAuthorization("PERIODOSCONTABLES.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportPeriodosContablesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportPeriodosContablesExcel")
+            .RequireAuthorization("PERIODOSCONTABLES.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportPeriodosContablesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportPeriodosContablesPdf")
+            .RequireAuthorization("PERIODOSCONTABLES.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
                 Results.Ok(await sender.Send(new GetPeriodoContableByCodeQuery(codigo))))

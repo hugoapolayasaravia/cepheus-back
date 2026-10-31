@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Facturacion.Catalogos.Fletes.GetFleteByCode;
 using Cepheus.Application.Features.Facturacion.Catalogos.Fletes.GetFletesPaginated;
 using Cepheus.Application.Features.Facturacion.Catalogos.Fletes.ToggleFleteStatus;
 using Cepheus.Application.Features.Facturacion.Catalogos.Fletes.UpdateFlete;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Facturacion.Catalogos.Fletes.ExportFletes;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Facturacion.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Facturacion.Catalogos
             })
             .WithName("GetFletesPagedBody")
             .RequireAuthorization("FLETES.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportFletesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportFletesExcel")
+            .RequireAuthorization("FLETES.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportFletesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportFletesPdf")
+            .RequireAuthorization("FLETES.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

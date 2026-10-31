@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Rrhh.Catalogos.NivelesEducativos.GetNivelEduc
 using Cepheus.Application.Features.Rrhh.Catalogos.NivelesEducativos.GetNivelesEducativosPaginated;
 using Cepheus.Application.Features.Rrhh.Catalogos.NivelesEducativos.ToggleNivelEducativoStatus;
 using Cepheus.Application.Features.Rrhh.Catalogos.NivelesEducativos.UpdateNivelEducativo;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Catalogos.NivelesEducativos.ExportNivelesEducativos;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Catalogos
             })
             .WithName("GetNivelesEducativosPagedBody")
             .RequireAuthorization("NIVELESEDUCATIVOS.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportNivelesEducativosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportNivelesEducativosExcel")
+            .RequireAuthorization("NIVELESEDUCATIVOS.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportNivelesEducativosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportNivelesEducativosPdf")
+            .RequireAuthorization("NIVELESEDUCATIVOS.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

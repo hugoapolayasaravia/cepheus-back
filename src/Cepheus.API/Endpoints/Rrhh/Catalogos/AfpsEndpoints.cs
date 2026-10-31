@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Rrhh.Catalogos.Afps.GetAfpByCode;
 using Cepheus.Application.Features.Rrhh.Catalogos.Afps.GetAfpsPaginated;
 using Cepheus.Application.Features.Rrhh.Catalogos.Afps.ToggleAfpStatus;
 using Cepheus.Application.Features.Rrhh.Catalogos.Afps.UpdateAfp;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Catalogos.Afps.ExportAfps;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Catalogos
             })
             .WithName("GetAfpsPagedBody")
             .RequireAuthorization("AFPS.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportAfpsQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportAfpsExcel")
+            .RequireAuthorization("AFPS.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportAfpsQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportAfpsPdf")
+            .RequireAuthorization("AFPS.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

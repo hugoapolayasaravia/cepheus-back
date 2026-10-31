@@ -1,4 +1,4 @@
-﻿using Cepheus.Application.Comun.Extensions;
+using Cepheus.Application.Comun.Extensions;
 using Cepheus.Application.Comun.Interfaces.UnitOfWork;
 using Cepheus.Application.Comun.Models;
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.Common;
@@ -14,126 +14,119 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.Pedidos.GetPedido
         : IRequestHandler<GetPedidosPaginatedQuery, PagedResult<PedidoResponse>>
     {
         private readonly IUnitOfWork _uow;
+        private readonly Cepheus.Application.Comun.Interfaces.ICurrentUserService _current;
 
-        public GetPedidosPaginatedQueryHandler(IUnitOfWork uow)
+        public GetPedidosPaginatedQueryHandler(IUnitOfWork uow, Cepheus.Application.Comun.Interfaces.ICurrentUserService current)
         {
             _uow = uow;
+            _current = current;
         }
 
         public async Task<PagedResult<PedidoResponse>> Handle(
             GetPedidosPaginatedQuery request,
             CancellationToken cancellationToken)
         {
-            IQueryable<Pedido> query = _uow.Logistica.Transacciones.Pedidos
-                .Query()
-                .AsNoTracking();
+            IQueryable<Pedido> query = _uow.Logistica.Transacciones.Pedidos.Query()
+                .AsNoTracking()
+                .Include(p => p.Detalles);
 
-            // Planta: PR.Codigo_Pla
+            // Solo se ven los pedidos de las plantas en las que el usuario está inscrito (UsuariosPlanta).
+            var uid = _current.UserId ?? -1;
+            var misPlantas = _uow.Logistica.Catalogos.UsuariosPlanta.Query()
+                .Where(x => x.UserId == uid).Select(x => x.PlantaCode);
+            query = query.Where(p => misPlantas.Contains(p.PlantaCode));
+
+            if (!string.IsNullOrWhiteSpace(request.Search))
+            {
+                var search = request.Search.Trim().ToLower();
+
+                query = query.Where(p =>
+                    p.Code.ToLower().Contains(search) ||
+                    p.Observaciones.ToLower().Contains(search));
+            }
+
             if (!string.IsNullOrWhiteSpace(request.PlantaCode))
             {
-                var planta = request.PlantaCode.Trim().ToUpper();
-                query = query.Where(p => p.PlantaCode == planta);
+                var plantaCode = request.PlantaCode.Trim().ToUpper();
+
+                query = query.Where(p =>
+                    p.PlantaCode == plantaCode);
             }
 
-            // Código de pedido: PR.Codigo_Ped
-            // Al buscar un código específico, el SP omite los demás filtros.
-            if (!string.IsNullOrWhiteSpace(request.Search)
-                && !request.Search.Trim().Equals(
-                    "T", StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrWhiteSpace(request.Estado)
+                && System.Enum.TryParse<EstadoPedido>(
+                    request.Estado,
+                    true,
+                    out var estado))
             {
-                var codigoPedido = request.Search.Trim();
-                query = query.Where(p => p.Code == codigoPedido);
+                query = query.Where(p =>
+                    p.EstadoPedido == estado);
             }
-            else
+
+            if (!string.IsNullOrWhiteSpace(request.TrabajadorCode))
             {
-                // Estado: PR.Codigo_Est
-                if (!string.IsNullOrWhiteSpace(request.Estado)
-                    && !request.Estado.Trim().Equals(
-                        "T", StringComparison.OrdinalIgnoreCase))
-                {
-                    var estadoTexto = request.Estado.Trim();
+                var trabajadorCode = request.TrabajadorCode.Trim().ToUpper();
 
-                    if (Enum.TryParse<EstadoPedido>(
-                        estadoTexto,
-                        true,
-                        out var estado))
-                    {
-                        query = query.Where(p => p.EstadoPedido == estado);
-                    }
-                    else
-                    {
-                        query = query.Where(p => false);
-                    }
-                }
-
-                // Subcentro de costo: PR.Codigo_Scc
-                if (!string.IsNullOrWhiteSpace(request.SubCentroCostoCode)
-                    && !request.SubCentroCostoCode.Trim().Equals(
-                        "T", StringComparison.OrdinalIgnoreCase))
-                {
-                    var subCentroCosto = request.SubCentroCostoCode.Trim();
-                    query = query.Where(p =>
-                        p.SubCentroCostoCode == subCentroCosto);
-                }
-
-                // Usuario: PR.Usuario
-                if (!string.IsNullOrWhiteSpace(request.UsuarioCode)
-                    && !request.UsuarioCode.Trim().Equals(
-                        "T", StringComparison.OrdinalIgnoreCase))
-                {
-                    var usuario = request.UsuarioCode.Trim();
-                    query = query.Where(p => p.CreatedBy == usuario);
-                }
-
-                // Tipo de pedido: TP.Codigo_Tpe
-                if (!string.IsNullOrWhiteSpace(request.TipoPedidoCode)
-                    && !request.TipoPedidoCode.Trim().Equals(
-                        "T", StringComparison.OrdinalIgnoreCase))
-                {
-                    var tipoPedido = request.TipoPedidoCode.Trim();
-                    query = query.Where(p =>
-                        p.TipoPedidoCode == tipoPedido);
-                }
-
-                // Fecha inicial: PR.Fecha_Pro.
-                // Se conserva FechaEntrega porque es la propiedad conocida
-                // en la entidad compartida en esta conversación.
-                if (request.FechaPedidoDesde.HasValue)
-                {
-                    var fechaDesde = request.FechaPedidoDesde.Value.Date;
-
-                    query = query.Where(p =>
-                        p.FechaEntrega >= fechaDesde);
-                }
-
-                // Fecha final inclusiva.
-                if (request.FechaPedidoHasta.HasValue)
-                {
-                    var fechaHastaExclusiva =
-                        request.FechaPedidoHasta.Value.Date.AddDays(1);
-
-                    query = query.Where(p =>
-                        p.FechaEntrega < fechaHastaExclusiva);
-                }
+                query = query.Where(p =>
+                    p.TrabajadorCode == trabajadorCode);
             }
 
-            // Paginación
-            var pageNumber = Math.Max(request.PageNumber ?? 1, 1);
-            var pageSize = Math.Clamp(request.PageSize ?? 10, 1, 100);
+            if (!string.IsNullOrWhiteSpace(request.SubCentroCostoCode))
+            {
+                var subCentroCostoCode = request.SubCentroCostoCode.Trim().ToUpper();
+
+                query = query.Where(p =>
+                    p.SubCentroCostoCode == subCentroCostoCode);
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.TipoPedidoCode))
+            {
+                var tipoPedidoCode = request.TipoPedidoCode.Trim().ToUpper();
+
+                query = query.Where(p =>
+                    p.TipoPedidoCode == tipoPedidoCode);
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.CreatedBy))
+            {
+                var createdBy = request.CreatedBy.Trim().ToLower();
+
+                query = query.Where(p =>
+                    p.CreatedBy != null && p.CreatedBy.ToLower().Contains(createdBy));
+            }
+
+            // Fecha de proceso = fecha en que se registró el pedido (auditoría).
+            if (request.FechaProcesoDesde.HasValue)
+            {
+                var desde = request.FechaProcesoDesde.Value.Date;
+                query = query.Where(p => p.CreatedAt >= desde);
+            }
+
+            if (request.FechaProcesoHasta.HasValue)
+            {
+                var hasta = request.FechaProcesoHasta.Value.Date.AddDays(1);
+                query = query.Where(p => p.CreatedAt < hasta);
+            }
+
+            if (request.FechaEntregaDesde.HasValue)
+            {
+                query = query.Where(p =>
+                    p.FechaEntrega >= request.FechaEntregaDesde.Value);
+            }
+
+            if (request.FechaEntregaHasta.HasValue)
+            {
+                query = query.Where(p =>
+                    p.FechaEntrega <= request.FechaEntregaHasta.Value);
+            }
+
             var sortDesc = request.SortDesc ?? true;
+            var pageNumber = request.PageNumber ?? 1;
+            var pageSize = request.PageSize ?? 10;
 
-            IQueryable<Pedido> sortedQuery;
-
-            if (string.IsNullOrWhiteSpace(request.SortBy))
-            {
-                sortedQuery = query
-                    .OrderByDescending(p => p.CreatedAt)
-                    .ThenByDescending(p => p.Code);
-            }
-            else
-            {
-                sortedQuery = query.ApplySort(request.SortBy, sortDesc);
-            }
+            var sortedQuery = string.IsNullOrWhiteSpace(request.SortBy)
+                ? query.OrderByDescending(p => p.CreatedAt)
+                : query.ApplySort(request.SortBy, sortDesc);
 
             var pagedEntities = await sortedQuery.ToPagedResultAsync(
                 pageNumber,
@@ -145,6 +138,7 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.Pedidos.GetPedido
                 Items = pagedEntities.Items
                     .Select(CreatePedidoCommandHandler.Map)
                     .ToList(),
+
                 TotalCount = pagedEntities.TotalCount,
                 PageNumber = pagedEntities.PageNumber,
                 PageSize = pagedEntities.PageSize

@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Rrhh.Catalogos.NivelesTrabajador.GetNivelTrab
 using Cepheus.Application.Features.Rrhh.Catalogos.NivelesTrabajador.GetNivelesTrabajadorPaginated;
 using Cepheus.Application.Features.Rrhh.Catalogos.NivelesTrabajador.ToggleNivelTrabajadorStatus;
 using Cepheus.Application.Features.Rrhh.Catalogos.NivelesTrabajador.UpdateNivelTrabajador;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Catalogos.NivelesTrabajador.ExportNivelesTrabajador;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Catalogos
             })
             .WithName("GetNivelesTrabajadorPagedBody")
             .RequireAuthorization("NIVELESTRABAJADOR.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportNivelesTrabajadorQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportNivelesTrabajadorExcel")
+            .RequireAuthorization("NIVELESTRABAJADOR.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportNivelesTrabajadorQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportNivelesTrabajadorPdf")
+            .RequireAuthorization("NIVELESTRABAJADOR.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Contabilidad.Maestros.Anexos.GetAnexoByCode;
 using Cepheus.Application.Features.Contabilidad.Maestros.Anexos.GetAnexosPaginated;
 using Cepheus.Application.Features.Contabilidad.Maestros.Anexos.ToggleAnexoStatus;
 using Cepheus.Application.Features.Contabilidad.Maestros.Anexos.UpdateAnexo;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Contabilidad.Maestros.Anexos.ExportAnexos;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Contabilidad.Maestros
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Contabilidad.Maestros
             })
             .WithName("GetAnexosPagedBody")
             .RequireAuthorization("ANEXOS.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportAnexosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportAnexosExcel")
+            .RequireAuthorization("ANEXOS.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportAnexosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportAnexosPdf")
+            .RequireAuthorization("ANEXOS.EXPORT_PDF");
 
             group.MapGet("/{tipoAnexoCode}/{codigo}", async (string tipoAnexoCode, string codigo, ISender sender) =>
             {

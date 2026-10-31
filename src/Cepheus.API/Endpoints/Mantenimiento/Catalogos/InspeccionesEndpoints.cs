@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Mantenimiento.Catalogos.Inspecciones.GetInspe
 using Cepheus.Application.Features.Mantenimiento.Catalogos.Inspecciones.GetInspeccionesPaginated;
 using Cepheus.Application.Features.Mantenimiento.Catalogos.Inspecciones.ToggleInspeccionStatus;
 using Cepheus.Application.Features.Mantenimiento.Catalogos.Inspecciones.UpdateInspeccion;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Mantenimiento.Catalogos.Inspecciones.ExportInspecciones;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Mantenimiento.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Mantenimiento.Catalogos
             })
             .WithName("GetInspeccionesPagedBody")
             .RequireAuthorization("INSPECCIONES.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportInspeccionesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportInspeccionesExcel")
+            .RequireAuthorization("INSPECCIONES.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportInspeccionesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportInspeccionesPdf")
+            .RequireAuthorization("INSPECCIONES.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

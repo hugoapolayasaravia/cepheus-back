@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Facturacion.Catalogos.ListasPrecio.GetListaPr
 using Cepheus.Application.Features.Facturacion.Catalogos.ListasPrecio.GetListasPrecioPaginated;
 using Cepheus.Application.Features.Facturacion.Catalogos.ListasPrecio.ToggleListaPrecioStatus;
 using Cepheus.Application.Features.Facturacion.Catalogos.ListasPrecio.UpdateListaPrecio;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Facturacion.Catalogos.ListasPrecio.ExportListasPrecio;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Facturacion.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Facturacion.Catalogos
             })
             .WithName("GetListasPrecioPagedBody")
             .RequireAuthorization("LISTASPRECIO.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportListasPrecioQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportListasPrecioExcel")
+            .RequireAuthorization("LISTASPRECIO.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportListasPrecioQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportListasPrecioPdf")
+            .RequireAuthorization("LISTASPRECIO.EXPORT_PDF");
 
             group.MapGet("/{id:long}", async (long id, ISender sender) =>
             {

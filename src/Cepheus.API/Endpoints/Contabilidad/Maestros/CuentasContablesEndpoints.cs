@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Contabilidad.Maestros.CuentasContables.GetCue
 using Cepheus.Application.Features.Contabilidad.Maestros.CuentasContables.GetCuentasContablesPaginated;
 using Cepheus.Application.Features.Contabilidad.Maestros.CuentasContables.ToggleCuentaContableStatus;
 using Cepheus.Application.Features.Contabilidad.Maestros.CuentasContables.UpdateCuentaContable;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Contabilidad.Maestros.CuentasContables.ExportCuentasContables;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Contabilidad.Maestros
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Contabilidad.Maestros
             })
             .WithName("GetCuentasContablesPagedBody")
             .RequireAuthorization("CUENTASCONTABLES.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportCuentasContablesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportCuentasContablesExcel")
+            .RequireAuthorization("CUENTASCONTABLES.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportCuentasContablesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportCuentasContablesPdf")
+            .RequireAuthorization("CUENTASCONTABLES.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

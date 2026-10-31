@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Mantenimiento.Maestros.CentrosEjecutores.GetC
 using Cepheus.Application.Features.Mantenimiento.Maestros.CentrosEjecutores.GetCentrosEjecutoresPaginated;
 using Cepheus.Application.Features.Mantenimiento.Maestros.CentrosEjecutores.ToggleCentroEjecutorStatus;
 using Cepheus.Application.Features.Mantenimiento.Maestros.CentrosEjecutores.UpdateCentroEjecutor;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Mantenimiento.Maestros.CentrosEjecutores.ExportCentrosEjecutores;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Mantenimiento.Maestros
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Mantenimiento.Maestros
             })
             .WithName("GetCentrosEjecutoresPagedBody")
             .RequireAuthorization("CENTROSEJECUTORES.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportCentrosEjecutoresQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportCentrosEjecutoresExcel")
+            .RequireAuthorization("CENTROSEJECUTORES.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportCentrosEjecutoresQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportCentrosEjecutoresPdf")
+            .RequireAuthorization("CENTROSEJECUTORES.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Facturacion.Maestros.Cobradores.GetCobradorBy
 using Cepheus.Application.Features.Facturacion.Maestros.Cobradores.GetCobradoresPaginated;
 using Cepheus.Application.Features.Facturacion.Maestros.Cobradores.ToggleCobradorStatus;
 using Cepheus.Application.Features.Facturacion.Maestros.Cobradores.UpdateCobrador;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Facturacion.Maestros.Cobradores.ExportCobradores;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Facturacion.Maestros
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Facturacion.Maestros
             })
             .WithName("GetCobradoresPagedBody")
             .RequireAuthorization("COBRADORES.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportCobradoresQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportCobradoresExcel")
+            .RequireAuthorization("COBRADORES.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportCobradoresQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportCobradoresPdf")
+            .RequireAuthorization("COBRADORES.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

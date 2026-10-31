@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Mantenimiento.Catalogos.Prioridades.GetPriori
 using Cepheus.Application.Features.Mantenimiento.Catalogos.Prioridades.GetPrioridadesPaginated;
 using Cepheus.Application.Features.Mantenimiento.Catalogos.Prioridades.TogglePrioridadStatus;
 using Cepheus.Application.Features.Mantenimiento.Catalogos.Prioridades.UpdatePrioridad;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Mantenimiento.Catalogos.Prioridades.ExportPrioridades;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Mantenimiento.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Mantenimiento.Catalogos
             })
             .WithName("GetPrioridadesPagedBody")
             .RequireAuthorization("PRIORIDADES.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportPrioridadesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportPrioridadesExcel")
+            .RequireAuthorization("PRIORIDADES.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportPrioridadesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportPrioridadesPdf")
+            .RequireAuthorization("PRIORIDADES.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Facturacion.Catalogos.PreciosProducto.DeleteP
 using Cepheus.Application.Features.Facturacion.Catalogos.PreciosProducto.GetPrecioProducto;
 using Cepheus.Application.Features.Facturacion.Catalogos.PreciosProducto.GetPreciosProductoPaginated;
 using Cepheus.Application.Features.Facturacion.Catalogos.PreciosProducto.UpdatePrecioProducto;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Facturacion.Catalogos.PreciosProducto.ExportPreciosProducto;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Facturacion.Catalogos
@@ -44,6 +46,30 @@ namespace Cepheus.API.Endpoints.Facturacion.Catalogos
             })
             .WithName("GetPreciosProductoPagedBody")
             .RequireAuthorization("PRECIOSPRODUCTO.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportPreciosProductoQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportPreciosProductoExcel")
+            .RequireAuthorization("PRECIOSPRODUCTO.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportPreciosProductoQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportPreciosProductoPdf")
+            .RequireAuthorization("PRECIOSPRODUCTO.EXPORT_PDF");
 
             group.MapGet("/{fleteCode}/{tipoCode}/{productoCode}/{monedaTipo}/{monedaCodigo}", async (
                 string fleteCode, string tipoCode, string productoCode, string monedaTipo, string monedaCodigo,

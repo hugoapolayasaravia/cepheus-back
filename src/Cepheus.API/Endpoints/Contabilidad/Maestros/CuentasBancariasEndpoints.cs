@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Contabilidad.Maestros.CuentasBancarias.GetCue
 using Cepheus.Application.Features.Contabilidad.Maestros.CuentasBancarias.GetCuentasBancariasPaginated;
 using Cepheus.Application.Features.Contabilidad.Maestros.CuentasBancarias.ToggleCuentaBancariaStatus;
 using Cepheus.Application.Features.Contabilidad.Maestros.CuentasBancarias.UpdateCuentaBancaria;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Contabilidad.Maestros.CuentasBancarias.ExportCuentasBancarias;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Contabilidad.Maestros
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Contabilidad.Maestros
             })
             .WithName("GetCuentasBancariasPagedBody")
             .RequireAuthorization("CUENTASBANCARIAS.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportCuentasBancariasQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportCuentasBancariasExcel")
+            .RequireAuthorization("CUENTASBANCARIAS.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportCuentasBancariasQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportCuentasBancariasPdf")
+            .RequireAuthorization("CUENTASBANCARIAS.EXPORT_PDF");
 
             group.MapGet("/{bankCode}/{accountNumber}", async (string bankCode, string accountNumber, ISender sender) =>
             {

@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Facturacion.Maestros.Productos.GetProductoByC
 using Cepheus.Application.Features.Facturacion.Maestros.Productos.GetProductosPaginated;
 using Cepheus.Application.Features.Facturacion.Maestros.Productos.ToggleProductoStatus;
 using Cepheus.Application.Features.Facturacion.Maestros.Productos.UpdateProducto;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Facturacion.Maestros.Productos.ExportProductos;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Facturacion.Maestros
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Facturacion.Maestros
             })
             .WithName("GetProductosPagedBody")
             .RequireAuthorization("PRODUCTOS.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportProductosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportProductosExcel")
+            .RequireAuthorization("PRODUCTOS.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportProductosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportProductosPdf")
+            .RequireAuthorization("PRODUCTOS.EXPORT_PDF");
 
             group.MapGet("/{tipoProducto}/{codigo}", async (
                 string tipoProducto, string codigo, ISender sender) =>

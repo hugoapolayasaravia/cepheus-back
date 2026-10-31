@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Facturacion.Maestros.Obras.CreateObra;
 using Cepheus.Application.Features.Facturacion.Maestros.Obras.GetObraByCode;
 using Cepheus.Application.Features.Facturacion.Maestros.Obras.GetObrasPaginated;
 using Cepheus.Application.Features.Facturacion.Maestros.Obras.UpdateObra;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Facturacion.Maestros.Obras.ExportObras;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Facturacion.Maestros
@@ -43,6 +45,30 @@ namespace Cepheus.API.Endpoints.Facturacion.Maestros
             })
             .WithName("GetObrasPagedBody")
             .RequireAuthorization("OBRAS.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportObrasQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportObrasExcel")
+            .RequireAuthorization("OBRAS.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportObrasQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportObrasPdf")
+            .RequireAuthorization("OBRAS.EXPORT_PDF");
 
             group.MapGet("/{codigoCliente}/{codigo}", async (string codigoCliente, string codigo, ISender sender) =>
             {

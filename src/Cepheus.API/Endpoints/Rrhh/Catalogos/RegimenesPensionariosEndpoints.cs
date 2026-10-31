@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Rrhh.Catalogos.RegimenesPensionarios.GetRegim
 using Cepheus.Application.Features.Rrhh.Catalogos.RegimenesPensionarios.GetRegimenesPensionariosPaginated;
 using Cepheus.Application.Features.Rrhh.Catalogos.RegimenesPensionarios.ToggleRegimenPensionarioStatus;
 using Cepheus.Application.Features.Rrhh.Catalogos.RegimenesPensionarios.UpdateRegimenPensionario;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Catalogos.RegimenesPensionarios.ExportRegimenesPensionarios;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Catalogos
             })
             .WithName("GetRegimenesPensionariosPagedBody")
             .RequireAuthorization("REGIMENESPENSIONARIO.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportRegimenesPensionariosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportRegimenesPensionariosExcel")
+            .RequireAuthorization("REGIMENESPENSIONARIO.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportRegimenesPensionariosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportRegimenesPensionariosPdf")
+            .RequireAuthorization("REGIMENESPENSIONARIO.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

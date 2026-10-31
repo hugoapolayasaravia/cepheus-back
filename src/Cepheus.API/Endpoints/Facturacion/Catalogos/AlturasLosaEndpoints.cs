@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Facturacion.Catalogos.AlturasLosa.GetAlturaLo
 using Cepheus.Application.Features.Facturacion.Catalogos.AlturasLosa.GetAlturasLosaPaginated;
 using Cepheus.Application.Features.Facturacion.Catalogos.AlturasLosa.ToggleAlturaLosaStatus;
 using Cepheus.Application.Features.Facturacion.Catalogos.AlturasLosa.UpdateAlturaLosa;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Facturacion.Catalogos.AlturasLosa.ExportAlturasLosa;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Facturacion.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Facturacion.Catalogos
             })
             .WithName("GetAlturasLosaPagedBody")
             .RequireAuthorization("ALTURASLOSA.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportAlturasLosaQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportAlturasLosaExcel")
+            .RequireAuthorization("ALTURASLOSA.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportAlturasLosaQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportAlturasLosaPdf")
+            .RequireAuthorization("ALTURASLOSA.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

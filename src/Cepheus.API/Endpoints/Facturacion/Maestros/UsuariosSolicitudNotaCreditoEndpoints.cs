@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Facturacion.Maestros.UsuariosSolicitudNotaCre
 using Cepheus.Application.Features.Facturacion.Maestros.UsuariosSolicitudNotaCredito.GetUsuariosSolicitudNotaCreditoPaginated;
 using Cepheus.Application.Features.Facturacion.Maestros.UsuariosSolicitudNotaCredito.ToggleUsuarioSolicitudNotaCreditoStatus;
 using Cepheus.Application.Features.Facturacion.Maestros.UsuariosSolicitudNotaCredito.UpdateUsuarioSolicitudNotaCredito;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Facturacion.Maestros.UsuariosSolicitudNotaCredito.ExportUsuariosSolicitudNotaCredito;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Facturacion.Maestros
@@ -44,6 +46,30 @@ namespace Cepheus.API.Endpoints.Facturacion.Maestros
             })
             .WithName("GetUsuariosSolicitudNotaCreditoPagedBody")
             .RequireAuthorization("USUARIOSSNC.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportUsuariosSolicitudNotaCreditoQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportUsuariosSolicitudNotaCreditoExcel")
+            .RequireAuthorization("USUARIOSSNC.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportUsuariosSolicitudNotaCreditoQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportUsuariosSolicitudNotaCreditoPdf")
+            .RequireAuthorization("USUARIOSSNC.EXPORT_PDF");
 
             group.MapGet("/{negocio}/{etapa}/{userId:int}", async (
                 string negocio, string etapa, int userId, ISender sender) =>

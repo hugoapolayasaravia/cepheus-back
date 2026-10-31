@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Rrhh.Catalogos.TiposPension.GetTipoPensionByC
 using Cepheus.Application.Features.Rrhh.Catalogos.TiposPension.GetTiposPensionPaginated;
 using Cepheus.Application.Features.Rrhh.Catalogos.TiposPension.ToggleTipoPensionStatus;
 using Cepheus.Application.Features.Rrhh.Catalogos.TiposPension.UpdateTipoPension;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Catalogos.TiposPension.ExportTiposPension;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Catalogos
             })
             .WithName("GetTiposPensionPagedBody")
             .RequireAuthorization("TIPOSPENSION.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportTiposPensionQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportTiposPensionExcel")
+            .RequireAuthorization("TIPOSPENSION.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportTiposPensionQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportTiposPensionPdf")
+            .RequireAuthorization("TIPOSPENSION.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

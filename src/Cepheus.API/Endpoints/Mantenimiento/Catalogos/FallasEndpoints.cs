@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Mantenimiento.Catalogos.Fallas.GetFallaByCode
 using Cepheus.Application.Features.Mantenimiento.Catalogos.Fallas.GetFallasPaginated;
 using Cepheus.Application.Features.Mantenimiento.Catalogos.Fallas.ToggleFallaStatus;
 using Cepheus.Application.Features.Mantenimiento.Catalogos.Fallas.UpdateFalla;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Mantenimiento.Catalogos.Fallas.ExportFallas;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Mantenimiento.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Mantenimiento.Catalogos
             })
             .WithName("GetFallasPagedBody")
             .RequireAuthorization("FALLAS.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportFallasQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportFallasExcel")
+            .RequireAuthorization("FALLAS.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportFallasQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportFallasPdf")
+            .RequireAuthorization("FALLAS.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Rrhh.Catalogos.Horarios.GetHorarioByCode;
 using Cepheus.Application.Features.Rrhh.Catalogos.Horarios.GetHorariosPaginated;
 using Cepheus.Application.Features.Rrhh.Catalogos.Horarios.ToggleHorarioStatus;
 using Cepheus.Application.Features.Rrhh.Catalogos.Horarios.UpdateHorario;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Catalogos.Horarios.ExportHorarios;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Catalogos
             })
             .WithName("GetHorariosPagedBody")
             .RequireAuthorization("HORARIOS.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportHorariosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportHorariosExcel")
+            .RequireAuthorization("HORARIOS.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportHorariosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportHorariosPdf")
+            .RequireAuthorization("HORARIOS.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

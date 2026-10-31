@@ -2,6 +2,8 @@ using Cepheus.Application.Features.Facturacion.Maestros.Tecnicos.CreateTecnico;
 using Cepheus.Application.Features.Facturacion.Maestros.Tecnicos.GetTecnicoByCode;
 using Cepheus.Application.Features.Facturacion.Maestros.Tecnicos.GetTecnicosPaginated;
 using Cepheus.Application.Features.Facturacion.Maestros.Tecnicos.ToggleTecnicoStatus;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Facturacion.Maestros.Tecnicos.ExportTecnicos;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Facturacion.Maestros
@@ -41,6 +43,30 @@ namespace Cepheus.API.Endpoints.Facturacion.Maestros
             })
             .WithName("GetTecnicosPagedBody")
             .RequireAuthorization("TECNICOS.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportTecnicosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportTecnicosExcel")
+            .RequireAuthorization("TECNICOS.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportTecnicosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportTecnicosPdf")
+            .RequireAuthorization("TECNICOS.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Rrhh.Catalogos.SubOcupaciones.GetSubOcupacion
 using Cepheus.Application.Features.Rrhh.Catalogos.SubOcupaciones.GetSubOcupacionesPaginated;
 using Cepheus.Application.Features.Rrhh.Catalogos.SubOcupaciones.ToggleSubOcupacionStatus;
 using Cepheus.Application.Features.Rrhh.Catalogos.SubOcupaciones.UpdateSubOcupacion;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Catalogos.SubOcupaciones.ExportSubOcupaciones;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Catalogos
             })
             .WithName("GetSubOcupacionesPagedBody")
             .RequireAuthorization("SUBOCUPACIONES.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportSubOcupacionesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportSubOcupacionesExcel")
+            .RequireAuthorization("SUBOCUPACIONES.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportSubOcupacionesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportSubOcupacionesPdf")
+            .RequireAuthorization("SUBOCUPACIONES.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

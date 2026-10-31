@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Facturacion.Catalogos.FormasPagoVenta.GetForm
 using Cepheus.Application.Features.Facturacion.Catalogos.FormasPagoVenta.GetFormasPagoVentaPaginated;
 using Cepheus.Application.Features.Facturacion.Catalogos.FormasPagoVenta.ToggleFormaPagoVentaStatus;
 using Cepheus.Application.Features.Facturacion.Catalogos.FormasPagoVenta.UpdateFormaPagoVenta;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Facturacion.Catalogos.FormasPagoVenta.ExportFormasPagoVenta;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Facturacion.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Facturacion.Catalogos
             })
             .WithName("GetFormasPagoVentaPagedBody")
             .RequireAuthorization("FORMASPAGOVENTA.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportFormasPagoVentaQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportFormasPagoVentaExcel")
+            .RequireAuthorization("FORMASPAGOVENTA.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportFormasPagoVentaQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportFormasPagoVentaPdf")
+            .RequireAuthorization("FORMASPAGOVENTA.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Mantenimiento.Catalogos.Especialidades.GetEsp
 using Cepheus.Application.Features.Mantenimiento.Catalogos.Especialidades.GetEspecialidadesPaginated;
 using Cepheus.Application.Features.Mantenimiento.Catalogos.Especialidades.ToggleEspecialidadStatus;
 using Cepheus.Application.Features.Mantenimiento.Catalogos.Especialidades.UpdateEspecialidad;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Mantenimiento.Catalogos.Especialidades.ExportEspecialidades;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Mantenimiento.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Mantenimiento.Catalogos
             })
             .WithName("GetEspecialidadesPagedBody")
             .RequireAuthorization("ESPECIALIDADES.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportEspecialidadesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportEspecialidadesExcel")
+            .RequireAuthorization("ESPECIALIDADES.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportEspecialidadesQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportEspecialidadesPdf")
+            .RequireAuthorization("ESPECIALIDADES.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

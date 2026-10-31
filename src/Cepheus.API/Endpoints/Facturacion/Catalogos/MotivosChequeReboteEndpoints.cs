@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Facturacion.Catalogos.MotivosChequeRebote.Get
 using Cepheus.Application.Features.Facturacion.Catalogos.MotivosChequeRebote.GetMotivosChequeRebotePaginated;
 using Cepheus.Application.Features.Facturacion.Catalogos.MotivosChequeRebote.ToggleMotivoChequeReboteStatus;
 using Cepheus.Application.Features.Facturacion.Catalogos.MotivosChequeRebote.UpdateMotivoChequeRebote;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Facturacion.Catalogos.MotivosChequeRebote.ExportMotivosChequeRebote;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Facturacion.Catalogos
@@ -34,6 +36,30 @@ namespace Cepheus.API.Endpoints.Facturacion.Catalogos
                 Results.Ok(await sender.Send(query)))
             .WithName("GetMotivosChequeRebotePagedBody")
             .RequireAuthorization("MOTIVOSCHEQUEREBOTE.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportMotivosChequeReboteQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportMotivosChequeReboteExcel")
+            .RequireAuthorization("MOTIVOSCHEQUEREBOTE.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportMotivosChequeReboteQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportMotivosChequeRebotePdf")
+            .RequireAuthorization("MOTIVOSCHEQUEREBOTE.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
                 Results.Ok(await sender.Send(new GetMotivoChequeReboteByCodeQuery(codigo))))

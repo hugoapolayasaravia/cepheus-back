@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Rrhh.Catalogos.CategoriasTrabajador.GetCatego
 using Cepheus.Application.Features.Rrhh.Catalogos.CategoriasTrabajador.GetCategoriasTrabajadorPaginated;
 using Cepheus.Application.Features.Rrhh.Catalogos.CategoriasTrabajador.ToggleCategoriaTrabajadorStatus;
 using Cepheus.Application.Features.Rrhh.Catalogos.CategoriasTrabajador.UpdateCategoriaTrabajador;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Catalogos.CategoriasTrabajador.ExportCategoriasTrabajador;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Catalogos
             })
             .WithName("GetCategoriasTrabajadorPagedBody")
             .RequireAuthorization("CATEGORIASTRABAJADOR.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportCategoriasTrabajadorQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportCategoriasTrabajadorExcel")
+            .RequireAuthorization("CATEGORIASTRABAJADOR.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportCategoriasTrabajadorQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportCategoriasTrabajadorPdf")
+            .RequireAuthorization("CATEGORIASTRABAJADOR.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

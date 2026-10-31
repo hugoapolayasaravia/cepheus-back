@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Facturacion.Catalogos.TiposHojaCorte.GetTipoH
 using Cepheus.Application.Features.Facturacion.Catalogos.TiposHojaCorte.GetTiposHojaCortePaginated;
 using Cepheus.Application.Features.Facturacion.Catalogos.TiposHojaCorte.ToggleTipoHojaCorteStatus;
 using Cepheus.Application.Features.Facturacion.Catalogos.TiposHojaCorte.UpdateTipoHojaCorte;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Facturacion.Catalogos.TiposHojaCorte.ExportTiposHojaCorte;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Facturacion.Catalogos
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Facturacion.Catalogos
             })
             .WithName("GetTiposHojaCortePagedBody")
             .RequireAuthorization("TIPOSHOJACORTE.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportTiposHojaCorteQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportTiposHojaCorteExcel")
+            .RequireAuthorization("TIPOSHOJACORTE.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportTiposHojaCorteQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportTiposHojaCortePdf")
+            .RequireAuthorization("TIPOSHOJACORTE.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

@@ -2,6 +2,8 @@
 using Cepheus.Application.Features.Rrhh.Maestros.Trabajadores.GetTrabajadorByCode;
 using Cepheus.Application.Features.Rrhh.Maestros.Trabajadores.GetTrabajadoresPaginated;
 using Cepheus.Application.Features.Rrhh.Maestros.Trabajadores.UpdateTrabajador;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Rrhh.Maestros.Trabajadores.ExportTrabajadores;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Rrhh.Maestros
@@ -41,6 +43,30 @@ namespace Cepheus.API.Endpoints.Rrhh.Maestros
             })
             .WithName("GetTrabajadoresPagedBody")
             .RequireAuthorization("TRABAJADORES.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportTrabajadoresQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportTrabajadoresExcel")
+            .RequireAuthorization("TRABAJADORES.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportTrabajadoresQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportTrabajadoresPdf")
+            .RequireAuthorization("TRABAJADORES.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {
