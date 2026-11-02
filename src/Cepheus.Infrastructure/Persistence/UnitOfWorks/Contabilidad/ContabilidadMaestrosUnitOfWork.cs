@@ -34,5 +34,8 @@ namespace Cepheus.Infrastructure.Persistence.UnitOfWorks.Contabilidad
         private IRepository<PlantillaAsientoLinea>? _plantillaAsientoLineas;
         public IRepository<PlantillaAsientoLinea> PlantillaAsientoLineas => _plantillaAsientoLineas ??= new Repository<PlantillaAsientoLinea>(_context);
 
+        private IRepository<NoAfectoRetencion>? _noAfectosRetencion;
+        public IRepository<NoAfectoRetencion> NoAfectosRetencion => _noAfectosRetencion ??= new Repository<NoAfectoRetencion>(_context);
+
     }
 }

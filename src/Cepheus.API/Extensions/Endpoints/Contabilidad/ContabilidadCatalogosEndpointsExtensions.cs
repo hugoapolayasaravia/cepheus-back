@@ -10,6 +10,7 @@ public static class ContabilidadCatalogosEndpointsExtensions
         app.MapTiposAnexoEndpoints();
         app.MapTiposCuentaContableEndpoints();
         app.MapTiposAsientoEndpoints();
+        app.MapFormasPagoCancelacionEndpoints();
 
         return app;
     }

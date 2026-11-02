@@ -14,14 +14,18 @@ public static class FacturacionTransaccionesEndpointsExtensions
         app.MapCotizacionMetradoDetallesEndpoints();
         app.MapHojasCorteEndpoints();
         app.MapSolicitudesNotaCreditoEndpoints();
-        app.MapNotasCreditoVentaEndpoints();
-        app.MapNotasDebitoVentaEndpoints();
-        app.MapChequesVentaEndpoints();
         app.MapOrdenesTrabajoVentaEndpoints();
         app.MapProgramacionesConcretoEndpoints();
         app.MapProgramacionesOtrosEndpoints();
         app.MapGuiasRemisionVentaEndpoints();
         app.MapComprobantesVentaEndpoints();
+        app.MapNotasCreditoVentaEndpoints();
+        app.MapNotasDebitoVentaEndpoints();
+        app.MapChequesVentaEndpoints();
+        app.MapLetrasVentaEndpoints();
+        app.MapCobranzasEndpoints();
+        app.MapCancelacionesVentaEndpoints();
+
 
         return app;
     }

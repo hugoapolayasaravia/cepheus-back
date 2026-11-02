@@ -12,5 +12,5 @@ public partial class ApplicationDbContext
     public DbSet<PeriodoContable> PeriodosContables => Set<PeriodoContable>();
     public DbSet<PlantillaAsiento> PlantillasAsiento => Set<PlantillaAsiento>();
     public DbSet<PlantillaAsientoLinea> PlantillaAsientoLineas => Set<PlantillaAsientoLinea>();
-
+    public DbSet<NoAfectoRetencion> NoAfectosRetencion => Set<NoAfectoRetencion>();
 }

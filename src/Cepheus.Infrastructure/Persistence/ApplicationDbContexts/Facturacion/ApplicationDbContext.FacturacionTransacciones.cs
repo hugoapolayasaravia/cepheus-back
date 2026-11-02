@@ -46,5 +46,11 @@ public partial class ApplicationDbContext
     public DbSet<NotaDebitoVentaDetalle> NotasDebitoVentaDetalle => Set<NotaDebitoVentaDetalle>();
 
     public DbSet<ChequeVenta> ChequesVenta => Set<ChequeVenta>();
+    public DbSet<LetraVenta> LetrasVenta => Set<LetraVenta>();
+    
+    public DbSet<CancelacionVenta> CancelacionesVenta => Set<CancelacionVenta>();
+    public DbSet<CancelacionVentaDetalle> CancelacionesVentaDetalle => Set<CancelacionVentaDetalle>();
+
+    public DbSet<ChequeMixtoDocumento> ChequesMixtosDocumentos => Set<ChequeMixtoDocumento>();
 
 }

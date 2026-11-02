@@ -24,7 +24,9 @@ namespace Cepheus.Application.Features.Contabilidad.Transacciones.AsientosNotaIn
         private static readonly ConceptoAsiento[] ConceptosOpcionales =
         {
             ConceptoAsiento.Igv, ConceptoAsiento.IgvExterior, ConceptoAsiento.Renta,
-            ConceptoAsiento.Fonavi, ConceptoAsiento.NoGravable, ConceptoAsiento.Servicio
+            ConceptoAsiento.Fonavi, ConceptoAsiento.NoGravable, ConceptoAsiento.Servicio,
+            ConceptoAsiento.PagoRecibido, ConceptoAsiento.CobranzaDudosa,
+            ConceptoAsiento.DiferenciaCambioGanancia, ConceptoAsiento.DiferenciaCambioPerdida
         };
 
         public static async Task BuildAsync(
@@ -77,6 +79,7 @@ namespace Cepheus.Application.Features.Contabilidad.Transacciones.AsientosNotaIn
                     OrigenCuentaAsiento.Fija => (tl.AccountCode ?? string.Empty).Trim(),
                     OrigenCuentaAsiento.CuentaPorPagarProveedor => (fuente.CuentaPorPagarCode ?? string.Empty).Trim(),
                     OrigenCuentaAsiento.LineaDocumento => (linea?.CuentaCode ?? string.Empty).Trim(),
+                    OrigenCuentaAsiento.CuentaPago => (fuente.CuentaPagoCode ?? string.Empty).Trim(),
                     _ => string.Empty
                 };
 
@@ -144,7 +147,9 @@ namespace Cepheus.Application.Features.Contabilidad.Transacciones.AsientosNotaIn
                     CuentaContableCode = cuentaCode,
                     AnexoTipoCode = anexoTipo,
                     AnexoCode = anexoCode,
-                    NumeroDocumento = string.IsNullOrWhiteSpace(fuente.NumeroDocumento) ? null : fuente.NumeroDocumento.Trim(),
+                    NumeroDocumento = !string.IsNullOrWhiteSpace(linea?.NumeroDocumento)
+                        ? linea!.NumeroDocumento!.Trim()
+                        : string.IsNullOrWhiteSpace(fuente.NumeroDocumento) ? null : fuente.NumeroDocumento.Trim(),
                     CargoSol = naturaleza == NaturalezaAsiento.Debe ? importe : 0m,
                     AbonoSol = naturaleza == NaturalezaAsiento.Haber ? importe : 0m,
                     TipoContabilidad = tl.AccountingType,
@@ -179,7 +184,11 @@ namespace Cepheus.Application.Features.Contabilidad.Transacciones.AsientosNotaIn
                             importe += fuente.Servicio;
                         }
 
-                        await AddLineAsync(tl, naturaleza, importe, linea);
+                        var naturalezaLinea = linea.InvierteNaturaleza
+                            ? (naturaleza == NaturalezaAsiento.Debe ? NaturalezaAsiento.Haber : NaturalezaAsiento.Debe)
+                            : naturaleza;
+
+                        await AddLineAsync(tl, naturalezaLinea, importe, linea);
                     }
 
                     continue;
@@ -196,6 +205,10 @@ namespace Cepheus.Application.Features.Contabilidad.Transacciones.AsientosNotaIn
                     ConceptoAsiento.Servicio => fuente.Servicio,
                     ConceptoAsiento.MontoNotaIngreso => fuente.MontoNotaIngreso,
                     ConceptoAsiento.NetoNotaIngreso => fuente.NetoNotaIngreso,
+                    ConceptoAsiento.PagoRecibido => fuente.TotalPago,
+                    ConceptoAsiento.CobranzaDudosa => fuente.CobranzaDudosa,
+                    ConceptoAsiento.DiferenciaCambioGanancia => fuente.DiferenciaGanancia,
+                    ConceptoAsiento.DiferenciaCambioPerdida => fuente.DiferenciaPerdida,
                     _ => 0m
                 };
 

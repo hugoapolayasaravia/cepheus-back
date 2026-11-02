@@ -10,6 +10,7 @@ namespace Cepheus.Application.Comun.Interfaces.UnitOfWork
         IRepository<PeriodoContable> PeriodosContables { get; }
         IRepository<PlantillaAsiento> PlantillasAsiento { get; }
         IRepository<PlantillaAsientoLinea> PlantillaAsientoLineas { get; }
+        IRepository<NoAfectoRetencion> NoAfectosRetencion { get; }
 
 
     }

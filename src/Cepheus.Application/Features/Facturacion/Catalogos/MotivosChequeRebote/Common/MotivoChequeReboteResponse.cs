@@ -12,6 +12,8 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.MotivosChequeRebote
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public string? CreatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
         public byte[] RowVersion { get; set; } = default!;
     }
 
@@ -25,6 +27,8 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.MotivosChequeRebote
                 IsActive = t.IsActive,
                 CreatedAt = t.CreatedAt,
                 UpdatedAt = t.UpdatedAt,
+                CreatedBy = t.CreatedBy,
+                UpdatedBy = t.UpdatedBy,
                 RowVersion = t.RowVersion
             };
 

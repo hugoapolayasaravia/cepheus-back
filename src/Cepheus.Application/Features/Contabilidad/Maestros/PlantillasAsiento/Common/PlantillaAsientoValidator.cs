@@ -30,6 +30,11 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
             ConceptoAsiento.TotalDocumento, ConceptoAsiento.DetalleDocumento, ConceptoAsiento.Igv
         };
 
+        private static readonly ConceptoAsiento[] ConceptosCancelacionProveedor =
+        {
+            ConceptoAsiento.PagoDocumento, ConceptoAsiento.PagoRetencion, ConceptoAsiento.PagoTotal
+        };
+
         private static readonly ConceptoAsiento[] ConceptosConsumo =
         {
             ConceptoAsiento.DetalleVale, ConceptoAsiento.TotalVales
@@ -45,7 +50,8 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
             p == ProcesoAsiento.TransferenciaNotaIngreso || p == ProcesoAsiento.TransferenciaOrdenServicio;
 
         private static ConceptoAsiento[] ConceptosPermitidos(ProcesoAsiento p) =>
-            p == ProcesoAsiento.ReversionCajaChica ? ConceptosReversionCajaChica
+            p == ProcesoAsiento.CancelacionProveedor ? ConceptosCancelacionProveedor
+            : p == ProcesoAsiento.ReversionCajaChica ? ConceptosReversionCajaChica
             : EsVenta(p) ? ConceptosProvisionVenta
             : EsProvision(p) ? ConceptosProvision : EsTransferencia(p) ? ConceptosTransferencia : ConceptosConsumo;
 
@@ -272,7 +278,8 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
                     context.AddFailure("Lines", $"{label}: la moneda de la línea solo aplica a la provisión de ventas.");
                 }
 
-                if (line.AnnexSource == OrigenAnexoAsiento.Proveedor && !EsProvision(process))
+                if (line.AnnexSource == OrigenAnexoAsiento.Proveedor && !EsProvision(process)
+                    && process != ProcesoAsiento.CancelacionProveedor)
                 {
                     context.AddFailure("Lines", $"{label}: el anexo del proveedor solo aplica a la provisión de compras o de orden de servicio.");
                 }
@@ -322,6 +329,50 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
                     if (porMoneda.Distinct().Count() != porMoneda.Count)
                     {
                         context.AddFailure("Lines", $"El concepto {concepto} no puede repetirse para la misma moneda.");
+                    }
+                }
+            }
+
+            if (process == ProcesoAsiento.CancelacionProveedor)
+            {
+                foreach (var concepto in ConceptosCancelacionProveedor)
+                {
+                    if (lines.Count(l => l.Concept == concepto) != 1)
+                    {
+                        context.AddFailure("Lines", $"La cancelación a proveedores necesita exactamente una línea de concepto {concepto}.");
+                    }
+                }
+
+                foreach (var line in lines)
+                {
+                    var label = $"Línea {line.Order}";
+
+                    var cuentaEsperada = line.Concept switch
+                    {
+                        ConceptoAsiento.PagoDocumento => OrigenCuentaAsiento.CuentaProvisionDocumento,
+                        ConceptoAsiento.PagoRetencion => OrigenCuentaAsiento.Fija,
+                        ConceptoAsiento.PagoTotal => OrigenCuentaAsiento.CuentaBancariaPago,
+                        _ => line.AccountSource
+                    };
+
+                    if (line.AccountSource != cuentaEsperada)
+                    {
+                        context.AddFailure("Lines", $"{label}: el concepto {line.Concept} usa el origen de cuenta {cuentaEsperada}.");
+                    }
+
+                    if (line.AnnexSource == OrigenAnexoAsiento.AnexoProvisionDocumento && line.Concept != ConceptoAsiento.PagoDocumento)
+                    {
+                        context.AddFailure("Lines", $"{label}: el anexo de la provisión solo aplica al concepto PagoDocumento.");
+                    }
+
+                    if (line.Concept == ConceptoAsiento.PagoDocumento && line.AnnexSource != OrigenAnexoAsiento.AnexoProvisionDocumento)
+                    {
+                        context.AddFailure("Lines", $"{label}: PagoDocumento toma el anexo de la línea de provisión del documento.");
+                    }
+
+                    if (line.InvertsOnCreditNote && line.Concept != ConceptoAsiento.PagoDocumento)
+                    {
+                        context.AddFailure("Lines", $"{label}: solo PagoDocumento cambia de naturaleza en nota de crédito.");
                     }
                 }
             }

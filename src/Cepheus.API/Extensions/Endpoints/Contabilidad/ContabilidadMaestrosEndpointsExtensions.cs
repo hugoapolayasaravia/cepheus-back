@@ -12,6 +12,7 @@ public static class ContabilidadMaestrosEndpointsExtensions
         app.MapCuentasBancariasEndpoints();
         app.MapPeriodosContablesEndpoints();
         app.MapPlantillasAsientoEndpoints();
+        app.MapNoAfectosRetencionEndpoints();
 
         return app;
     }

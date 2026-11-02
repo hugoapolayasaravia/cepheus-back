@@ -16,4 +16,6 @@ public partial class ApplicationDbContext
     public DbSet<DetraccionItem> DetraccionItems => Set<DetraccionItem>();
     public DbSet<DetraccionDocumento> DetraccionDocumentos => Set<DetraccionDocumento>();
 
+    public DbSet<PagoProveedor> PagosProveedor => Set<PagoProveedor>();
+    public DbSet<PagoProveedorDetalle> PagoProveedorDetalles => Set<PagoProveedorDetalle>();
 }

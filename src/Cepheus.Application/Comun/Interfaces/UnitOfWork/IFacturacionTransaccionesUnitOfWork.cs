@@ -44,5 +44,10 @@ namespace Cepheus.Application.Comun.Interfaces.UnitOfWork
         IRepository<NotaDebitoVenta> NotasDebitoVenta { get; }
         IRepository<NotaDebitoVentaDetalle> NotasDebitoVentaDetalle { get; }
         IRepository<ChequeVenta> ChequesVenta { get; }
+        IRepository<LetraVenta> LetrasVenta { get; }
+        IRepository<ClienteResponsableLetra> ClientesResponsablesLetra { get; }
+        IRepository<CancelacionVenta> CancelacionesVenta { get; }
+        IRepository<CancelacionVentaDetalle> CancelacionesVentaDetalle { get; }
+        IRepository<ChequeMixtoDocumento> ChequesMixtosDocumentos { get; }
     }
 }

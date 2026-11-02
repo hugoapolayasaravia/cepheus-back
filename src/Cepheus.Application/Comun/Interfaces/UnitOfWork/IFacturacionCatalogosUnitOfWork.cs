@@ -19,18 +19,15 @@ namespace Cepheus.Application.Comun.Interfaces.UnitOfWork
         IRepository<UnidadMedidaVenta> UnidadesMedidaVenta { get; }
         IRepository<ListaPrecio> ListasPrecio { get; }
         IRepository<StockProducto> StockProductos { get; }
-
         IRepository<Flete> Fletes { get; }
         IRepository<AlturaLosa> AlturasLosa { get; }
         IRepository<PrecioProducto> PreciosProducto { get; }
         IRepository<NotaCotizacionPlantilla> NotasCotizacionPlantilla { get; }
         IRepository<ResponsableObra> ResponsablesObra { get; }
-
         IRepository<TipoHojaCorte> TiposHojaCorte { get; }
         IRepository<MotivoSolicitudNotaCredito> MotivosSolicitudNotaCredito { get; }
-
         IRepository<ElementoConcreto> ElementosConcreto { get; }
-
         IRepository<MotivoChequeRebote> MotivosChequeRebote { get; }
+        IRepository<TipoPago> TiposPago { get; }
     }
 }

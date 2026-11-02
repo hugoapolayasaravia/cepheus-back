@@ -104,5 +104,19 @@ namespace Cepheus.Infrastructure.Persistence.UnitOfWorks
         private IRepository<ChequeVenta>? _chequesVenta;
         public IRepository<ChequeVenta> ChequesVenta => _chequesVenta ??= new Repository<ChequeVenta>(_context);
 
+        private IRepository<LetraVenta>? _letrasVenta;
+        public IRepository<LetraVenta> LetrasVenta => _letrasVenta ??= new Repository<LetraVenta>(_context);
+        
+        private IRepository<ClienteResponsableLetra>? _clientesResponsablesLetra;
+        public IRepository<ClienteResponsableLetra> ClientesResponsablesLetra => _clientesResponsablesLetra ??= new Repository<ClienteResponsableLetra>(_context);
+
+        private IRepository<CancelacionVenta>? _cancelacionesVenta;
+        public IRepository<CancelacionVenta> CancelacionesVenta => _cancelacionesVenta ??= new Repository<CancelacionVenta>(_context);
+
+        private IRepository<CancelacionVentaDetalle>? _cancelacionesVentaDetalle;
+        public IRepository<CancelacionVentaDetalle> CancelacionesVentaDetalle => _cancelacionesVentaDetalle ??= new Repository<CancelacionVentaDetalle>(_context);
+
+        private IRepository<ChequeMixtoDocumento>? _chequesMixtosDocumentos;
+        public IRepository<ChequeMixtoDocumento> ChequesMixtosDocumentos => _chequesMixtosDocumentos ??= new Repository<ChequeMixtoDocumento>(_context);
     }
 }

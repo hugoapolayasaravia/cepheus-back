@@ -12,7 +12,7 @@ namespace Cepheus.Application.Features.Contabilidad.Transacciones.AsientosContab
     ///   - No se anula el tipo 04 (apertura).
     ///   - El período contable debe existir y estar Abierto.
     ///   - Se elimina el detalle, el asiento queda Anulado con totales en cero.
-    ///   - Se libera la referencia al asiento en la Nota de Ingreso, la Orden de Servicio (con su salida y las
+    ///   - Se libera la referencia al asiento en el Pago a Proveedor, la Nota de Ingreso, la Orden de Servicio (con su salida y las
     ///     líneas de la salida), el Vale (con sus líneas) y el Documento de Compra que lo tuvieran.
     /// </summary>
     public static class AsientoAnulacionService
@@ -106,6 +106,16 @@ namespace Cepheus.Application.Features.Contabilidad.Transacciones.AsientosContab
                 {
                     c.ReversionAsientoCode = null;
                 }
+            }
+
+            foreach (var p in await uow.Contabilidad.Transacciones.PagosProveedor.Query()
+                         .Where(p => p.AsientoCancelacionCode == codigo)
+                         .ToListAsync(cancellationToken))
+            {
+                // Legacy (ue_set_btn_eli_bor): al anular el asiento el pago queda sin asiento y sin
+                // comprobante de caja-bancos impreso.
+                p.AsientoCancelacionCode = null;
+                p.ComprobanteCajaBancosImpreso = false;
             }
 
             foreach (var d in await uow.Contabilidad.Transacciones.DocumentosCompra.Query()

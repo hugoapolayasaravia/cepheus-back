@@ -7,5 +7,6 @@ namespace Cepheus.Application.Comun.Interfaces.UnitOfWork
         IRepository<TipoAnexo> TiposAnexo { get; }
         IRepository<TipoCuentaContable> TiposCuentaContable { get; }
         IRepository<TipoAsiento> TiposAsiento { get; }
+        IRepository<FormaPagoCancelacion> FormasPagoCancelacion { get; }
     }
 }

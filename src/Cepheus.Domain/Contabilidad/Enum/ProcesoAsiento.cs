@@ -39,6 +39,22 @@
         /// Debe: cuenta del cliente (TotalDocumento). Haber: cuenta del producto de cada línea (DetalleDocumento)
         /// e IGV (Igv). En nota de crédito las líneas invierten su naturaleza (InvertsOnCreditNote).
         /// </summary>
-        ProvisionVenta = 8
+        ProvisionVenta = 8,
+        /// <summary>
+        /// Cancelación de documentos de compra con un Pago a Proveedor (legacy: fc_genasicanprv, asiento tipo 01).
+        /// Debe: cuenta por pagar del documento (PagoDocumento; Haber en nota de crédito). Haber: retención del
+        /// IGV (PagoRetencion) y total a pagar en la cuenta del banco (PagoTotal).
+        /// </summary>
+        CancelacionProveedor = 9,
+        /// <summary>
+        /// Cancelación de documentos de venta (cobranza): reversa la cuenta por cobrar de cada documento cancelado y
+        /// registra el ingreso a caja o banco, la cobranza dudosa y la diferencia de cambio
+        /// (legacy: fc_genasicancelacion, asiento tipo 07). Líneas: DetalleDocumento (cuenta y anexo de la línea de
+        /// provisión de cada documento; las notas de crédito van a la naturaleza contraria), PagoRecibido (caja/banco
+        /// según el tipo de pago), CobranzaDudosa (una línea al Debe y otra al Haber) y DiferenciaCambioGanancia /
+        /// DiferenciaCambioPerdida.
+        /// </summary>
+        CancelacionVenta = 10
+
     }
 }

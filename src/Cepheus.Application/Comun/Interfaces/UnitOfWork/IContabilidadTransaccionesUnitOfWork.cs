@@ -15,5 +15,8 @@ namespace Cepheus.Application.Comun.Interfaces.UnitOfWork
         IRepository<Detraccion> Detracciones { get; }
         IRepository<DetraccionItem> DetraccionItems { get; }
         IRepository<DetraccionDocumento> DetraccionDocumentos { get; }
+
+        IRepository<PagoProveedor> PagosProveedor { get; }
+        IRepository<PagoProveedorDetalle> PagoProveedorDetalles { get; }
     }
 }

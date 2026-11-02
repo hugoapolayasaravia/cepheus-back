@@ -29,6 +29,17 @@
         public decimal MontoNotaIngreso { get; init; }
         public decimal NetoNotaIngreso { get; init; }
 
+        /// <summary>Cuenta de caja o banco del pago (solo cancelación de ventas).</summary>
+        public string? CuentaPagoCode { get; init; }
+        /// <summary>Total recibido en soles (solo cancelación de ventas).</summary>
+        public decimal TotalPago { get; init; }
+        /// <summary>Importe cobrado de documentos en cobranza dudosa, en soles (solo cancelación de ventas).</summary>
+        public decimal CobranzaDudosa { get; init; }
+        /// <summary>Diferencia de cambio a favor, en soles (solo cancelación de ventas).</summary>
+        public decimal DiferenciaGanancia { get; init; }
+        /// <summary>Diferencia de cambio en contra, en soles (solo cancelación de ventas).</summary>
+        public decimal DiferenciaPerdida { get; init; }
+
         public List<AsientoFuenteLinea> Lineas { get; init; } = new();
     }
 
@@ -40,5 +51,11 @@
         public string? AnexoTipoCode { get; init; }
         public string? AnexoCode { get; init; }
         public decimal Parcial { get; init; }
+
+        /// <summary>Número del documento de la línea; si se informa reemplaza al de la fuente (cancelación: documento cancelado).</summary>
+        public string? NumeroDocumento { get; init; }
+
+        /// <summary>La línea toma la naturaleza contraria a la de la plantilla (cancelación: nota de crédito).</summary>
+        public bool InvierteNaturaleza { get; init; }
     }
 }

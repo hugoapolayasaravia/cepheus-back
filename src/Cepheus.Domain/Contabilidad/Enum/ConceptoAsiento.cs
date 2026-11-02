@@ -33,6 +33,24 @@
         DetalleVale = 11,
 
         /// <summary>Suma de los importes de las líneas de vale (se asienta una sola vez). Solo ConsumoVales.</summary>
-        TotalVales = 12
+        TotalVales = 12,
+        /// <summary>Una línea del asiento por cada documento del pago (importe = pago del documento, en positivo). Solo CancelacionProveedor.</summary>
+        PagoDocumento = 13,
+        /// <summary>Retención del IGV del pago (solo si es mayor a 0). Solo CancelacionProveedor.</summary>
+        PagoRetencion = 14,
+        /// <summary>Total a pagar del pago (pago menos retención), en la cuenta del banco. Solo CancelacionProveedor.</summary>
+        PagoTotal = 15,
+        /// <summary>Total recibido en la cancelación, en soles (caja, banco o letras). Solo CancelacionVenta; el canje no lo genera.</summary>
+        PagoRecibido = 16,
+        /// <summary>Importe cobrado de documentos en cobranza dudosa. Solo CancelacionVenta; se genera solo si es mayor a 0.</summary>
+        CobranzaDudosa = 17,
+        /// <summary>Diferencia de cambio a favor (lo que falta al Haber para cuadrar). Solo CancelacionVenta; solo si es mayor a 0.</summary>
+        DiferenciaCambioGanancia = 18,
+        /// <summary>Diferencia de cambio en contra (lo que falta al Debe para cuadrar). Solo CancelacionVenta; solo si es mayor a 0.</summary>
+        DiferenciaCambioPerdida = 19
+
+
+
+
     }
 }

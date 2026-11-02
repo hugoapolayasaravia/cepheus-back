@@ -14,6 +14,7 @@ public static class ContabilidadTransaccionesEndpointsExtensions
         app.MapAsientosConsumoEndpoints();
         app.MapCajasChicaEndpoints();
         app.MapDetraccionesEndpoints();
+        app.MapPagosProveedorEndpoints();
 
         return app;
     }

@@ -1,4 +1,5 @@
 ﻿using Cepheus.Domain.Facturacion.Catalogos;
+using Cepheus.Domain.Facturacion.Maestros;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cepheus.Infrastructure.Persistence.ApplicationDbContexts;
@@ -25,13 +26,11 @@ public partial class ApplicationDbContext
     public DbSet<AlturaLosa> AlturasLosa => Set<AlturaLosa>();
     public DbSet<PrecioProducto> PreciosProducto => Set<PrecioProducto>();
     public DbSet<NotaCotizacionPlantilla> NotasCotizacionPlantilla => Set<NotaCotizacionPlantilla>();
-
     public DbSet<ResponsableObra> ResponsablesObra => Set<ResponsableObra>();
-
     public DbSet<TipoHojaCorte> TiposHojaCorte => Set<TipoHojaCorte>();
     public DbSet<MotivoSolicitudNotaCredito> MotivosSolicitudNotaCredito => Set<MotivoSolicitudNotaCredito>();
-
     public DbSet<ElementoConcreto> ElementosConcreto => Set<ElementoConcreto>();
-
     public DbSet<MotivoChequeRebote> MotivosChequeRebote => Set<MotivoChequeRebote>();
+    public DbSet<TipoPago> TiposPago => Set<TipoPago>();
+    public DbSet<ClienteResponsableLetra> ClientesResponsablesLetra => Set<ClienteResponsableLetra>();
 }

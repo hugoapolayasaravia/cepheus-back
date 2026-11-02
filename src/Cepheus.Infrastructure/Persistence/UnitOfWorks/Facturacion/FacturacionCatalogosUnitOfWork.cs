@@ -85,5 +85,9 @@ namespace Cepheus.Infrastructure.Persistence.UnitOfWorks.Facturacion
 
         private IRepository<MotivoChequeRebote>? _motivosChequeRebote;
         public IRepository<MotivoChequeRebote> MotivosChequeRebote => _motivosChequeRebote ??= new Repository<MotivoChequeRebote>(_context);
+
+        private IRepository<TipoPago>? _tiposPago;
+        public IRepository<TipoPago> TiposPago => _tiposPago ??= new Repository<TipoPago>(_context);
+
     }
 }

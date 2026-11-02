@@ -23,6 +23,8 @@
         /// El cliente del documento de venta, solo si la cuenta de la línea exige tipo de anexo
         /// (legacy: "if len(trim(tipo_anexo)) = 3 then anexo = cliente"). Solo ProvisionVenta.
         /// </summary>
-        Cliente = 5
+        Cliente = 5,
+        /// <summary>El tipo y código de anexo de la línea del asiento de provisión del documento cancelado (solo PagoDocumento).</summary>
+        AnexoProvisionDocumento = 6
     }
 }

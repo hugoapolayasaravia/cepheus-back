@@ -96,6 +96,9 @@ namespace Cepheus.Domain.Facturacion.Transacciones
         public string? ProvisionEntryNumber { get; set; }
         public string? CancellationEntryNumber { get; set; }
         public DateTime? CanceledAt { get; set; }
+
+        /// <summary>Fecha en que quedó aplicada por completo (legacy FecCancelacion_cve).</summary>
+        public DateTime? SettledAt { get; set; }
         public string? CancelReason { get; set; }
 
         public string Type { get; set; } = "N";

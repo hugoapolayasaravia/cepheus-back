@@ -25,5 +25,8 @@ namespace Cepheus.Infrastructure.Persistence.UnitOfWorks.Contabilidad
         private IRepository<TipoAsiento>? _tiposAsiento;
         public IRepository<TipoAsiento> TiposAsiento => _tiposAsiento ??= new Repository<TipoAsiento>(_context);
 
+        private IRepository<FormaPagoCancelacion>? _formasPagoCancelacion;
+        public IRepository<FormaPagoCancelacion> FormasPagoCancelacion => _formasPagoCancelacion ??= new Repository<FormaPagoCancelacion>(_context);
+
     }
 }

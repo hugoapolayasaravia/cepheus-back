@@ -76,6 +76,9 @@ namespace Cepheus.Domain.Facturacion.Transacciones
         public decimal TotalAmount { get; set; }
         public decimal TotalSoles { get; set; }
 
+        /// <summary>Saldo por cobrar en la moneda del comprobante (legacy PendienteSol/Dol_fve). Lo mueve Cancelaciones.</summary>
+        public decimal PendingAmount { get; set; }
+
         public EstadoComprobanteVenta Status { get; set; } = EstadoComprobanteVenta.Pendiente;
 
         public bool IsPrinted { get; set; }
@@ -87,6 +90,9 @@ namespace Cepheus.Domain.Facturacion.Transacciones
         public string? CashDocument { get; set; }
 
         public DateTime? CanceledAt { get; set; }
+
+        /// <summary>Fecha en que quedó cobrado por completo (legacy FecCancelacion_fve).</summary>
+        public DateTime? SettledAt { get; set; }
         public string? CanceledBy { get; set; }
         public string? CancelReason { get; set; }
         public string? ReplacedByNumber { get; set; }

@@ -43,5 +43,12 @@ namespace Cepheus.Infrastructure.Persistence.UnitOfWorks.Contabilidad
         private IRepository<DetraccionDocumento>? _detraccionDocumentos;
         public IRepository<DetraccionDocumento> DetraccionDocumentos => _detraccionDocumentos ??= new Repository<DetraccionDocumento>(_context);
 
+        private IRepository<PagoProveedor>? _pagosProveedor;
+        public IRepository<PagoProveedor> PagosProveedor => _pagosProveedor ??= new Repository<PagoProveedor>(_context);
+
+        private IRepository<PagoProveedorDetalle>? _pagoProveedorDetalles;
+        public IRepository<PagoProveedorDetalle> PagoProveedorDetalles => _pagoProveedorDetalles ??= new Repository<PagoProveedorDetalle>(_context);
+
+
     }
 }

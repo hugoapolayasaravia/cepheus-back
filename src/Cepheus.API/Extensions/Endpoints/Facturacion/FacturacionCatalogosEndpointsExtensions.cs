@@ -31,6 +31,7 @@ public static class FacturacionCatalogosEndpointsExtensions
         app.MapMotivosSolicitudNotaCreditoEndpoints();
         app.MapElementosConcretoEndpoints();
         app.MapMotivosChequeReboteEndpoints();
+        app.MapTiposPagoEndpoints();
         return app;
     }
 }

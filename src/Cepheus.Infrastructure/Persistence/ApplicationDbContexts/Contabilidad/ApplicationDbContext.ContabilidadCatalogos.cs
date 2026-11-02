@@ -11,5 +11,6 @@ public partial class ApplicationDbContext
     public DbSet<TipoAnexo> TiposAnexo => Set<TipoAnexo>();
     public DbSet<TipoCuentaContable> TiposCuentaContable => Set<TipoCuentaContable>();
     public DbSet<TipoAsiento> TiposAsiento => Set<TipoAsiento>();
+    public DbSet<FormaPagoCancelacion> FormasPagoCancelacion => Set<FormaPagoCancelacion>();
 
 }
