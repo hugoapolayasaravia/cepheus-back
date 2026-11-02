@@ -9,8 +9,7 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.PreciosProducto.Upd
             RuleFor(x => x.FleteCode).NotEmpty().Length(2);
             RuleFor(x => x.ProductoTipoCode).NotEmpty().MaximumLength(2);
             RuleFor(x => x.ProductoCode).NotEmpty().MaximumLength(4);
-            RuleFor(x => x.CurrencyTypeCode).NotEmpty().Length(1);
-            RuleFor(x => x.CurrencyCode).NotEmpty().Length(1);
+            RuleFor(x => x.CurrencyCode).NotEmpty().Length(3);
 
             RuleFor(x => x.Amount).GreaterThanOrEqualTo(0);
             RuleFor(x => x.TransportAmount).GreaterThanOrEqualTo(0);

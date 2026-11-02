@@ -23,7 +23,6 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.PreciosProducto.Upd
                     p.FleteCode == request.FleteCode &&
                     p.ProductoTipoCode == request.ProductoTipoCode &&
                     p.ProductoCode == request.ProductoCode &&
-                    p.CurrencyTypeCode == request.CurrencyTypeCode &&
                     p.CurrencyCode == request.CurrencyCode, cancellationToken);
 
             if (current is null)
@@ -36,7 +35,6 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.PreciosProducto.Upd
                 FleteCode = request.FleteCode,
                 ProductoTipoCode = request.ProductoTipoCode,
                 ProductoCode = request.ProductoCode,
-                CurrencyTypeCode = request.CurrencyTypeCode,
                 CurrencyCode = request.CurrencyCode,
                 Amount = request.Amount,
                 TransportAmount = request.TransportAmount,
@@ -65,7 +63,6 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.PreciosProducto.Upd
                 FleteCode = precioProducto.FleteCode,
                 ProductoTipoCode = precioProducto.ProductoTipoCode,
                 ProductoCode = precioProducto.ProductoCode,
-                CurrencyTypeCode = precioProducto.CurrencyTypeCode,
                 CurrencyCode = precioProducto.CurrencyCode,
                 Amount = precioProducto.Amount,
                 TransportAmount = precioProducto.TransportAmount,

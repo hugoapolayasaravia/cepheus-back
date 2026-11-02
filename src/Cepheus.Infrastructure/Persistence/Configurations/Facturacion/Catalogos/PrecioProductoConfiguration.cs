@@ -15,15 +15,13 @@ namespace Cepheus.Infrastructure.Persistence.Configurations.Facturacion.Catalogo
                 x.FleteCode,
                 x.ProductoTipoCode,
                 x.ProductoCode,
-                x.CurrencyTypeCode,
                 x.CurrencyCode
             });
 
             builder.Property(x => x.FleteCode).IsRequired().HasColumnType("char(2)");
             builder.Property(x => x.ProductoTipoCode).IsRequired().HasColumnType("char(2)");
             builder.Property(x => x.ProductoCode).IsRequired().HasColumnType("char(4)");
-            builder.Property(x => x.CurrencyTypeCode).IsRequired().HasColumnType("char(1)");
-            builder.Property(x => x.CurrencyCode).IsRequired().HasColumnType("char(1)").HasDefaultValue("S");
+            builder.Property(x => x.CurrencyCode).IsRequired().HasMaxLength(3);
 
             builder.Property(x => x.Amount).IsRequired().HasColumnType("decimal(18,4)").HasDefaultValue(0m);
             builder.Property(x => x.TransportAmount).IsRequired().HasColumnType("decimal(18,4)").HasDefaultValue(0m);
@@ -46,7 +44,13 @@ namespace Cepheus.Infrastructure.Persistence.Configurations.Facturacion.Catalogo
                 .HasPrincipalKey(p => new { p.TipoProductoCode, p.Code })
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(x => x.Moneda)
+                .WithMany()
+                .HasForeignKey(x => x.CurrencyCode)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasIndex(x => new { x.ProductoTipoCode, x.ProductoCode });
+            builder.HasIndex(x => x.CurrencyCode);
         }
     }
 }

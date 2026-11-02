@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Logistica.Maestros.Vehiculos.GetVehiculoByCod
 using Cepheus.Application.Features.Logistica.Maestros.Vehiculos.GetVehiculosPaginated;
 using Cepheus.Application.Features.Logistica.Maestros.Vehiculos.ToggleVehiculoStatus;
 using Cepheus.Application.Features.Logistica.Maestros.Vehiculos.UpdateVehiculo;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Logistica.Maestros.Vehiculos.ExportVehiculos;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Logistica.Maestros
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Logistica.Maestros
             })
             .WithName("GetVehiculosPagedBody")
             .RequireAuthorization("VEHICULOS.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportVehiculosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportVehiculosExcel")
+            .RequireAuthorization("VEHICULOS.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportVehiculosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportVehiculosPdf")
+            .RequireAuthorization("VEHICULOS.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

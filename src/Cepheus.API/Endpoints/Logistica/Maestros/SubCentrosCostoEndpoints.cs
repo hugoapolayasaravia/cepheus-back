@@ -3,6 +3,8 @@ using Cepheus.Application.Features.Logistica.Maestros.SubCentrosCosto.GetSubCent
 using Cepheus.Application.Features.Logistica.Maestros.SubCentrosCosto.GetSubCentrosCostoPaginated;
 using Cepheus.Application.Features.Logistica.Maestros.SubCentrosCosto.ToggleSubCentroCostoStatus;
 using Cepheus.Application.Features.Logistica.Maestros.SubCentrosCosto.UpdateSubCentroCosto;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Logistica.Maestros.SubCentrosCosto.ExportSubCentrosCosto;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Logistica.Maestros
@@ -42,6 +44,30 @@ namespace Cepheus.API.Endpoints.Logistica.Maestros
             })
             .WithName("GetSubCentrosCostoPagedBody")
             .RequireAuthorization("SUBCENTROSCOSTO.VIEW");
+
+            // GET export/excel  (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportSubCentrosCostoQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportSubCentrosCostoExcel")
+            .RequireAuthorization("SUBCENTROSCOSTO.EXPORT_EXCEL");
+
+            // GET export/pdf
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportSubCentrosCostoQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportSubCentrosCostoPdf")
+            .RequireAuthorization("SUBCENTROSCOSTO.EXPORT_PDF");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {

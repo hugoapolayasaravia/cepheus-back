@@ -20,7 +20,6 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.PreciosProducto.Del
                     p.FleteCode == request.FleteCode &&
                     p.ProductoTipoCode == request.ProductoTipoCode &&
                     p.ProductoCode == request.ProductoCode &&
-                    p.CurrencyTypeCode == request.CurrencyTypeCode &&
                     p.CurrencyCode == request.CurrencyCode, cancellationToken);
 
             if (precioProducto is null)

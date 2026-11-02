@@ -6,7 +6,6 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.PreciosProducto.Del
         string FleteCode,
         string ProductoTipoCode,
         string ProductoCode,
-        string CurrencyTypeCode,
         string CurrencyCode
     ) : IRequest;
 }

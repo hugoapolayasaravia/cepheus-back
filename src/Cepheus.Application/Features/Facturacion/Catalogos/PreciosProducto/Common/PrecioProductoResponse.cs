@@ -5,8 +5,8 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.PreciosProducto.Com
         public string FleteCode { get; set; } = default!;
         public string ProductoTipoCode { get; set; } = default!;
         public string ProductoCode { get; set; } = default!;
-        public string CurrencyTypeCode { get; set; } = default!;
         public string CurrencyCode { get; set; } = default!;
+        public string? CurrencyName { get; set; }
         public decimal Amount { get; set; }
         public decimal TransportAmount { get; set; }
         public decimal FreightAmount { get; set; }

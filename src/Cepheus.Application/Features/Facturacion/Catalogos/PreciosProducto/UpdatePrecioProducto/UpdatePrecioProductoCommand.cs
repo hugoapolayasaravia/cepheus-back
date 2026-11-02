@@ -12,7 +12,6 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.PreciosProducto.Upd
         string FleteCode,
         string ProductoTipoCode,
         string ProductoCode,
-        string CurrencyTypeCode,
         string CurrencyCode,
         decimal Amount,
         decimal TransportAmount,

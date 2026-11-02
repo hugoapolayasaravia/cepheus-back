@@ -160,9 +160,9 @@ using (var scope = app.Services.CreateScope())
     var dbContext =
         scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-    await AdministracionSeeder.SeedAsync(dbContext);
-    await ComunesSeeder.SeedAsync(dbContext);
-    await LogisticaSeeder.SeedAsync(dbContext);
+    //await AdministracionSeeder.SeedAsync(dbContext);
+    //await ComunesSeeder.SeedAsync(dbContext);
+    //await LogisticaSeeder.SeedAsync(dbContext);
 }
 
 app.UseExceptionHandling();

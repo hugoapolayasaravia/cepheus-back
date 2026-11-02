@@ -21,7 +21,7 @@ namespace Cepheus.API.Endpoints.Facturacion.Catalogos
             {
                 var result = await sender.Send(command);
                 return Results.Created(
-                    $"/api/facturacion/catalogos/precios-producto/{result.FleteCode}/{result.ProductoTipoCode}/{result.ProductoCode}/{result.CurrencyTypeCode}/{result.CurrencyCode}",
+                    $"/api/facturacion/catalogos/precios-producto/{result.FleteCode}/{result.ProductoTipoCode}/{result.ProductoCode}/{result.CurrencyCode}",
                     result);
             })
             .WithName("CreatePrecioProducto")
@@ -71,23 +71,22 @@ namespace Cepheus.API.Endpoints.Facturacion.Catalogos
             .WithName("ExportPreciosProductoPdf")
             .RequireAuthorization("PRECIOSPRODUCTO.EXPORT_PDF");
 
-            group.MapGet("/{fleteCode}/{tipoCode}/{productoCode}/{monedaTipo}/{monedaCodigo}", async (
-                string fleteCode, string tipoCode, string productoCode, string monedaTipo, string monedaCodigo,
+            group.MapGet("/{fleteCode}/{tipoCode}/{productoCode}/{monedaCode}", async (
+                string fleteCode, string tipoCode, string productoCode, string monedaCode,
                 ISender sender) =>
             {
-                var result = await sender.Send(new GetPrecioProductoQuery(fleteCode, tipoCode, productoCode, monedaTipo, monedaCodigo));
+                var result = await sender.Send(new GetPrecioProductoQuery(fleteCode, tipoCode, productoCode, monedaCode));
                 return Results.Ok(result);
             })
             .WithName("GetPrecioProducto")
             .RequireAuthorization("PRECIOSPRODUCTO.VIEW");
 
-            group.MapPut("/{fleteCode}/{tipoCode}/{productoCode}/{monedaTipo}/{monedaCodigo}", async (
-                string fleteCode, string tipoCode, string productoCode, string monedaTipo, string monedaCodigo,
+            group.MapPut("/{fleteCode}/{tipoCode}/{productoCode}/{monedaCode}", async (
+                string fleteCode, string tipoCode, string productoCode, string monedaCode,
                 UpdatePrecioProductoCommand command, ISender sender) =>
             {
                 if (fleteCode != command.FleteCode || tipoCode != command.ProductoTipoCode ||
-                    productoCode != command.ProductoCode || monedaTipo != command.CurrencyTypeCode ||
-                    monedaCodigo != command.CurrencyCode)
+                    productoCode != command.ProductoCode || monedaCode != command.CurrencyCode)
                 {
                     return Results.BadRequest("La clave de la ruta no coincide con el cuerpo.");
                 }
@@ -98,11 +97,11 @@ namespace Cepheus.API.Endpoints.Facturacion.Catalogos
             .WithName("UpdatePrecioProducto")
             .RequireAuthorization("PRECIOSPRODUCTO.UPDATE");
 
-            group.MapDelete("/{fleteCode}/{tipoCode}/{productoCode}/{monedaTipo}/{monedaCodigo}", async (
-                string fleteCode, string tipoCode, string productoCode, string monedaTipo, string monedaCodigo,
+            group.MapDelete("/{fleteCode}/{tipoCode}/{productoCode}/{monedaCode}", async (
+                string fleteCode, string tipoCode, string productoCode, string monedaCode,
                 ISender sender) =>
             {
-                await sender.Send(new DeletePrecioProductoCommand(fleteCode, tipoCode, productoCode, monedaTipo, monedaCodigo));
+                await sender.Send(new DeletePrecioProductoCommand(fleteCode, tipoCode, productoCode, monedaCode));
                 return Results.NoContent();
             })
             .WithName("DeletePrecioProducto")

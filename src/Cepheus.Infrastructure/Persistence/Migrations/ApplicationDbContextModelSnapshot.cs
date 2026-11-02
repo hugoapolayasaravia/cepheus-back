@@ -3259,13 +3259,9 @@ namespace Cepheus.Infrastructure.Persistence.Migrations
                     b.Property<string>("ProductoCode")
                         .HasColumnType("char(4)");
 
-                    b.Property<string>("CurrencyTypeCode")
-                        .HasColumnType("char(1)");
-
                     b.Property<string>("CurrencyCode")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(1)")
-                        .HasDefaultValue("S");
+                        .HasMaxLength(3)
+                        .HasColumnType("char(3)");
 
                     b.Property<decimal>("Amount")
                         .ValueGeneratedOnAdd()
@@ -3302,7 +3298,9 @@ namespace Cepheus.Infrastructure.Persistence.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.HasKey("FleteCode", "ProductoTipoCode", "ProductoCode", "CurrencyTypeCode", "CurrencyCode");
+                    b.HasKey("FleteCode", "ProductoTipoCode", "ProductoCode", "CurrencyCode");
+
+                    b.HasIndex("CurrencyCode");
 
                     b.HasIndex("ProductoTipoCode", "ProductoCode");
 
@@ -17566,6 +17564,12 @@ namespace Cepheus.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Cepheus.Domain.Facturacion.Catalogos.PrecioProducto", b =>
                 {
+                    b.HasOne("Cepheus.Domain.Comunes.Moneda", "Moneda")
+                        .WithMany()
+                        .HasForeignKey("CurrencyCode")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Cepheus.Domain.Facturacion.Catalogos.Flete", "Flete")
                         .WithMany()
                         .HasForeignKey("FleteCode")
@@ -17579,6 +17583,8 @@ namespace Cepheus.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Flete");
+
+                    b.Navigation("Moneda");
 
                     b.Navigation("Producto");
                 });

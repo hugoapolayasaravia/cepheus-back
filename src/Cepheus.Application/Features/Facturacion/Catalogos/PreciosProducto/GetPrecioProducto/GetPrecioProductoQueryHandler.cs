@@ -22,15 +22,14 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.PreciosProducto.Get
                     p.FleteCode == request.FleteCode &&
                     p.ProductoTipoCode == request.ProductoTipoCode &&
                     p.ProductoCode == request.ProductoCode &&
-                    p.CurrencyTypeCode == request.CurrencyTypeCode &&
                     p.CurrencyCode == request.CurrencyCode)
                 .Select(p => new PrecioProductoResponse
                 {
                     FleteCode = p.FleteCode,
                     ProductoTipoCode = p.ProductoTipoCode,
                     ProductoCode = p.ProductoCode,
-                    CurrencyTypeCode = p.CurrencyTypeCode,
                     CurrencyCode = p.CurrencyCode,
+                    CurrencyName = p.Moneda.Name,
                     Amount = p.Amount,
                     TransportAmount = p.TransportAmount,
                     FreightAmount = p.FreightAmount,

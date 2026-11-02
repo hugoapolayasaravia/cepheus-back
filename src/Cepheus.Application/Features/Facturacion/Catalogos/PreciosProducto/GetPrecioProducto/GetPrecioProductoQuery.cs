@@ -7,7 +7,6 @@ namespace Cepheus.Application.Features.Facturacion.Catalogos.PreciosProducto.Get
         string FleteCode,
         string ProductoTipoCode,
         string ProductoCode,
-        string CurrencyTypeCode,
         string CurrencyCode
     ) : IRequest<PrecioProductoResponse>;
 }
