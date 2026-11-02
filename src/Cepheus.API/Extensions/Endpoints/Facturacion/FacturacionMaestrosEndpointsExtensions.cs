@@ -21,6 +21,7 @@ public static class FacturacionMaestrosEndpointsExtensions
 
         app.MapTecnicosEndpoints();
         app.MapUsuariosSolicitudNotaCreditoEndpoints();
+        app.MapClientesResponsablesLetraEndpoints();
 
         return app;
     }

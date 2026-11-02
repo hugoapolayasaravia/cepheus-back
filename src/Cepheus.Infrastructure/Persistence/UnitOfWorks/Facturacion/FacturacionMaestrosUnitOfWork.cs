@@ -51,7 +51,7 @@ namespace Cepheus.Infrastructure.Persistence.UnitOfWorks.Facturacion
         private IRepository<UsuarioSolicitudNotaCredito>? _usuariosSolicitudNotaCredito;
         public IRepository<UsuarioSolicitudNotaCredito> UsuariosSolicitudNotaCredito => _usuariosSolicitudNotaCredito ??= new Repository<UsuarioSolicitudNotaCredito>(_context);
 
-        private IRepository<ClienteResponsableLetra>? _clienteResponsableLetra;
-        public IRepository<ClienteResponsableLetra> ClientesResponsablesLetra => _clienteResponsableLetra ??= new Repository<ClienteResponsableLetra>(_context);
+        private IRepository<ClienteResponsableLetra>? _clientesResponsablesLetra;
+        public IRepository<ClienteResponsableLetra> ClientesResponsablesLetra => _clientesResponsablesLetra ??= new Repository<ClienteResponsableLetra>(_context);
     }
 }

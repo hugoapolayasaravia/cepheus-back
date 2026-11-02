@@ -1,19 +1,20 @@
 using Cepheus.Application.Comun.Interfaces.UnitOfWork;
+using Cepheus.Application.Features.Facturacion.Maestros.ClientesResponsablesLetra.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cepheus.Application.Features.Facturacion.Transacciones.LetrasVenta.GetAvalesCliente
+namespace Cepheus.Application.Features.Facturacion.Maestros.ClientesResponsablesLetra.GetClientesResponsablesLetra
 {
-    public class GetAvalesClienteQueryHandler : IRequestHandler<GetAvalesClienteQuery, List<AvalClienteResponse>>
+    public class GetClientesResponsablesLetraQueryHandler : IRequestHandler<GetClientesResponsablesLetraQuery, List<ClienteResponsableLetraResponse>>
     {
         private readonly IUnitOfWork _uow;
 
-        public GetAvalesClienteQueryHandler(IUnitOfWork uow)
+        public GetClientesResponsablesLetraQueryHandler(IUnitOfWork uow)
         {
             _uow = uow;
         }
 
-        public async Task<List<AvalClienteResponse>> Handle(GetAvalesClienteQuery request, CancellationToken cancellationToken)
+        public async Task<List<ClienteResponsableLetraResponse>> Handle(GetClientesResponsablesLetraQuery request, CancellationToken cancellationToken)
         {
             var cliente = request.ClienteCode.Trim();
 
@@ -21,7 +22,7 @@ namespace Cepheus.Application.Features.Facturacion.Transacciones.LetrasVenta.Get
                 .AsNoTracking()
                 .Where(a => a.ClienteCode == cliente)
                 .OrderBy(a => a.Sequence)
-                .Select(a => new AvalClienteResponse
+                .Select(a => new ClienteResponsableLetraResponse
                 {
                     ClienteCode = a.ClienteCode,
                     Sequence = a.Sequence,

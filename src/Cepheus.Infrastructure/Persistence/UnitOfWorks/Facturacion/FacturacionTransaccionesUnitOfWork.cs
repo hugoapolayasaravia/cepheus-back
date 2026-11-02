@@ -1,6 +1,5 @@
 ﻿using Cepheus.Application.Comun.Interfaces;
 using Cepheus.Application.Comun.Interfaces.UnitOfWork;
-using Cepheus.Domain.Contabilidad.Transacciones;
 using Cepheus.Domain.Facturacion.Transacciones;
 using Cepheus.Infrastructure.Persistence.ApplicationDbContexts;
 using Cepheus.Infrastructure.Persistence.Repositories;
@@ -107,9 +106,6 @@ namespace Cepheus.Infrastructure.Persistence.UnitOfWorks
         private IRepository<LetraVenta>? _letrasVenta;
         public IRepository<LetraVenta> LetrasVenta => _letrasVenta ??= new Repository<LetraVenta>(_context);
         
-        private IRepository<ClienteResponsableLetra>? _clientesResponsablesLetra;
-        public IRepository<ClienteResponsableLetra> ClientesResponsablesLetra => _clientesResponsablesLetra ??= new Repository<ClienteResponsableLetra>(_context);
-
         private IRepository<CancelacionVenta>? _cancelacionesVenta;
         public IRepository<CancelacionVenta> CancelacionesVenta => _cancelacionesVenta ??= new Repository<CancelacionVenta>(_context);
 

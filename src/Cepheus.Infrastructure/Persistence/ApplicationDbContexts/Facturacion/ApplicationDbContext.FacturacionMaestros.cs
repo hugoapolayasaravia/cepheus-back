@@ -1,5 +1,4 @@
-﻿using Cepheus.Domain.Facturacion.Catalogos;
-using Cepheus.Domain.Facturacion.Maestros;
+﻿using Cepheus.Domain.Facturacion.Maestros;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cepheus.Infrastructure.Persistence.ApplicationDbContexts;
@@ -22,5 +21,6 @@ public partial class ApplicationDbContext
 
     public DbSet<Tecnico> Tecnicos => Set<Tecnico>();
     public DbSet<UsuarioSolicitudNotaCredito> UsuariosSolicitudNotaCredito => Set<UsuarioSolicitudNotaCredito>();
+    public DbSet<ClienteResponsableLetra> ClientesResponsablesLetra => Set<ClienteResponsableLetra>();
 
 }

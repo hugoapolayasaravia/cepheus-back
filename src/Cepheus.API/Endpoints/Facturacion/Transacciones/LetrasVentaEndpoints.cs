@@ -1,6 +1,5 @@
 using Cepheus.Application.Features.Facturacion.Transacciones.LetrasVenta.EliminarDocumentoLetraVenta;
 using Cepheus.Application.Features.Facturacion.Transacciones.LetrasVenta.GenerarLetrasVarias;
-using Cepheus.Application.Features.Facturacion.Transacciones.LetrasVenta.GetAvalesCliente;
 using Cepheus.Application.Features.Facturacion.Transacciones.LetrasVenta.GetLetraVentaReport;
 using Cepheus.Application.Features.Facturacion.Transacciones.LetrasVenta.GetLetrasVentaReportLote;
 using Cepheus.Application.Features.Facturacion.Transacciones.LetrasVenta.GetLetrasVentaPaginated;
@@ -46,17 +45,11 @@ namespace Cepheus.API.Endpoints.Facturacion.Transacciones
             .WithName("GetLetraVentaByKey")
             .RequireAuthorization("LETRASVENTA.VIEW");
 
-            // Impresión: ?aval=<secuencia del aval>&opcion=S|N (legacy: letra + opción + aval).
+            // Impresión: ?aval=<secuencia del responsable (maestro Clientes responsables de letra)>&opcion=S|N (legacy: letra + opción + aval).
             group.MapGet("/{planta}/{numero}/reporte", async (
                 string planta, string numero, string? aval, string? opcion, ISender sender) =>
                 Results.Ok(await sender.Send(new GetLetraVentaReportQuery(planta, numero, aval, opcion ?? "S"))))
             .WithName("GetLetraVentaReport")
-            .RequireAuthorization("LETRASVENTA.VIEW");
-
-            // Avales del cliente (legacy dw_bus_cre_avales) para elegir al imprimir.
-            group.MapGet("/avales/{cliente}", async (string cliente, ISender sender) =>
-                Results.Ok(await sender.Send(new GetAvalesClienteQuery(cliente))))
-            .WithName("GetAvalesClienteLetra")
             .RequireAuthorization("LETRASVENTA.VIEW");
 
             // Impresión por lote (legacy w_cre_rpt_x_lote_letras).

@@ -1,11 +1,7 @@
-using MediatR;
-
-namespace Cepheus.Application.Features.Facturacion.Transacciones.LetrasVenta.GetAvalesCliente
+namespace Cepheus.Application.Features.Facturacion.Maestros.ClientesResponsablesLetra.Common
 {
-    /// <summary>Avales del cliente para elegir al imprimir la letra (legacy dw_bus_cre_avales).</summary>
-    public record GetAvalesClienteQuery(string ClienteCode) : IRequest<List<AvalClienteResponse>>;
-
-    public class AvalClienteResponse
+    /// <summary>Responsable / aval de letras de un cliente.</summary>
+    public class ClienteResponsableLetraResponse
     {
         public string ClienteCode { get; set; } = default!;
         public string Sequence { get; set; } = default!;
