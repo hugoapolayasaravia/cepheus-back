@@ -1,4 +1,5 @@
 ﻿using Cepheus.Application.Comun.Interfaces.UnitOfWork;
+using Cepheus.Application.Features.Comunes.Plantas.Common;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,6 +45,30 @@ namespace Cepheus.Application.Features.Comunes.Plantas.CreatePlanta
 
             RuleFor(x => x.StatusCode)
                 .MaximumLength(2).WithMessage("El código de estado no puede exceder los 2 caracteres.");
+
+            RuleFor(x => x.NumeroGve)
+                .Must(PlantaNumeracion.EsValidoOVacio).WithMessage(PlantaNumeracion.Mensaje);
+
+            RuleFor(x => x.NumeroFve)
+                .Must(PlantaNumeracion.EsValidoOVacio).WithMessage(PlantaNumeracion.Mensaje);
+
+            RuleFor(x => x.NumeroDve)
+                .Must(PlantaNumeracion.EsValidoOVacio).WithMessage(PlantaNumeracion.Mensaje);
+
+            RuleFor(x => x.NumeroBve)
+                .Must(PlantaNumeracion.EsValidoOVacio).WithMessage(PlantaNumeracion.Mensaje);
+
+            RuleFor(x => x.NumeroCve)
+                .Must(PlantaNumeracion.EsValidoOVacio).WithMessage(PlantaNumeracion.Mensaje);
+
+            RuleFor(x => x.NumeroLet)
+                .Must(PlantaNumeracion.EsValidoOVacio).WithMessage(PlantaNumeracion.Mensaje);
+
+            RuleFor(x => x.NumeroRet)
+                .Must(PlantaNumeracion.EsValidoOVacio).WithMessage(PlantaNumeracion.Mensaje);
+
+            RuleFor(x => x.GuiaNum)
+                .Must(PlantaNumeracion.EsValidoOVacio).WithMessage(PlantaNumeracion.Mensaje);
         }
 
         private async Task<bool> BeUniqueCode(string code, CancellationToken cancellationToken)

@@ -31,7 +31,15 @@ namespace Cepheus.Application.Features.Comunes.Plantas.CreatePlanta
                 RequiresApprovals = request.RequiresApprovals,
                 AppliesDetraction = request.AppliesDetraction,
                 StatusCode = string.IsNullOrWhiteSpace(request.StatusCode) ? null : request.StatusCode.Trim(),
-                IsActive = true
+                IsActive = true,
+                NumeroGve = Numero(request.NumeroGve),
+                NumeroFve = Numero(request.NumeroFve),
+                NumeroDve = Numero(request.NumeroDve),
+                NumeroBve = Numero(request.NumeroBve),
+                NumeroCve = Numero(request.NumeroCve),
+                NumeroLet = Numero(request.NumeroLet),
+                NumeroRet = Numero(request.NumeroRet),
+                GuiaNum = Numero(request.GuiaNum)
             };
 
             await _uow.Comunes.Plantas.AddAsync(planta, cancellationToken);
@@ -39,6 +47,9 @@ namespace Cepheus.Application.Features.Comunes.Plantas.CreatePlanta
 
             return Map(planta);
         }
+
+        private static string Numero(string? valor)
+            => string.IsNullOrWhiteSpace(valor) ? PlantaNumeracion.Inicial : valor.Trim();
 
         internal static PlantaResponse Map(Planta planta) => new()
         {
@@ -55,6 +66,14 @@ namespace Cepheus.Application.Features.Comunes.Plantas.CreatePlanta
             RequiresApprovals = planta.RequiresApprovals,
             AppliesDetraction = planta.AppliesDetraction,
             StatusCode = planta.StatusCode,
+            NumeroGve = planta.NumeroGve,
+            NumeroFve = planta.NumeroFve,
+            NumeroDve = planta.NumeroDve,
+            NumeroBve = planta.NumeroBve,
+            NumeroCve = planta.NumeroCve,
+            NumeroLet = planta.NumeroLet,
+            NumeroRet = planta.NumeroRet,
+            GuiaNum = planta.GuiaNum,
             IsActive = planta.IsActive,
             CreatedAt = planta.CreatedAt,
             UpdatedAt = planta.UpdatedAt,

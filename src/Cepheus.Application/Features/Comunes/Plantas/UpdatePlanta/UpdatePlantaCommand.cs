@@ -17,6 +17,14 @@ namespace Cepheus.Application.Features.Comunes.Plantas.UpdatePlanta
         bool RequiresApprovals,
         bool AppliesDetraction,
         string? StatusCode,
-        byte[] RowVersion
+        byte[] RowVersion,
+        string? NumeroGve = null,
+        string? NumeroFve = null,
+        string? NumeroDve = null,
+        string? NumeroBve = null,
+        string? NumeroCve = null,
+        string? NumeroLet = null,
+        string? NumeroRet = null,
+        string? GuiaNum = null
     ) : IRequest<PlantaResponse>;
 }

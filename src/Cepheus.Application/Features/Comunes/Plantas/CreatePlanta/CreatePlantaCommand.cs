@@ -16,6 +16,14 @@ namespace Cepheus.Application.Features.Comunes.Plantas.CreatePlanta
         bool IsProject,
         bool RequiresApprovals,
         bool AppliesDetraction,
-        string? StatusCode
+        string? StatusCode,
+        string? NumeroGve = null,
+        string? NumeroFve = null,
+        string? NumeroDve = null,
+        string? NumeroBve = null,
+        string? NumeroCve = null,
+        string? NumeroLet = null,
+        string? NumeroRet = null,
+        string? GuiaNum = null
     ) : IRequest<PlantaResponse>;
 }

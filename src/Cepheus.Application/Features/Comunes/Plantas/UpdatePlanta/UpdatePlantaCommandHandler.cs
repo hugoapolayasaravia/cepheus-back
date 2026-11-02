@@ -15,6 +15,10 @@ namespace Cepheus.Application.Features.Comunes.Plantas.UpdatePlanta
             _uow = uow;
         }
 
+        // Si no se envía (o viene vacía) se conserva la numeración vigente: nunca se pierde al editar la planta.
+        private static string Numero(string? nuevo, string actual)
+            => string.IsNullOrWhiteSpace(nuevo) ? actual : nuevo.Trim();
+
         public async Task<PlantaResponse> Handle(UpdatePlantaCommand request, CancellationToken cancellationToken)
         {
             var current = await _uow.Comunes.Plantas.Query()
@@ -41,6 +45,15 @@ namespace Cepheus.Application.Features.Comunes.Plantas.UpdatePlanta
                 RequiresApprovals = request.RequiresApprovals,
                 AppliesDetraction = request.AppliesDetraction,
                 StatusCode = string.IsNullOrWhiteSpace(request.StatusCode) ? null : request.StatusCode.Trim(),
+
+                NumeroGve = Numero(request.NumeroGve, current.NumeroGve),
+                NumeroFve = Numero(request.NumeroFve, current.NumeroFve),
+                NumeroDve = Numero(request.NumeroDve, current.NumeroDve),
+                NumeroBve = Numero(request.NumeroBve, current.NumeroBve),
+                NumeroCve = Numero(request.NumeroCve, current.NumeroCve),
+                NumeroLet = Numero(request.NumeroLet, current.NumeroLet),
+                NumeroRet = Numero(request.NumeroRet, current.NumeroRet),
+                GuiaNum = Numero(request.GuiaNum, current.GuiaNum),
 
                 IsActive = current.IsActive,
                 CreatedAt = current.CreatedAt,
@@ -76,6 +89,14 @@ namespace Cepheus.Application.Features.Comunes.Plantas.UpdatePlanta
                 RequiresApprovals = planta.RequiresApprovals,
                 AppliesDetraction = planta.AppliesDetraction,
                 StatusCode = planta.StatusCode,
+                NumeroGve = planta.NumeroGve,
+                NumeroFve = planta.NumeroFve,
+                NumeroDve = planta.NumeroDve,
+                NumeroBve = planta.NumeroBve,
+                NumeroCve = planta.NumeroCve,
+                NumeroLet = planta.NumeroLet,
+                NumeroRet = planta.NumeroRet,
+                GuiaNum = planta.GuiaNum,
                 IsActive = planta.IsActive,
                 CreatedAt = planta.CreatedAt,
                 UpdatedAt = planta.UpdatedAt,

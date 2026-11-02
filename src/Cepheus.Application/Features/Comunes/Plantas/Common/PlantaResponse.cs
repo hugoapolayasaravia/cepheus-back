@@ -15,6 +15,14 @@
         public bool RequiresApprovals { get; set; }
         public bool AppliesDetraction { get; set; }
         public string? StatusCode { get; set; }
+        public string NumeroGve { get; set; } = default!;
+        public string NumeroFve { get; set; } = default!;
+        public string NumeroDve { get; set; } = default!;
+        public string NumeroBve { get; set; } = default!;
+        public string NumeroCve { get; set; } = default!;
+        public string NumeroLet { get; set; } = default!;
+        public string NumeroRet { get; set; } = default!;
+        public string GuiaNum { get; set; } = default!;
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
