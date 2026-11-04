@@ -1,6 +1,7 @@
 ﻿using Cepheus.Application.Comun.Interfaces;
 using Cepheus.Application.Comun.Interfaces.UnitOfWork;
 using Cepheus.Domain.Mantenimiento.Maestros;
+using Cepheus.Domain.Mantenimiento.Transacciones;
 using Cepheus.Infrastructure.Persistence.ApplicationDbContexts;
 using Cepheus.Infrastructure.Persistence.Repositories;
 
@@ -34,14 +35,6 @@ namespace Cepheus.Infrastructure.Persistence.UnitOfWorks.Mantenimiento
         private IRepository<Actividad>? _actividades;
         public IRepository<Actividad> Actividades => _actividades ??= new Repository<Actividad>(_context);
 
-        private IRepository<PlanMantenimientoPreventivo>? _planesPreventivo;
-        public IRepository<PlanMantenimientoPreventivo> PlanesMantenimientoPreventivo => _planesPreventivo ??= new Repository<PlanMantenimientoPreventivo>(_context);
-        
-        private IRepository<PlanMantenimientoPreventivoManoObra>? _planesPreventivoManoObra;
-        public IRepository<PlanMantenimientoPreventivoManoObra> PlanesMantenimientoPreventivoManoObra => _planesPreventivoManoObra ??= new Repository<PlanMantenimientoPreventivoManoObra>(_context);
-        
-        private IRepository<PlanMantenimientoPreventivoMaterial>? _planesPreventivoMateriales;
-        public IRepository<PlanMantenimientoPreventivoMaterial> PlanesMantenimientoPreventivoMateriales => _planesPreventivoMateriales ??= new Repository<PlanMantenimientoPreventivoMaterial>(_context);
 
         private IRepository<ActividadMantenimiento>? _actividadesMantenimiento;
         public IRepository<ActividadMantenimiento> ActividadesMantenimiento => _actividadesMantenimiento ??= new Repository<ActividadMantenimiento>(_context);

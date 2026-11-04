@@ -1,6 +1,8 @@
 ﻿// Cepheus.API/Endpoints/Logistica/Transacciones/PedidosEndpoints.cs
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.ChangeEstadoPedido;
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.CreatePedido;
+using Cepheus.Application.Comun.Models;
+using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.ExportPedidos;
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.GetPedidoByCode;
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.GetPedidosPaginated;
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.Impresion;
@@ -49,6 +51,29 @@ namespace Cepheus.API.Endpoints.Logistica.Transacciones
             })
             .WithName("GetPedidosPagedBody")
             .RequireAuthorization("PEDIDOS.VIEW");
+
+            // GET export/excel y export/pdf (mismos filtros y orden que /paged, sin paginar)
+            group.MapGet("/export/excel", async (
+                [AsParameters] ExportPedidosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Excel;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportPedidosExcel")
+            .RequireAuthorization("PEDIDOS.EXPORT_EXCEL");
+
+            group.MapGet("/export/pdf", async (
+                [AsParameters] ExportPedidosQuery query,
+                ISender sender) =>
+            {
+                query.Format = ExportFormat.Pdf;
+                var file = await sender.Send(query);
+                return Results.File(file.Content, file.ContentType, file.FileName);
+            })
+            .WithName("ExportPedidosPdf")
+            .RequireAuthorization("PEDIDOS.EXPORT_PDF");
 
             group.MapGet("/{codigoPlanta}/{codigo}", async (string codigoPlanta, string codigo, ISender sender) =>
             {

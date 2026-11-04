@@ -1,5 +1,6 @@
 ﻿using Cepheus.API.Endpoints.Mantenimiento.Catalogos;
 using Cepheus.API.Endpoints.Mantenimiento.Maestros;
+using Cepheus.API.Endpoints.Mantenimiento.Transacciones;
 
 namespace Cepheus.API.Extensions.Endpoints.Mantenimiento;
 

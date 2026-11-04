@@ -35,6 +35,12 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
             ConceptoAsiento.PagoDocumento, ConceptoAsiento.PagoRetencion, ConceptoAsiento.PagoTotal
         };
 
+        private static readonly ConceptoAsiento[] ConceptosCancelacionVenta =
+        {
+            ConceptoAsiento.DetalleDocumento, ConceptoAsiento.PagoRecibido, ConceptoAsiento.CobranzaDudosa,
+            ConceptoAsiento.DiferenciaCambioGanancia, ConceptoAsiento.DiferenciaCambioPerdida
+        };
+
         private static readonly ConceptoAsiento[] ConceptosConsumo =
         {
             ConceptoAsiento.DetalleVale, ConceptoAsiento.TotalVales
@@ -49,10 +55,13 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
         private static bool EsTransferencia(ProcesoAsiento p) =>
             p == ProcesoAsiento.TransferenciaNotaIngreso || p == ProcesoAsiento.TransferenciaOrdenServicio;
 
+        private static bool EsCancelacionVenta(ProcesoAsiento p) => p == ProcesoAsiento.CancelacionVenta;
+
         private static ConceptoAsiento[] ConceptosPermitidos(ProcesoAsiento p) =>
             p == ProcesoAsiento.CancelacionProveedor ? ConceptosCancelacionProveedor
             : p == ProcesoAsiento.ReversionCajaChica ? ConceptosReversionCajaChica
             : EsVenta(p) ? ConceptosProvisionVenta
+            : EsCancelacionVenta(p) ? ConceptosCancelacionVenta
             : EsProvision(p) ? ConceptosProvision : EsTransferencia(p) ? ConceptosTransferencia : ConceptosConsumo;
 
         protected PlantillaAsientoValidator(IUnitOfWork uow)
@@ -268,9 +277,34 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
                     context.AddFailure("Lines", $"{label}: la provisión de ventas no usa cuentas por pagar de proveedor (use una cuenta fija).");
                 }
 
-                if (line.AnnexSource == OrigenAnexoAsiento.Cliente && !EsVenta(process))
+                if (line.AnnexSource == OrigenAnexoAsiento.Cliente && !EsVenta(process) && !EsCancelacionVenta(process))
                 {
-                    context.AddFailure("Lines", $"{label}: el anexo del cliente solo aplica a la provisión de ventas.");
+                    context.AddFailure("Lines", $"{label}: el anexo del cliente solo aplica a la provisión de ventas y a la cancelación de ventas.");
+                }
+
+                if (line.AccountSource == OrigenCuentaAsiento.CuentaPago
+                    && (line.Concept != ConceptoAsiento.PagoRecibido || !EsCancelacionVenta(process)))
+                {
+                    context.AddFailure("Lines", $"{label}: la cuenta del pago solo aplica al concepto PagoRecibido de la cancelación de ventas.");
+                }
+
+                if (line.Concept == ConceptoAsiento.PagoRecibido && line.AccountSource != OrigenCuentaAsiento.CuentaPago)
+                {
+                    context.AddFailure("Lines", $"{label}: PagoRecibido usa la cuenta del pago (caja o banco).");
+                }
+
+                if (EsCancelacionVenta(process) && line.Concept == ConceptoAsiento.DetalleDocumento
+                    && line.AccountSource != OrigenCuentaAsiento.LineaDocumento)
+                {
+                    context.AddFailure("Lines", $"{label}: el detalle de la cancelación usa la cuenta de la línea del documento.");
+                }
+
+                if (EsCancelacionVenta(process)
+                    && line.Concept is ConceptoAsiento.CobranzaDudosa or ConceptoAsiento.DiferenciaCambioGanancia
+                        or ConceptoAsiento.DiferenciaCambioPerdida
+                    && line.AccountSource != OrigenCuentaAsiento.Fija)
+                {
+                    context.AddFailure("Lines", $"{label}: {line.Concept} usa una cuenta fija.");
                 }
 
                 if (!string.IsNullOrWhiteSpace(line.CurrencyCode) && !EsVenta(process))
@@ -329,6 +363,42 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
                     if (porMoneda.Distinct().Count() != porMoneda.Count)
                     {
                         context.AddFailure("Lines", $"El concepto {concepto} no puede repetirse para la misma moneda.");
+                    }
+                }
+            }
+
+            if (EsCancelacionVenta(process))
+            {
+                var detalleDoc = lines.Where(l => l.Concept == ConceptoAsiento.DetalleDocumento).ToList();
+
+                if (detalleDoc.Count != 1 || detalleDoc[0].Nature != NaturalezaAsiento.Haber)
+                {
+                    context.AddFailure("Lines", "La cancelación de ventas necesita exactamente una línea DetalleDocumento al Haber (la nota de crédito se invierte sola).");
+                }
+
+                if (lines.Count(l => l.Concept == ConceptoAsiento.PagoRecibido) != 1
+                    || lines.First(l => l.Concept == ConceptoAsiento.PagoRecibido).Nature != NaturalezaAsiento.Debe)
+                {
+                    context.AddFailure("Lines", "La cancelación de ventas necesita exactamente una línea PagoRecibido al Debe.");
+                }
+
+                var dudosa = lines.Where(l => l.Concept == ConceptoAsiento.CobranzaDudosa).ToList();
+                if (dudosa.Count is not (0 or 2)
+                    || (dudosa.Count == 2 && dudosa.Select(l => l.Nature).Distinct().Count() != 2))
+                {
+                    context.AddFailure("Lines", "La cobranza dudosa necesita dos líneas: una al Debe y otra al Haber (o ninguna).");
+                }
+
+                foreach (var (concepto, naturaleza) in new[]
+                         {
+                             (ConceptoAsiento.DiferenciaCambioGanancia, NaturalezaAsiento.Haber),
+                             (ConceptoAsiento.DiferenciaCambioPerdida, NaturalezaAsiento.Debe)
+                         })
+                {
+                    var l = lines.Where(x => x.Concept == concepto).ToList();
+                    if (l.Count != 1 || l[0].Nature != naturaleza)
+                    {
+                        context.AddFailure("Lines", $"La cancelación de ventas necesita exactamente una línea {concepto} al {naturaleza}.");
                     }
                 }
             }

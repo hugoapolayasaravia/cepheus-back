@@ -1,4 +1,5 @@
 ﻿using Cepheus.Domain.Mantenimiento.Maestros;
+using Cepheus.Domain.Mantenimiento.Transacciones;
 
 namespace Cepheus.Application.Comun.Interfaces.UnitOfWork
 {
@@ -11,9 +12,6 @@ namespace Cepheus.Application.Comun.Interfaces.UnitOfWork
         IRepository<VerboActividad> VerbosActividad { get; }
         IRepository<ObjetoActividad> ObjetosActividad { get; }
         IRepository<Actividad> Actividades { get; }
-        IRepository<PlanMantenimientoPreventivo> PlanesMantenimientoPreventivo { get; }
-        IRepository<PlanMantenimientoPreventivoManoObra> PlanesMantenimientoPreventivoManoObra { get; }
-        IRepository<PlanMantenimientoPreventivoMaterial> PlanesMantenimientoPreventivoMateriales { get; }
         IRepository<ActividadMantenimiento> ActividadesMantenimiento { get; }
 
 

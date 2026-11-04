@@ -17,7 +17,9 @@ namespace Cepheus.Application.Features.Administracion.Programas.CreatePrograma
         ("VIEW", "Consultar"),
         ("CREATE", "Crear"),
         ("UPDATE", "Modificar"),
-        ("DELETE", "Eliminar")
+        ("DELETE", "Eliminar"),
+        ("EXPORT_PDF", "Exportar a PDF"),
+        ("EXPORT_EXCEL", "Exportar a Excel")
     };
 
         private readonly IUnitOfWork _uow;

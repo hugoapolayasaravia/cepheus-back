@@ -12,7 +12,7 @@ namespace Cepheus.Application.Features.Contabilidad.Transacciones.AsientosContab
     ///   - No se anula el tipo 04 (apertura).
     ///   - El período contable debe existir y estar Abierto.
     ///   - Se elimina el detalle, el asiento queda Anulado con totales en cero.
-    ///   - Se libera la referencia al asiento en el Pago a Proveedor, la Nota de Ingreso, la Orden de Servicio (con su salida y las
+    ///   - Se libera la referencia al asiento en el Pago a Proveedor, el Comprobante de Venta, la Nota de Crédito y la Nota de Débito, la Nota de Ingreso, la Orden de Servicio (con su salida y las
     ///     líneas de la salida), el Vale (con sus líneas) y el Documento de Compra que lo tuvieran.
     /// </summary>
     public static class AsientoAnulacionService
@@ -116,6 +116,31 @@ namespace Cepheus.Application.Features.Contabilidad.Transacciones.AsientosContab
                 // comprobante de caja-bancos impreso.
                 p.AsientoCancelacionCode = null;
                 p.ComprobanteCajaBancosImpreso = false;
+            }
+
+            // Documentos de venta con asiento de provisión (legacy: al anular el asiento el documento queda sin asiento).
+            // Las cancelaciones, letras y cheques NO se liberan aquí: cambian de estado y se anulan desde su propio
+            // módulo (ver AnularAsientoContableCommandHandler).
+            foreach (var cv in await uow.Facturacion.Transacciones.ComprobantesVenta.Query()
+                         .Where(x => x.ProvisionEntry == codigo).ToListAsync(cancellationToken))
+            {
+                cv.ProvisionEntry = null;
+            }
+
+            foreach (var nc in await uow.Facturacion.Transacciones.NotasCreditoVenta.Query()
+                         .Where(x => x.ProvisionEntryNumber == codigo || x.CancellationEntryNumber == codigo)
+                         .ToListAsync(cancellationToken))
+            {
+                if (nc.ProvisionEntryNumber == codigo) nc.ProvisionEntryNumber = null;
+                if (nc.CancellationEntryNumber == codigo) nc.CancellationEntryNumber = null;
+            }
+
+            foreach (var nd in await uow.Facturacion.Transacciones.NotasDebitoVenta.Query()
+                         .Where(x => x.ProvisionEntryNumber == codigo || x.CancellationEntryNumber == codigo)
+                         .ToListAsync(cancellationToken))
+            {
+                if (nd.ProvisionEntryNumber == codigo) nd.ProvisionEntryNumber = null;
+                if (nd.CancellationEntryNumber == codigo) nd.CancellationEntryNumber = null;
             }
 
             foreach (var d in await uow.Contabilidad.Transacciones.DocumentosCompra.Query()

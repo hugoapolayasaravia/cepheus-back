@@ -61,6 +61,8 @@ namespace Cepheus.Application.Features.Administracion.Programas.GetProgramasPagi
                 IsActive = p.IsActive,
                 CreatedAt = p.CreatedAt,
                 UpdatedAt = p.UpdatedAt,
+                CreatedBy = p.CreatedBy,
+                UpdatedBy = p.UpdatedBy,
                 RowVersion = p.RowVersion,
                 Permissions = p.Permissions
                     .Select(perm => new PermissionSummary { Id = perm.Id, Code = perm.Code, Name = perm.Name })

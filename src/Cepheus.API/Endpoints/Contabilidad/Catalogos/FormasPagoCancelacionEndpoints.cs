@@ -21,7 +21,7 @@ namespace Cepheus.API.Endpoints.Contabilidad.Catalogos
                 return Results.Created($"/api/contabilidad/catalogos/formas-pago-cancelacion/{result.Code}", result);
             })
             .WithName("CreateFormaPagoCancelacion")
-            .RequireAuthorization("FORMASPAGOCANCELACION.CREATE");
+            .RequireAuthorization("FORMASPAGOCANCELA.CREATE");
 
             group.MapGet("/paged", async (
                 [AsParameters] GetFormasPagoCancelacionPaginatedQuery query,
@@ -31,7 +31,7 @@ namespace Cepheus.API.Endpoints.Contabilidad.Catalogos
                 return Results.Ok(result);
             })
             .WithName("GetFormasPagoCancelacionPagedQueryString")
-            .RequireAuthorization("FORMASPAGOCANCELACION.VIEW");
+            .RequireAuthorization("FORMASPAGOCANCELA.VIEW");
 
             group.MapPost("/paged/body", async (
                 GetFormasPagoCancelacionPaginatedQuery query,
@@ -41,7 +41,7 @@ namespace Cepheus.API.Endpoints.Contabilidad.Catalogos
                 return Results.Ok(result);
             })
             .WithName("GetFormasPagoCancelacionPagedBody")
-            .RequireAuthorization("FORMASPAGOCANCELACION.VIEW");
+            .RequireAuthorization("FORMASPAGOCANCELA.VIEW");
 
             group.MapGet("/{codigo}", async (string codigo, ISender sender) =>
             {
@@ -49,7 +49,7 @@ namespace Cepheus.API.Endpoints.Contabilidad.Catalogos
                 return Results.Ok(result);
             })
             .WithName("GetFormaPagoCancelacionById")
-            .RequireAuthorization("FORMASPAGOCANCELACION.VIEW");
+            .RequireAuthorization("FORMASPAGOCANCELA.VIEW");
 
             group.MapPut("/{codigo}", async (string codigo, UpdateFormaPagoCancelacionCommand command, ISender sender) =>
             {
@@ -62,7 +62,7 @@ namespace Cepheus.API.Endpoints.Contabilidad.Catalogos
                 return Results.Ok(result);
             })
             .WithName("UpdateFormaPagoCancelacion")
-            .RequireAuthorization("FORMASPAGOCANCELACION.UPDATE");
+            .RequireAuthorization("FORMASPAGOCANCELA.UPDATE");
 
             group.MapPatch("/{codigo}/toggle-status", async (string codigo, ISender sender) =>
             {
@@ -70,7 +70,7 @@ namespace Cepheus.API.Endpoints.Contabilidad.Catalogos
                 return Results.Ok(new { IsActive = isActive });
             })
             .WithName("ToggleFormaPagoCancelacionStatus")
-            .RequireAuthorization("FORMASPAGOCANCELACION.UPDATE");
+            .RequireAuthorization("FORMASPAGOCANCELA.UPDATE");
         }
     }
 }

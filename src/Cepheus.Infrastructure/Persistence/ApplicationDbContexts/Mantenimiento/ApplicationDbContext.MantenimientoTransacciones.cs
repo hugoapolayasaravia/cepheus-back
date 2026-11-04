@@ -6,6 +6,11 @@ namespace Cepheus.Infrastructure.Persistence.ApplicationDbContexts;
 public partial class ApplicationDbContext
 {
     // Mantenimiento - Transacciones
+    public DbSet<PlanMantenimientoPreventivo> PlanesMantenimientoPreventivo => Set<PlanMantenimientoPreventivo>();
+    public DbSet<PlanMantenimientoPreventivoManoObra> PlanesMantenimientoPreventivoManoObra => Set<PlanMantenimientoPreventivoManoObra>();
+    public DbSet<PlanMantenimientoPreventivoMaterial> PlanesMantenimientoPreventivoMateriales => Set<PlanMantenimientoPreventivoMaterial>();
+
+
     public DbSet<OrdenTrabajo> OrdenesTrabajo => Set<OrdenTrabajo>();
     public DbSet<OTResponsable> OTResponsables => Set<OTResponsable>();
     public DbSet<OTRMaquina> OTRMaquinas => Set<OTRMaquina>();

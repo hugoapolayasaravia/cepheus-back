@@ -28,7 +28,7 @@ internal static class CalendarioEquiposCalculo
 
         var dias = CalendarioEquiposCalculator.DiasHabiles(desde, hasta);
 
-        var planesQuery = uow.Mantenimiento.Maestros.PlanesMantenimientoPreventivo.Query().AsNoTracking();
+        var planesQuery = uow.Mantenimiento.Transacciones.PlanesMantenimientoPreventivo.Query().AsNoTracking();
         if (planta is not null) planesQuery = planesQuery.Where(p => p.PlantaCode == planta);
         if (equipo is not null) planesQuery = planesQuery.Where(p => p.EquipoCode.Contains(equipo));
 

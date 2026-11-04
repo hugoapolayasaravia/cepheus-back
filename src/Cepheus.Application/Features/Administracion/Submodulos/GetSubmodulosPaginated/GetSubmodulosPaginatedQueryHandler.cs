@@ -60,6 +60,8 @@ namespace Cepheus.Application.Features.Administracion.Submodulos.GetSubmodulosPa
                 IsActive = s.IsActive,
                 CreatedAt = s.CreatedAt,
                 UpdatedAt = s.UpdatedAt,
+                CreatedBy = s.CreatedBy,
+                UpdatedBy = s.UpdatedBy,
                 RowVersion = s.RowVersion
             });
 

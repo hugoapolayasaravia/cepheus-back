@@ -105,14 +105,14 @@ public sealed class GenerateOrdenesPreventivasCommandHandler
     {
         var codigosPlan = objetivos.Select(o => o.Plan.PlanCode).Distinct().ToList();
 
-        var planes = (await _uow.Mantenimiento.Maestros.PlanesMantenimientoPreventivo.Query().AsNoTracking()
+        var planes = (await _uow.Mantenimiento.Transacciones.PlanesMantenimientoPreventivo.Query().AsNoTracking()
                 .Where(p => p.PlantaCode == planta && codigosPlan.Contains(p.Code))
                 .Select(p => new PlanDatos(
                     p.Code, p.ResponsableCode, p.EspecialidadCode, p.SubCentroCostoCode, p.SubCentroEjecutorCode))
                 .ToListAsync(ct))
             .ToDictionary(p => p.Code);
 
-        var materiales = (await _uow.Mantenimiento.Maestros.PlanesMantenimientoPreventivoMateriales.Query().AsNoTracking()
+        var materiales = (await _uow.Mantenimiento.Transacciones.PlanesMantenimientoPreventivoMateriales.Query().AsNoTracking()
                 .Where(m => m.PlantaCode == planta && codigosPlan.Contains(m.PlanCode))
                 .Select(m => new MaterialPlan(m.PlanCode, m.ArticuloCode, m.Cantidad, m.CostoUnitario))
                 .ToListAsync(ct))

@@ -5,6 +5,10 @@ namespace Cepheus.Application.Comun.Interfaces.UnitOfWork
     public interface IMantenimientoTransaccionesUnitOfWork
     {
 
+        IRepository<PlanMantenimientoPreventivo> PlanesMantenimientoPreventivo { get; }
+        IRepository<PlanMantenimientoPreventivoManoObra> PlanesMantenimientoPreventivoManoObra { get; }
+        IRepository<PlanMantenimientoPreventivoMaterial> PlanesMantenimientoPreventivoMateriales { get; }
+
         IRepository<OrdenTrabajo> OrdenesTrabajo { get; }
         IRepository<OTResponsable> OTResponsables { get; }
         IRepository<OTRMaquina> OTRMaquinas { get; }
