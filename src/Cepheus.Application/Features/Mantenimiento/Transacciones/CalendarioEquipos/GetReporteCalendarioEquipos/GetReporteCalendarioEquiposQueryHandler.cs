@@ -1,7 +1,7 @@
 using Cepheus.Application.Comun.Interfaces.UnitOfWork;
 using MediatR;
 
-namespace Cepheus.Application.Features.Mantenimiento.Reportes.CalendarioEquipos.GetReporteCalendarioEquipos;
+namespace Cepheus.Application.Features.Mantenimiento.Transacciones.CalendarioEquipos.GetReporteCalendarioEquipos;
 
 /// <summary>Solo lectura: reemplaza Man_sp_Listado_Calendario_Equipos. El cálculo vive en CalendarioEquiposCalculo.</summary>
 public sealed class GetReporteCalendarioEquiposQueryHandler

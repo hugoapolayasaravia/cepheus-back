@@ -1,7 +1,7 @@
 using Cepheus.Domain.Mantenimiento.Enum;
 using MediatR;
 
-namespace Cepheus.Application.Features.Mantenimiento.Reportes.CalendarioOrdenesEquipo.GetReporteCalendarioOrdenesEquipo;
+namespace Cepheus.Application.Features.Mantenimiento.Transacciones.CalendarioOrdenesEquipo.GetReporteCalendarioOrdenesEquipo;
 
 /// <summary>
 /// Calendario de Órdenes de Trabajo por equipo en un rango de fechas (legacy

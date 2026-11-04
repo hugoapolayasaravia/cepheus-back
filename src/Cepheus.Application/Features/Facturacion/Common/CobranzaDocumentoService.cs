@@ -46,6 +46,18 @@ namespace Cepheus.Application.Features.Facturacion.Common
         public bool IsAvailable => Status == 2 && IsPrinted && !string.IsNullOrWhiteSpace(ProvisionEntry)
                                    && string.IsNullOrWhiteSpace(CashDocument);
 
+        /// <summary>Estado de cobranza dudosa del documento (legacy CobranzaDudosa N/S/X).</summary>
+        public EstadoCobranzaDudosa DoubtfulStatus { get; init; }
+
+        /// <summary>Tipo de cambio con que se envió a cobranza dudosa (legacy TipCamCdu).</summary>
+        public decimal DoubtfulExchangeRate { get; init; }
+
+        /// <summary>Escribe el estado de cobranza dudosa y su tipo de cambio en la entidad (no guarda).</summary>
+        internal Action<EstadoCobranzaDudosa, decimal> SetDoubtful { get; init; } = default!;
+
+        /// <summary>Escribe el asiento de provisión del documento (el canje de cobranza dudosa lo reemplaza; no guarda).</summary>
+        internal Action<string?> SetProvisionEntry { get; init; } = default!;
+
         /// <summary>Marca el documento como incluido en una letra (legacy Documento_Caj). Solo 01, 03 y 07.</summary>
         internal Action<string?>? SetCashDocument { get; init; }
 
@@ -101,6 +113,9 @@ namespace Cepheus.Application.Features.Facturacion.Common
                         Total = c.TotalAmount, Pending = c.PendingAmount, Status = (int)c.Status,
                         ObraCode = c.ObraCode, ProvisionEntry = c.ProvisionEntry, IsPrinted = c.IsPrinted, CashDocument = c.CashDocument,
                         SetCashDocument = v => c.CashDocument = v,
+                        DoubtfulStatus = c.DoubtfulStatus, DoubtfulExchangeRate = c.DoubtfulExchangeRate,
+                        SetDoubtful = (st, rate) => { c.DoubtfulStatus = st; c.DoubtfulExchangeRate = rate; },
+                        SetProvisionEntry = v => c.ProvisionEntry = v,
                         Apply = (pending, status, settled) =>
                         {
                             c.PendingAmount = pending;
@@ -124,6 +139,9 @@ namespace Cepheus.Application.Features.Facturacion.Common
                         Total = n.TotalAmount, Pending = n.PendingAmount, Status = (int)n.Status,
                         ObraCode = n.ObraCode, ProvisionEntry = n.ProvisionEntryNumber, IsPrinted = n.IsPrinted, CashDocument = n.CashDocument,
                         SetCashDocument = v => n.CashDocument = v,
+                        DoubtfulStatus = n.DoubtfulStatus, DoubtfulExchangeRate = n.DoubtfulExchangeRate,
+                        SetDoubtful = (st, rate) => { n.DoubtfulStatus = st; n.DoubtfulExchangeRate = rate; },
+                        SetProvisionEntry = v => n.ProvisionEntryNumber = v,
                         Apply = (pending, status, settled) =>
                         {
                             n.PendingAmount = pending;
@@ -146,6 +164,9 @@ namespace Cepheus.Application.Features.Facturacion.Common
                         CurrencyCode = n.MonedaCode, ExchangeRate = n.ExchangeRate, IssueDate = n.IssueDate,
                         Total = n.TotalAmount, Pending = n.PendingAmount, Status = (int)n.Status,
                         ObraCode = n.ObraCode, ProvisionEntry = n.ProvisionEntryNumber, IsPrinted = n.IsPrinted,
+                        DoubtfulStatus = n.DoubtfulStatus, DoubtfulExchangeRate = n.DoubtfulExchangeRate,
+                        SetDoubtful = (st, rate) => { n.DoubtfulStatus = st; n.DoubtfulExchangeRate = rate; },
+                        SetProvisionEntry = v => n.ProvisionEntryNumber = v,
                         Apply = (pending, status, settled) =>
                         {
                             n.PendingAmount = pending;
@@ -167,6 +188,9 @@ namespace Cepheus.Application.Features.Facturacion.Common
                         CurrencyCode = l.MonedaCode, ExchangeRate = l.ExchangeRate, IssueDate = l.IssueDate,
                         Total = l.TotalAmount, Pending = l.PendingAmount, Status = (int)l.Status,
                         ObraCode = "001", ProvisionEntry = l.ProvisionEntryNumber, IsPrinted = l.IsPrinted,
+                        DoubtfulStatus = l.DoubtfulStatus, DoubtfulExchangeRate = l.DoubtfulExchangeRate,
+                        SetDoubtful = (st, rate) => { l.DoubtfulStatus = st; l.DoubtfulExchangeRate = rate; },
+                        SetProvisionEntry = v => l.ProvisionEntryNumber = v,
                         Apply = (pending, status, settled) =>
                         {
                             l.PendingAmount = pending;
@@ -201,6 +225,9 @@ namespace Cepheus.Application.Features.Facturacion.Common
                         IssueDate = c.IssueDate, Total = c.TotalAmount, Pending = c.PendingAmount, Status = (int)c.Status,
                         IsReboteCheque = !string.IsNullOrWhiteSpace(c.MotivoReboteCode),
                         ObraCode = "001", ProvisionEntry = c.ProvisionEntryNumber, IsPrinted = true,
+                        DoubtfulStatus = c.DoubtfulStatus, DoubtfulExchangeRate = c.DoubtfulExchangeRate,
+                        SetDoubtful = (st, rate) => { c.DoubtfulStatus = st; c.DoubtfulExchangeRate = rate; },
+                        SetProvisionEntry = v => c.ProvisionEntryNumber = v,
                         Apply = (pending, status, settled) =>
                         {
                             c.PendingAmount = pending;
@@ -309,6 +336,33 @@ namespace Cepheus.Application.Features.Facturacion.Common
             }
 
             doc.Apply(pending, status, settled);
+
+            // Cobranza dudosa: el registro pasa a Cancelado (legacy Estado 'XX') cuando el documento se cobra por
+            // completo y vuelve a Registrado si se reabre el saldo. Solo con canje generado (el cobro de un dudoso
+            // sin canje se rechaza al agregar el documento a la cancelación).
+            if (doc.DoubtfulStatus != EstadoCobranzaDudosa.Normal)
+            {
+                var docType = doc.TypeCode;
+                var docNumber = doc.Number;
+                var docCliente = doc.ClienteCode;
+                var planta = docType is CobranzaTipoDocumento.NotaDebito or CobranzaTipoDocumento.Letra
+                    ? doc.PlantaCode ?? string.Empty
+                    : string.Empty;
+                var banco = docType == CobranzaTipoDocumento.Cheque ? doc.BancoCode ?? string.Empty : string.Empty;
+
+                var registro = await uow.Facturacion.Transacciones.CobranzasDudosas.Query()
+                    .FirstOrDefaultAsync(x => x.TypeCode == docType && x.Number == docNumber
+                                              && x.ClienteCode == docCliente
+                                              && x.PlantaCode == planta && x.BancoCode == banco,
+                        cancellationToken);
+
+                if (registro is not null)
+                {
+                    registro.Status = status == Cancelado
+                        ? EstadoRegistroCobranzaDudosa.Cancelado
+                        : EstadoRegistroCobranzaDudosa.Registrado;
+                }
+            }
         }
 
         private static async Task<DateTime?> LastCancelacionDateAsync(

@@ -79,6 +79,12 @@ namespace Cepheus.Domain.Facturacion.Transacciones
         /// <summary>Saldo por cobrar en la moneda del comprobante (legacy PendienteSol/Dol_fve). Lo mueve Cancelaciones.</summary>
         public decimal PendingAmount { get; set; }
 
+        /// <summary>Cobranza dudosa (legacy CobranzaDudosa S/N/X): Normal, Dudosa (enviado a cobranza dudosa) o Castigada.</summary>
+        public EstadoCobranzaDudosa DoubtfulStatus { get; set; } = EstadoCobranzaDudosa.Normal;
+
+        /// <summary>Tipo de cambio con que se registró la cobranza dudosa (legacy TipCamCdu).</summary>
+        public decimal DoubtfulExchangeRate { get; set; }
+
         public EstadoComprobanteVenta Status { get; set; } = EstadoComprobanteVenta.Pendiente;
 
         public bool IsPrinted { get; set; }

@@ -56,6 +56,12 @@ namespace Cepheus.Application.Features.Contabilidad.Transacciones.AsientosContab
                     $"El asiento {codigo} pertenece a una cancelación de venta: anúlelo desde Cancelaciones (Anular asiento).");
             }
 
+            if (await t.CobranzasDudosas.Query().AsNoTracking().AnyAsync(c => c.CanjeEntry == codigo, cancellationToken))
+            {
+                throw new InvalidOperationException(
+                    $"El asiento {codigo} es el canje de una cobranza dudosa: elimine la cobranza dudosa del documento desde Cobranza Dudosa.");
+            }
+
             if (await t.LetrasVenta.Query().AsNoTracking().AnyAsync(
                     l => l.ProvisionEntryNumber == codigo || l.CancellationEntryNumber == codigo, cancellationToken))
             {

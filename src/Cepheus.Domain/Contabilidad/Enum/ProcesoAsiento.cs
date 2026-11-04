@@ -54,7 +54,16 @@
         /// según el tipo de pago), CobranzaDudosa (una línea al Debe y otra al Haber) y DiferenciaCambioGanancia /
         /// DiferenciaCambioPerdida.
         /// </summary>
-        CancelacionVenta = 10
+        CancelacionVenta = 10,
+
+        /// <summary>
+        /// Canje de un documento de venta a cobranza dudosa (legacy: fc_cobranzadudosacanje, asiento tipo
+        /// gs_tipocancelacioncli = 07). Reemplaza la provisión del documento por una de cobranza dudosa.
+        /// Líneas: DetalleDocumento (cuenta y anexo de la línea 121/123 de la provisión original, al Haber por el saldo),
+        /// CobranzaDudosa (tres líneas con cuenta fija: 12910101 Debe, 94110107 Debe y 19210101 Haber en el legacy, todas
+        /// por el saldo a tipo de cambio de la cobranza dudosa) y DiferenciaCambioGanancia / DiferenciaCambioPerdida.
+        /// </summary>
+        CanjeCobranzaDudosa = 11
 
     }
 }

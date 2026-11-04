@@ -1,7 +1,9 @@
 using Cepheus.Application.Comun.Interfaces.UnitOfWork;
 using Cepheus.Application.Features.Facturacion.Common;
 using Cepheus.Application.Features.Facturacion.Transacciones.LetrasVenta.Common;
+using Cepheus.Domain.Facturacion.Enum;
 using Cepheus.Domain.Facturacion.Transacciones;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cepheus.Application.Features.Facturacion.Transacciones.CancelacionesVenta.Common
 {
@@ -70,6 +72,21 @@ namespace Cepheus.Application.Features.Facturacion.Transacciones.CancelacionesVe
                     throw new InvalidOperationException($"El documento {type} {number} no pertenece al cliente {c.ClienteCode}.");
                 }
 
+                // Cobranza dudosa: la provisión del documento pasa a ser el asiento de canje (cuenta 1291); mientras
+                // no se genere, la cancelación no encontraría esa cuenta.
+                if (doc.DoubtfulStatus != EstadoCobranzaDudosa.Normal)
+                {
+                    var conCanje = await uow.Facturacion.Transacciones.CobranzasDudosas.Query().AsNoTracking()
+                        .AnyAsync(x => x.TypeCode == doc.TypeCode && x.Number == doc.Number && x.ClienteCode == doc.ClienteCode
+                                       && x.CanjeEntry != null && x.CanjeEntry != "", cancellationToken);
+
+                    if (!conCanje)
+                    {
+                        throw new InvalidOperationException(
+                            $"El documento {type} {number} está en cobranza dudosa sin asiento de canje: genérelo antes de cancelarlo.");
+                    }
+                }
+
                 if (!doc.IsAvailable)
                 {
                     throw new InvalidOperationException(
@@ -130,8 +147,9 @@ namespace Cepheus.Application.Features.Facturacion.Transacciones.CancelacionesVe
                     DifferenceSoles = sign * difference,
                     ProvisionEntryNumber = doc.ProvisionEntry,
                     ObraCode = doc.ObraCode,
-                    IsDoubtful = false,
-                    DoubtfulExchangeRate = 0m,
+                    // Legacy: la línea copia CobranzaDudosa y TipCamCdu del documento (dudosa o castigada).
+                    IsDoubtful = doc.DoubtfulStatus != EstadoCobranzaDudosa.Normal,
+                    DoubtfulExchangeRate = doc.DoubtfulStatus != EstadoCobranzaDudosa.Normal ? doc.DoubtfulExchangeRate : 0m,
                     IsDetraction = input.IsDetraction
                 };
 

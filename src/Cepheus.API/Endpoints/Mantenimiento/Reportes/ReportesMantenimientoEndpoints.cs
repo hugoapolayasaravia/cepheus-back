@@ -1,7 +1,4 @@
-using Cepheus.Application.Features.Mantenimiento.Reportes.CalendarioEquipos.GetReporteCalendarioEquipos;
-using Cepheus.Application.Features.Mantenimiento.Reportes.CalendarioOrdenesEquipo.GetReporteCalendarioOrdenesEquipo;
 using Cepheus.Application.Features.Mantenimiento.Reportes.HorometroCalendario.GetReporteHorometroCalendario;
-using Cepheus.Domain.Mantenimiento.Enum;
 using Cepheus.Application.Features.Mantenimiento.Reportes.UnidadesDia.GetReporteUnidadesDia;
 using MediatR;
 
@@ -29,22 +26,5 @@ public static class ReportesMantenimientoEndpoints
                     centroCostoCode, plantaCode, fechaDesde, fechaHasta))))
         .WithName("GetReporteHorometroCalendario")
         .RequireAuthorization("REPORTEHOROMETROCALENDARIO.VIEW");
-
-        // Calendario de órdenes de trabajo por equipo en un rango de fechas. plantaCode/equipoCode/estado: omitir = todos.
-        group.MapGet("/calendario-ordenes-equipo", async (
-            string? plantaCode, string? equipoCode, EstadoOrdenTrabajo? estado,
-            DateTime fechaDesde, DateTime fechaHasta, ISender sender) =>
-                Results.Ok(await sender.Send(new GetReporteCalendarioOrdenesEquipoQuery(
-                    plantaCode, equipoCode, estado, fechaDesde, fechaHasta))))
-        .WithName("GetReporteCalendarioOrdenesEquipo")
-        .RequireAuthorization("REPORTECALENDARIOOT.VIEW");
-
-        // Calendario de equipos: dato diario de cada plan preventivo. plantaCode/equipoCode: omitir = todos.
-        group.MapGet("/calendario-equipos", async (
-            string? plantaCode, string? equipoCode, DateTime fechaDesde, DateTime fechaHasta, ISender sender) =>
-                Results.Ok(await sender.Send(new GetReporteCalendarioEquiposQuery(
-                    plantaCode, equipoCode, fechaDesde, fechaHasta))))
-        .WithName("GetReporteCalendarioEquipos")
-        .RequireAuthorization("REPORTECALENDARIOEQUIPOS.VIEW");
     }
 }

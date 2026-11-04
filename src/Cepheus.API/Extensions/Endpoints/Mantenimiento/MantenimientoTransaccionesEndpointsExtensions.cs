@@ -14,6 +14,7 @@ public static class MantenimientoTransaccionesEndpointsExtensions
         app.MapUnidadesParadaEndpoints();
         app.MapUnidadesHorometroEndpoints();
         app.MapOrdenesPreventivasEndpoints();
+        app.MapCalendariosMantenimientoEndpoints();
 
         return app;
     }

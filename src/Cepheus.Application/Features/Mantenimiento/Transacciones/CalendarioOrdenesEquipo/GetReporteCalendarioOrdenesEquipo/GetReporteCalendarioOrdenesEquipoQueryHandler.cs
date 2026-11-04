@@ -3,7 +3,7 @@ using Cepheus.Application.Features.Mantenimiento.Reportes.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cepheus.Application.Features.Mantenimiento.Reportes.CalendarioOrdenesEquipo.GetReporteCalendarioOrdenesEquipo;
+namespace Cepheus.Application.Features.Mantenimiento.Transacciones.CalendarioOrdenesEquipo.GetReporteCalendarioOrdenesEquipo;
 
 /// <summary>
 /// Solo lectura, sin SQL dinámico ni tablas temporales: reemplaza Man_sp_Listado_Calendario_Ot_Equipos.

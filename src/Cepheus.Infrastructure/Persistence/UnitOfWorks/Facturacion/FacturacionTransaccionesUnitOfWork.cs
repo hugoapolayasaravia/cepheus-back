@@ -114,5 +114,8 @@ namespace Cepheus.Infrastructure.Persistence.UnitOfWorks
 
         private IRepository<ChequeMixtoDocumento>? _chequesMixtosDocumentos;
         public IRepository<ChequeMixtoDocumento> ChequesMixtosDocumentos => _chequesMixtosDocumentos ??= new Repository<ChequeMixtoDocumento>(_context);
+
+        private IRepository<CobranzaDudosa>? _cobranzasDudosas;
+        public IRepository<CobranzaDudosa> CobranzasDudosas => _cobranzasDudosas ??= new Repository<CobranzaDudosa>(_context);
     }
 }

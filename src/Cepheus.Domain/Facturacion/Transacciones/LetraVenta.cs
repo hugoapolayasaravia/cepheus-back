@@ -60,6 +60,12 @@ namespace Cepheus.Domain.Facturacion.Transacciones
 
         public decimal TotalAmount { get; set; }
         public decimal PendingAmount { get; set; }
+
+        /// <summary>Cobranza dudosa (legacy CobranzaDudosa S/N/X): Normal, Dudosa (enviado a cobranza dudosa) o Castigada.</summary>
+        public EstadoCobranzaDudosa DoubtfulStatus { get; set; } = EstadoCobranzaDudosa.Normal;
+
+        /// <summary>Tipo de cambio con que se registró la cobranza dudosa (legacy TipCamCdu).</summary>
+        public decimal DoubtfulExchangeRate { get; set; }
         public decimal Interest { get; set; }
 
         public string? ProvisionEntryNumber { get; set; }

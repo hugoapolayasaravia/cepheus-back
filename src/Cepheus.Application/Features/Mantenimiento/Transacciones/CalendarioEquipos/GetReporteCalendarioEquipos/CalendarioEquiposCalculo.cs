@@ -2,7 +2,7 @@ using Cepheus.Application.Comun.Interfaces.UnitOfWork;
 using Cepheus.Application.Features.Mantenimiento.Reportes.Common;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cepheus.Application.Features.Mantenimiento.Reportes.CalendarioEquipos.GetReporteCalendarioEquipos;
+namespace Cepheus.Application.Features.Mantenimiento.Transacciones.CalendarioEquipos.GetReporteCalendarioEquipos;
 
 internal sealed record CalendarioCalculado(IReadOnlyList<DateTime> Dias, IReadOnlyList<GamaCalculada> Gamas);
 

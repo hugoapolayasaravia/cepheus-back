@@ -22,7 +22,7 @@ namespace Cepheus.API.Endpoints.Mantenimiento.Transacciones
     {
         public static void MapPlanesPreventivoEndpoints(this IEndpointRouteBuilder app)
         {
-            var group = app.MapGroup("/api/mantenimiento/maestros/planes-preventivo")
+            var group = app.MapGroup("/api/mantenimiento/transacciones/planes-preventivo")
                 .WithTags("Planes de Mantenimiento Preventivo")
                 .RequireAuthorization();
 
@@ -30,7 +30,7 @@ namespace Cepheus.API.Endpoints.Mantenimiento.Transacciones
             group.MapPost("/", async (CreatePlanPreventivoCommand command, ISender sender) =>
             {
                 var result = await sender.Send(command);
-                return Results.Created($"/api/mantenimiento/maestros/planes-preventivo/{result.PlantaCode}/{result.Code}", result);
+                return Results.Created($"/api/mantenimiento/transacciones/planes-preventivo/{result.PlantaCode}/{result.Code}", result);
             })
             .WithName("CreatePlanPreventivo")
             .RequireAuthorization("PLANESPREVENTIVO.CREATE");
@@ -92,7 +92,7 @@ namespace Cepheus.API.Endpoints.Mantenimiento.Transacciones
             group.MapPost("/{plantaCode}/{code}/copiar", async (string plantaCode, string code, ISender sender) =>
             {
                 var result = await sender.Send(new CopyPlanPreventivoCommand(plantaCode, code));
-                return Results.Created($"/api/mantenimiento/maestros/planes-preventivo/{result.PlantaCode}/{result.Code}", result);
+                return Results.Created($"/api/mantenimiento/transacciones/planes-preventivo/{result.PlantaCode}/{result.Code}", result);
             })
             .WithName("CopyPlanPreventivo")
             .RequireAuthorization("PLANESPREVENTIVO.CREATE");
@@ -121,7 +121,7 @@ namespace Cepheus.API.Endpoints.Mantenimiento.Transacciones
                 }
 
                 var result = await sender.Send(command);
-                return Results.Created($"/api/mantenimiento/maestros/planes-preventivo/{plantaCode}/{code}/mano-obra/{result.TrabajadorCode}", result);
+                return Results.Created($"/api/mantenimiento/transacciones/planes-preventivo/{plantaCode}/{code}/mano-obra/{result.TrabajadorCode}", result);
             })
             .WithName("CreatePlanPreventivoManoObra")
             .RequireAuthorization("PLANESPREVENTIVO.UPDATE");
@@ -167,7 +167,7 @@ namespace Cepheus.API.Endpoints.Mantenimiento.Transacciones
                 }
 
                 var result = await sender.Send(command);
-                return Results.Created($"/api/mantenimiento/maestros/planes-preventivo/{plantaCode}/{code}/materiales/{result.ArticuloCode}", result);
+                return Results.Created($"/api/mantenimiento/transacciones/planes-preventivo/{plantaCode}/{code}/materiales/{result.ArticuloCode}", result);
             })
             .WithName("CreatePlanPreventivoMaterial")
             .RequireAuthorization("PLANESPREVENTIVO.UPDATE");

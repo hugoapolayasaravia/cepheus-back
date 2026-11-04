@@ -1,6 +1,6 @@
 using Cepheus.Application.Comun.Interfaces.UnitOfWork;
 using Cepheus.Application.Features.Logistica.Transacciones.Vales.Common;
-using Cepheus.Application.Features.Mantenimiento.Reportes.CalendarioEquipos.GetReporteCalendarioEquipos;
+using Cepheus.Application.Features.Mantenimiento.Transacciones.CalendarioEquipos.GetReporteCalendarioEquipos;
 using Cepheus.Domain.Logistica.Enum;
 using Cepheus.Domain.Logistica.Transacciones;
 using Cepheus.Domain.Mantenimiento.Transacciones;

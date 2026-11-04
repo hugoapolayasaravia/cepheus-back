@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace Cepheus.Application.Features.Mantenimiento.Reportes.CalendarioEquipos.GetReporteCalendarioEquipos;
+namespace Cepheus.Application.Features.Mantenimiento.Transacciones.CalendarioEquipos.GetReporteCalendarioEquipos;
 
 /// <summary>
 /// Calendario de Equipos: para cada plan de mantenimiento preventivo, el "dato" diario (tiempo restante hasta el

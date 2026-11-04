@@ -41,6 +41,12 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
             ConceptoAsiento.DiferenciaCambioGanancia, ConceptoAsiento.DiferenciaCambioPerdida
         };
 
+        private static readonly ConceptoAsiento[] ConceptosCanjeCobranzaDudosa =
+        {
+            ConceptoAsiento.DetalleDocumento, ConceptoAsiento.CobranzaDudosa,
+            ConceptoAsiento.DiferenciaCambioGanancia, ConceptoAsiento.DiferenciaCambioPerdida
+        };
+
         private static readonly ConceptoAsiento[] ConceptosConsumo =
         {
             ConceptoAsiento.DetalleVale, ConceptoAsiento.TotalVales
@@ -57,11 +63,14 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
 
         private static bool EsCancelacionVenta(ProcesoAsiento p) => p == ProcesoAsiento.CancelacionVenta;
 
+        private static bool EsCanjeCobranzaDudosa(ProcesoAsiento p) => p == ProcesoAsiento.CanjeCobranzaDudosa;
+
         private static ConceptoAsiento[] ConceptosPermitidos(ProcesoAsiento p) =>
             p == ProcesoAsiento.CancelacionProveedor ? ConceptosCancelacionProveedor
             : p == ProcesoAsiento.ReversionCajaChica ? ConceptosReversionCajaChica
             : EsVenta(p) ? ConceptosProvisionVenta
             : EsCancelacionVenta(p) ? ConceptosCancelacionVenta
+            : EsCanjeCobranzaDudosa(p) ? ConceptosCanjeCobranzaDudosa
             : EsProvision(p) ? ConceptosProvision : EsTransferencia(p) ? ConceptosTransferencia : ConceptosConsumo;
 
         protected PlantillaAsientoValidator(IUnitOfWork uow)
@@ -277,9 +286,10 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
                     context.AddFailure("Lines", $"{label}: la provisión de ventas no usa cuentas por pagar de proveedor (use una cuenta fija).");
                 }
 
-                if (line.AnnexSource == OrigenAnexoAsiento.Cliente && !EsVenta(process) && !EsCancelacionVenta(process))
+                if (line.AnnexSource == OrigenAnexoAsiento.Cliente && !EsVenta(process) && !EsCancelacionVenta(process)
+                    && !EsCanjeCobranzaDudosa(process))
                 {
-                    context.AddFailure("Lines", $"{label}: el anexo del cliente solo aplica a la provisión de ventas y a la cancelación de ventas.");
+                    context.AddFailure("Lines", $"{label}: el anexo del cliente solo aplica a la provisión de ventas, a la cancelación de ventas y al canje de cobranza dudosa.");
                 }
 
                 if (line.AccountSource == OrigenCuentaAsiento.CuentaPago
@@ -293,13 +303,13 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
                     context.AddFailure("Lines", $"{label}: PagoRecibido usa la cuenta del pago (caja o banco).");
                 }
 
-                if (EsCancelacionVenta(process) && line.Concept == ConceptoAsiento.DetalleDocumento
+                if ((EsCancelacionVenta(process) || EsCanjeCobranzaDudosa(process)) && line.Concept == ConceptoAsiento.DetalleDocumento
                     && line.AccountSource != OrigenCuentaAsiento.LineaDocumento)
                 {
-                    context.AddFailure("Lines", $"{label}: el detalle de la cancelación usa la cuenta de la línea del documento.");
+                    context.AddFailure("Lines", $"{label}: el detalle de la cancelación o del canje usa la cuenta de la línea del documento.");
                 }
 
-                if (EsCancelacionVenta(process)
+                if ((EsCancelacionVenta(process) || EsCanjeCobranzaDudosa(process))
                     && line.Concept is ConceptoAsiento.CobranzaDudosa or ConceptoAsiento.DiferenciaCambioGanancia
                         or ConceptoAsiento.DiferenciaCambioPerdida
                     && line.AccountSource != OrigenCuentaAsiento.Fija)
@@ -399,6 +409,36 @@ namespace Cepheus.Application.Features.Contabilidad.Maestros.PlantillasAsiento.C
                     if (l.Count != 1 || l[0].Nature != naturaleza)
                     {
                         context.AddFailure("Lines", $"La cancelación de ventas necesita exactamente una línea {concepto} al {naturaleza}.");
+                    }
+                }
+            }
+
+            if (EsCanjeCobranzaDudosa(process))
+            {
+                var detalleDoc = lines.Where(l => l.Concept == ConceptoAsiento.DetalleDocumento).ToList();
+
+                if (detalleDoc.Count != 1 || detalleDoc[0].Nature != NaturalezaAsiento.Haber
+                    || detalleDoc[0].AnnexSource != OrigenAnexoAsiento.LineaDocumento)
+                {
+                    context.AddFailure("Lines", "El canje de cobranza dudosa necesita exactamente una línea DetalleDocumento al Haber con el anexo de la línea del documento (la cuenta 12 de su provisión).");
+                }
+
+                var dudosa = lines.Where(l => l.Concept == ConceptoAsiento.CobranzaDudosa).ToList();
+                if (!dudosa.Any(l => l.Nature == NaturalezaAsiento.Debe) || !dudosa.Any(l => l.Nature == NaturalezaAsiento.Haber))
+                {
+                    context.AddFailure("Lines", "El canje de cobranza dudosa necesita líneas CobranzaDudosa al Debe y al Haber (legacy: 12910101 y 94110107 al Debe, 19210101 al Haber).");
+                }
+
+                foreach (var (concepto, naturaleza) in new[]
+                         {
+                             (ConceptoAsiento.DiferenciaCambioGanancia, NaturalezaAsiento.Haber),
+                             (ConceptoAsiento.DiferenciaCambioPerdida, NaturalezaAsiento.Debe)
+                         })
+                {
+                    var l = lines.Where(x => x.Concept == concepto).ToList();
+                    if (l.Count != 1 || l[0].Nature != naturaleza)
+                    {
+                        context.AddFailure("Lines", $"El canje de cobranza dudosa necesita exactamente una línea {concepto} al {naturaleza}.");
                     }
                 }
             }

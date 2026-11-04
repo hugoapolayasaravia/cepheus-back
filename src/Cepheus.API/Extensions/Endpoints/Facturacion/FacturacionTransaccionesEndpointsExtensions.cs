@@ -25,7 +25,7 @@ public static class FacturacionTransaccionesEndpointsExtensions
         app.MapLetrasVentaEndpoints();
         app.MapCobranzasEndpoints();
         app.MapCancelacionesVentaEndpoints();
-
+        app.MapCobranzasDudosasEndpoints();
 
         return app;
     }

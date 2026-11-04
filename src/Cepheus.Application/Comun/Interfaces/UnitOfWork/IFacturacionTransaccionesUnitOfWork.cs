@@ -48,5 +48,6 @@ namespace Cepheus.Application.Comun.Interfaces.UnitOfWork
         IRepository<CancelacionVenta> CancelacionesVenta { get; }
         IRepository<CancelacionVentaDetalle> CancelacionesVentaDetalle { get; }
         IRepository<ChequeMixtoDocumento> ChequesMixtosDocumentos { get; }
+        IRepository<CobranzaDudosa> CobranzasDudosas { get; }
     }
 }

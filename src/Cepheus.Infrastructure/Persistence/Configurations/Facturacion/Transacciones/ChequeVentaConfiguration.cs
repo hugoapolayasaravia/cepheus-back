@@ -27,6 +27,8 @@ namespace Cepheus.Infrastructure.Persistence.Configurations.Facturacion.Transacc
             builder.Property(x => x.ExchangeRate).IsRequired().HasColumnType("decimal(18,4)");
 
             builder.Property(x => x.TotalAmount).IsRequired().HasColumnType("decimal(18,2)");
+            builder.Property(x => x.DoubtfulStatus).IsRequired().HasDefaultValue(EstadoCobranzaDudosa.Normal);
+            builder.Property(x => x.DoubtfulExchangeRate).IsRequired().HasColumnType("decimal(18,4)").HasDefaultValue(0m);
             builder.Property(x => x.PendingAmount).IsRequired().HasColumnType("decimal(18,2)");
 
             builder.Property(x => x.ProvisionEntryNumber).HasColumnType("char(13)");

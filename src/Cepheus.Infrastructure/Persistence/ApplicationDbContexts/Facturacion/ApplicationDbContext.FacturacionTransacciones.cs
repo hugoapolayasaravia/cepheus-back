@@ -53,4 +53,5 @@ public partial class ApplicationDbContext
 
     public DbSet<ChequeMixtoDocumento> ChequesMixtosDocumentos => Set<ChequeMixtoDocumento>();
 
+    public DbSet<CobranzaDudosa> CobranzasDudosas => Set<CobranzaDudosa>();
 }

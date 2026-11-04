@@ -1,6 +1,6 @@
 using Cepheus.Domain.Mantenimiento.Enum;
 
-namespace Cepheus.Application.Features.Mantenimiento.Reportes.CalendarioOrdenesEquipo.GetReporteCalendarioOrdenesEquipo;
+namespace Cepheus.Application.Features.Mantenimiento.Transacciones.CalendarioOrdenesEquipo.GetReporteCalendarioOrdenesEquipo;
 
 public sealed record ReporteCalendarioOrdenesEquipoResponse(
     DateTime FechaDesde,
