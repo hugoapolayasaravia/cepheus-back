@@ -80,7 +80,7 @@ public sealed class ChangeEstadoOrdenServicioCommandHandler
         {
             case EstadoOrdenServicio.Aprobado:
                 await ValidarAprobadorAsync(os, ct);
-                os.AprobadoPor = _currentUser.FullName;
+                os.AprobadoPor = _currentUser.Login;
                 os.FechaAprobacion = DateTime.Now;
                 break;
 

@@ -85,7 +85,7 @@ public sealed class ChangeEstadoValeCommandHandler
         await ValidarAprobadorAsync(vale, ct);
 
         vale.Estado = EstadoVale.Aprobado;
-        vale.AprobadoPor = _currentUser.FullName;
+        vale.AprobadoPor = _currentUser.Login;
         vale.FechaAprobacion = DateTime.Now;
     }
 
@@ -100,7 +100,7 @@ public sealed class ChangeEstadoValeCommandHandler
                 $"El Vale de Salida se encuentra {vale.Estado}; solo se devuelve a Pendiente desde Aprobado.");
         }
 
-        if (!string.Equals(vale.AprobadoPor, _currentUser.FullName, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(vale.AprobadoPor, _currentUser.Login, StringComparison.OrdinalIgnoreCase))
         {
             throw new InvalidOperationException(
                 "Solo el usuario que aprobó el vale puede devolverlo a Pendiente.");

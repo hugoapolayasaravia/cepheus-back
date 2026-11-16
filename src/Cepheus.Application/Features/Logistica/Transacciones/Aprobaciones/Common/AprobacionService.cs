@@ -206,20 +206,14 @@ public sealed class AprobacionService : IAprobacionService
             return cache;
         }
 
-        // AprobadoPor guarda el Login en Pedido y el nombre completo en OC/OS/Vale: se aceptan ambos.
-        var usuarios = await _uow.Administracion.Users
+        // AprobadoPor guarda siempre el Login del usuario (Pedido, OC, OS y Vale). Un trabajador puede tener
+        // más de un usuario, por eso se buscan todos sus logins.
+        var nombres = await _uow.Administracion.Users
             .Query()
             .AsNoTracking()
             .Where(u => u.TrabajadorCode == trabajadorCode)
-            .Select(u => new { u.Login, u.FirstName, u.LastName })
+            .Select(u => u.Login)
             .ToListAsync(ct);
-
-        var nombres = new List<string>();
-        foreach (var u in usuarios)
-        {
-            nombres.Add(u.Login);
-            nombres.Add($"{u.FirstName} {u.LastName}");
-        }
 
         var resultado = new List<MontoAprobado>();
 

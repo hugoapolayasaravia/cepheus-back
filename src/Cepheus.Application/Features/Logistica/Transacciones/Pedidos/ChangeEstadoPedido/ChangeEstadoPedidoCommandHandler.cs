@@ -82,8 +82,7 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.Pedidos.ChangeEst
             else if (nuevoEstado == EstadoPedido.Pendiente)
             {
                 // Aprobado -> Pendiente: solo lo devuelve quien lo aprobó (legacy: desaprobar).
-                var aprobo = string.Equals(pedido.AprobadoPor, _currentUser.Login, StringComparison.OrdinalIgnoreCase)
-                          || string.Equals(pedido.AprobadoPor, _currentUser.FullName, StringComparison.OrdinalIgnoreCase);
+                var aprobo = string.Equals(pedido.AprobadoPor, _currentUser.Login, StringComparison.OrdinalIgnoreCase);
 
                 if (!aprobo)
                 {

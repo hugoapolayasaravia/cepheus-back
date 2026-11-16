@@ -64,7 +64,7 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.OrdenesCompraAdm.
             if (nuevoEstado == EstadoOrdenCompraAdministracion.Aprobado)
             {
                 await ValidarAprobadorAsync(orden, cancellationToken);
-                orden.AprobadoPor = _currentUser.FullName;
+                orden.AprobadoPor = _currentUser.Login;
                 orden.FechaAprobacion = DateTime.UtcNow;
             }
 
