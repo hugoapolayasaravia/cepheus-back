@@ -1,7 +1,6 @@
 using Cepheus.Application.Comun.Interfaces;
 using Cepheus.Application.Comun.Interfaces.UnitOfWork;
-using Cepheus.Application.Features.Logistica.Maestros.AprobadoresAsignados.GetAprobadoresPorCombinacion;
-using Cepheus.Application.Features.Logistica.Maestros.RangosAprobacion.ResolverRangoAprobacion;
+using Cepheus.Application.Features.Logistica.Transacciones.Aprobaciones.Common;
 using Cepheus.Application.Features.Logistica.Transacciones.Vales.Common;
 using Cepheus.Domain.Logistica.Enum;
 using Cepheus.Domain.Logistica.Transacciones;
@@ -14,16 +13,16 @@ public sealed class ChangeEstadoValeCommandHandler
     : IRequestHandler<ChangeEstadoValeCommand, ValeResponse>
 {
     private readonly IUnitOfWork _uow;
-    private readonly ISender _sender;
+    private readonly IAprobacionService _aprobacion;
     private readonly ICurrentUserService _currentUser;
 
     public ChangeEstadoValeCommandHandler(
         IUnitOfWork uow,
-        ISender sender,
+        IAprobacionService aprobacion,
         ICurrentUserService currentUser)
     {
         _uow = uow;
-        _sender = sender;
+        _aprobacion = aprobacion;
         _currentUser = currentUser;
     }
 
@@ -114,66 +113,19 @@ public sealed class ChangeEstadoValeCommandHandler
     }
 
     /// <summary>
-    /// Mismo esquema de aprobación que la Orden de Compra: rango por tipo de transacción (VS / VC),
-    /// unidad de negocio, moneda (soles) y monto neto; el usuario debe ser aprobador, suplente o superior
-    /// del nivel que cubre el monto.
+    /// Regla única de aprobación (nivel asignado + límites diario/mensual por FechaAprobacion).
+    /// Tipo de transacción VS / VC según el tipo de vale; los vales se valorizan en soles.
     /// </summary>
-    private async Task ValidarAprobadorAsync(Vale vale, CancellationToken ct)
+    private Task ValidarAprobadorAsync(Vale vale, CancellationToken ct)
     {
-        if (_currentUser.UserId is null)
-        {
-            throw new InvalidOperationException(
-                "No se pudo identificar al usuario autenticado.");
-        }
-
-        var trabajadorCode = await _uow.Administracion.Users
-            .Query()
-            .AsNoTracking()
-            .Where(u => u.Id == _currentUser.UserId.Value)
-            .Select(u => u.TrabajadorCode)
-            .FirstOrDefaultAsync(ct);
-
-        if (string.IsNullOrWhiteSpace(trabajadorCode))
-        {
-            throw new InvalidOperationException(
-                "Tu usuario no tiene un Trabajador de RRHH vinculado — no puedes aprobar Vales de Salida.");
-        }
-
-        var tipoTransaccion = ValeRules.TipoTransaccion(vale.TipoValeCode);
-
-        var rango = await _sender.Send(
-            new ResolverRangoAprobacionQuery(
-                tipoTransaccion,
+        return _aprobacion.AsegurarAprobadorActualAsync(
+            new DocumentoAprobable(
+                ValeRules.TipoTransaccion(vale.TipoValeCode),
+                vale.PlantaCode,
+                vale.Code,
                 vale.UnidadNegocioCode,
                 ValeRules.MonedaSoles,
                 vale.Neto),
             ct);
-
-        if (rango.RangoAplicable is null)
-        {
-            throw new InvalidOperationException(
-                $"No existe un rango de aprobación configurado que cubra S/ {vale.Neto:N2} " +
-                $"para la unidad de negocio {vale.UnidadNegocioCode} ({tipoTransaccion}).");
-        }
-
-        var aprobadores = await _sender.Send(
-            new GetAprobadoresPorCombinacionQuery(
-                rango.RangoAplicable.NivelCode,
-                tipoTransaccion,
-                rango.UnidadNegocioEfectivaCode,
-                ValeRules.MonedaSoles),
-            ct);
-
-        var autorizado = aprobadores.Any(a =>
-            a.TrabajadorCode == trabajadorCode ||
-            a.SuplenteTrabajadorCode == trabajadorCode ||
-            a.SuperiorTrabajadorCode == trabajadorCode);
-
-        if (!autorizado)
-        {
-            throw new InvalidOperationException(
-                $"No estás autorizado para aprobar este Vale de Salida (nivel {rango.RangoAplicable.NivelCode}, " +
-                $"monto S/ {vale.Neto:N2}).");
-        }
     }
 }

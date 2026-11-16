@@ -1,6 +1,7 @@
 ﻿// Cepheus.Application/Features/Logistica/Transacciones/Pedidos/ChangeEstadoPedido/ChangeEstadoPedidoCommandHandler.cs
 using Cepheus.Application.Comun.Interfaces;
 using Cepheus.Application.Comun.Interfaces.UnitOfWork;
+using Cepheus.Application.Features.Logistica.Transacciones.Aprobaciones.Common;
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.Common;
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.CreatePedido;
 using Cepheus.Domain.Logistica.Enum;
@@ -15,7 +16,7 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.Pedidos.ChangeEst
         {
             [EstadoPedido.Pendiente] = new[] { EstadoPedido.AprobacionProvisional, EstadoPedido.Aprobado, EstadoPedido.Anulado },
             [EstadoPedido.AprobacionProvisional] = new[] { EstadoPedido.Aprobado, EstadoPedido.Anulado },
-            [EstadoPedido.Aprobado] = new[] { EstadoPedido.EnCompra, EstadoPedido.Anulado },
+            [EstadoPedido.Aprobado] = new[] { EstadoPedido.Pendiente, EstadoPedido.EnCompra, EstadoPedido.Anulado },
             [EstadoPedido.EnCompra] = new[] { EstadoPedido.CompraParcial, EstadoPedido.Comprado, EstadoPedido.Anulado },
             [EstadoPedido.CompraParcial] = new[] { EstadoPedido.Comprado, EstadoPedido.EntregaParcial, EstadoPedido.Anulado },
             [EstadoPedido.Comprado] = Array.Empty<EstadoPedido>(),
@@ -26,11 +27,16 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.Pedidos.ChangeEst
 
         private readonly IUnitOfWork _uow;
         private readonly ICurrentUserService _currentUser;
+        private readonly IAprobacionService _aprobacion;
 
-        public ChangeEstadoPedidoCommandHandler(IUnitOfWork uow, ICurrentUserService currentUser)
+        public ChangeEstadoPedidoCommandHandler(
+            IUnitOfWork uow,
+            ICurrentUserService currentUser,
+            IAprobacionService aprobacion)
         {
             _uow = uow;
             _currentUser = currentUser;
+            _aprobacion = aprobacion;
         }
 
         public async Task<PedidoResponse> Handle(ChangeEstadoPedidoCommand request, CancellationToken cancellationToken)
@@ -60,12 +66,43 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.Pedidos.ChangeEst
                     $"{string.Join(", ", ValidTransitions[pedido.EstadoPedido])}.");
             }
 
+            if (nuevoEstado == EstadoPedido.Aprobado)
+            {
+                // Regla única de aprobación (nivel asignado + límites diario/mensual por FechaAprobacion).
+                await _aprobacion.AsegurarAprobadorActualAsync(
+                    new DocumentoAprobable(
+                        AprobacionTipos.Pedido,
+                        pedido.PlantaCode,
+                        pedido.Code,
+                        pedido.UnidadNegocioCode,
+                        AprobacionTipos.MonedaSoles,
+                        pedido.TotalPedido),
+                    cancellationToken);
+            }
+            else if (nuevoEstado == EstadoPedido.Pendiente)
+            {
+                // Aprobado -> Pendiente: solo lo devuelve quien lo aprobó (legacy: desaprobar).
+                var aprobo = string.Equals(pedido.AprobadoPor, _currentUser.Login, StringComparison.OrdinalIgnoreCase)
+                          || string.Equals(pedido.AprobadoPor, _currentUser.FullName, StringComparison.OrdinalIgnoreCase);
+
+                if (!aprobo)
+                {
+                    throw new InvalidOperationException(
+                        "Solo el usuario que aprobó el pedido puede devolverlo a Pendiente.");
+                }
+            }
+
             pedido.EstadoPedido = nuevoEstado;
 
             if (nuevoEstado == EstadoPedido.Aprobado)
             {
                 pedido.AprobadoPor = _currentUser.Login;
-                pedido.FechaAprobacion = DateTime.UtcNow;
+                pedido.FechaAprobacion = DateTime.Now;
+            }
+            else if (nuevoEstado == EstadoPedido.Pendiente)
+            {
+                pedido.AprobadoPor = null;
+                pedido.FechaAprobacion = null;
             }
             else if (nuevoEstado == EstadoPedido.EnCompra)
             {

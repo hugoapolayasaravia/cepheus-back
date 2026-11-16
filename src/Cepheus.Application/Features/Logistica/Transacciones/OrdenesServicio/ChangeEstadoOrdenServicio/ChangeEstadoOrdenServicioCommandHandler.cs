@@ -1,7 +1,6 @@
 ﻿using Cepheus.Application.Comun.Interfaces;
 using Cepheus.Application.Comun.Interfaces.UnitOfWork;
-using Cepheus.Application.Features.Logistica.Maestros.AprobadoresAsignados.GetAprobadoresPorCombinacion;
-using Cepheus.Application.Features.Logistica.Maestros.RangosAprobacion.ResolverRangoAprobacion;
+using Cepheus.Application.Features.Logistica.Transacciones.Aprobaciones.Common;
 using Cepheus.Application.Features.Logistica.Transacciones.NotaIngresos.Common;
 using Cepheus.Application.Features.Logistica.Transacciones.OrdenesServicioSalida.Common;
 using Cepheus.Application.Features.Logistica.Transacciones.OrdenesServicio.Common;
@@ -40,13 +39,13 @@ public sealed class ChangeEstadoOrdenServicioCommandHandler
     };
 
     private readonly IUnitOfWork _uow;
-    private readonly ISender _sender;
+    private readonly IAprobacionService _aprobacion;
     private readonly ICurrentUserService _currentUser;
 
-    public ChangeEstadoOrdenServicioCommandHandler(IUnitOfWork uow, ISender sender, ICurrentUserService currentUser)
+    public ChangeEstadoOrdenServicioCommandHandler(IUnitOfWork uow, IAprobacionService aprobacion, ICurrentUserService currentUser)
     {
         _uow = uow;
-        _sender = sender;
+        _aprobacion = aprobacion;
         _currentUser = currentUser;
     }
 
@@ -130,46 +129,17 @@ public sealed class ChangeEstadoOrdenServicioCommandHandler
         OrdenServicioSalidaSync.MarkAnulado(os);
     }
 
-    private async Task ValidarAprobadorAsync(OrdenServicio os, CancellationToken ct)
+    private Task ValidarAprobadorAsync(OrdenServicio os, CancellationToken ct)
     {
-        if (_currentUser.UserId is null)
-            throw new InvalidOperationException("No se pudo identificar al usuario autenticado.");
-
-        var trabajadorCode = await _uow.Administracion.Users.Query()
-            .AsNoTracking()
-            .Where(u => u.Id == _currentUser.UserId.Value)
-            .Select(u => u.TrabajadorCode)
-            .FirstOrDefaultAsync(ct);
-
-        if (string.IsNullOrWhiteSpace(trabajadorCode))
-            throw new InvalidOperationException(
-                "Tu usuario no tiene un Trabajador de RRHH vinculado — no puedes aprobar Órdenes de Servicio.");
-
-        var rango = await _sender.Send(
-            new ResolverRangoAprobacionQuery(
-                OrdenServicioRules.TipoTransaccionOS, os.UnidadNegocioCode, os.MonedaCode, os.Monto),
+        // Regla única de aprobación (nivel asignado + límites diario/mensual por FechaAprobacion).
+        return _aprobacion.AsegurarAprobadorActualAsync(
+            new DocumentoAprobable(
+                AprobacionTipos.OrdenServicio,
+                os.PlantaCode,
+                os.Code,
+                os.UnidadNegocioCode,
+                os.MonedaCode,
+                os.Monto),
             ct);
-
-        if (rango.RangoAplicable is null)
-            throw new InvalidOperationException(
-                $"No existe un rango de aprobación configurado que cubra {os.Monto:N2} " +
-                $"para la unidad de negocio {os.UnidadNegocioCode} en {os.MonedaCode} " +
-                $"(tipo de transacción {OrdenServicioRules.TipoTransaccionOS}).");
-
-        var aprobadores = await _sender.Send(
-            new GetAprobadoresPorCombinacionQuery(
-                rango.RangoAplicable.NivelCode, OrdenServicioRules.TipoTransaccionOS,
-                rango.UnidadNegocioEfectivaCode, os.MonedaCode),
-            ct);
-
-        var autorizado = aprobadores.Any(a =>
-            a.TrabajadorCode == trabajadorCode ||
-            a.SuplenteTrabajadorCode == trabajadorCode ||
-            a.SuperiorTrabajadorCode == trabajadorCode);
-
-        if (!autorizado)
-            throw new InvalidOperationException(
-                $"No estás autorizado para aprobar esta Orden de Servicio (nivel {rango.RangoAplicable.NivelCode}, " +
-                $"monto {os.Monto:N2} {os.MonedaCode}).");
     }
 }

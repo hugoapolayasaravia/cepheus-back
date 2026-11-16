@@ -1,6 +1,7 @@
 ﻿using Cepheus.Application.Comun.Interfaces;
 using Cepheus.Application.Comun.Interfaces.UnitOfWork;
 using Cepheus.Application.Features.Logistica.Maestros.StockArticulos.Common;
+using Cepheus.Application.Features.Logistica.Transacciones.Aprobaciones.Common;
 using Cepheus.Application.Features.Logistica.Transacciones.CierreMensual.Common;
 using Cepheus.Infrastructure.Authorization;
 using Cepheus.Infrastructure.Identity;
@@ -31,6 +32,8 @@ namespace Cepheus.Infrastructure
 
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+            services.AddScoped<IAprobacionService, AprobacionService>();
 
             services.AddScoped<IPasswordHasher, PasswordHasherService>();
 

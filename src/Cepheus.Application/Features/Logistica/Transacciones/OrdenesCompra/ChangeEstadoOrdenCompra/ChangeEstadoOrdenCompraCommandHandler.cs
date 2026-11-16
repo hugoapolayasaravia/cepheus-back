@@ -1,8 +1,7 @@
 ﻿// Cepheus.Application/Features/Logistica/Transacciones/OrdenesCompra/ChangeEstadoOrdenCompra/ChangeEstadoOrdenCompraCommandHandler.cs
 using Cepheus.Application.Comun.Interfaces;
 using Cepheus.Application.Comun.Interfaces.UnitOfWork;
-using Cepheus.Application.Features.Logistica.Maestros.AprobadoresAsignados.GetAprobadoresPorCombinacion;
-using Cepheus.Application.Features.Logistica.Maestros.RangosAprobacion.ResolverRangoAprobacion;
+using Cepheus.Application.Features.Logistica.Transacciones.Aprobaciones.Common;
 using Cepheus.Application.Features.Logistica.Transacciones.OrdenesCompra.Common;
 using Cepheus.Domain.Logistica.Enum;
 using MediatR;
@@ -12,9 +11,6 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.OrdenesCompra.Cha
 {
     public class ChangeEstadoOrdenCompraCommandHandler : IRequestHandler<ChangeEstadoOrdenCompraCommand, OrdenCompraResponse>
     {
-        /// <summary>Código en TipoTransaccion para Orden de Compra (confirmado).</summary>
-        private const string TipoTransaccionOC = "OC";
-
         private static readonly Dictionary<EstadoOrdenCompra, EstadoOrdenCompra[]> ValidTransitions = new()
         {
             [EstadoOrdenCompra.Pendiente] = new[] { EstadoOrdenCompra.Aprobado, EstadoOrdenCompra.Anulado },
@@ -25,13 +21,13 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.OrdenesCompra.Cha
         };
 
         private readonly IUnitOfWork _uow;
-        private readonly ISender _sender;
+        private readonly IAprobacionService _aprobacion;
         private readonly ICurrentUserService _currentUser;
 
-        public ChangeEstadoOrdenCompraCommandHandler(IUnitOfWork uow, ISender sender, ICurrentUserService currentUser)
+        public ChangeEstadoOrdenCompraCommandHandler(IUnitOfWork uow, IAprobacionService aprobacion, ICurrentUserService currentUser)
         {
             _uow = uow;
-            _sender = sender;
+            _aprobacion = aprobacion;
             _currentUser = currentUser;
         }
 
@@ -65,7 +61,7 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.OrdenesCompra.Cha
             {
                 await ValidarAprobadorAsync(orden, cancellationToken);
                 orden.AprobadoPor = _currentUser.FullName;
-                orden.FechaAprobacion = DateTime.UtcNow;
+                orden.FechaAprobacion = DateTime.Now;
             }
 
             orden.Estado = nuevoEstado;
@@ -75,52 +71,18 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.OrdenesCompra.Cha
             return OrdenCompraMapper.Map(orden);
         }
 
-        private async Task ValidarAprobadorAsync(Domain.Logistica.Transacciones.OrdenCompra orden, CancellationToken cancellationToken)
+        private Task ValidarAprobadorAsync(Domain.Logistica.Transacciones.OrdenCompra orden, CancellationToken cancellationToken)
         {
-            if (_currentUser.UserId is null)
-            {
-                throw new InvalidOperationException("No se pudo identificar al usuario autenticado.");
-            }
-
-            var trabajadorCode = await _uow.Administracion.Users.Query()
-                .AsNoTracking()
-                .Where(u => u.Id == _currentUser.UserId.Value)
-                .Select(u => u.TrabajadorCode)
-                .FirstOrDefaultAsync(cancellationToken);
-
-            if (string.IsNullOrWhiteSpace(trabajadorCode))
-            {
-                throw new InvalidOperationException(
-                    "Tu usuario no tiene un Trabajador de RRHH vinculado — no puedes aprobar Órdenes de Compra.");
-            }
-
-            var rango = await _sender.Send(
-                new ResolverRangoAprobacionQuery(TipoTransaccionOC, orden.UnidadNegocioCode, orden.MonedaCode, orden.TotalCompra),
+            // Regla única de aprobación (nivel asignado + límites diario/mensual por FechaAprobacion).
+            return _aprobacion.AsegurarAprobadorActualAsync(
+                new DocumentoAprobable(
+                    AprobacionTipos.OrdenCompra,
+                    orden.PlantaCode,
+                    orden.Code,
+                    orden.UnidadNegocioCode,
+                    orden.MonedaCode,
+                    orden.TotalCompra),
                 cancellationToken);
-
-            if (rango.RangoAplicable is null)
-            {
-                throw new InvalidOperationException(
-                    $"No existe un rango de aprobación configurado que cubra S/ {orden.TotalCompra:N2} " +
-                    $"para la unidad de negocio {orden.UnidadNegocioCode} en {orden.MonedaCode}.");
-            }
-
-            var aprobadores = await _sender.Send(
-                new GetAprobadoresPorCombinacionQuery(
-                    rango.RangoAplicable.NivelCode, TipoTransaccionOC, rango.UnidadNegocioEfectivaCode, orden.MonedaCode),
-                cancellationToken);
-
-            var autorizado = aprobadores.Any(a =>
-                a.TrabajadorCode == trabajadorCode ||
-                a.SuplenteTrabajadorCode == trabajadorCode ||
-                a.SuperiorTrabajadorCode == trabajadorCode);
-
-            if (!autorizado)
-            {
-                throw new InvalidOperationException(
-                    $"No estás autorizado para aprobar esta Orden de Compra (nivel {rango.RangoAplicable.NivelCode}, " +
-                    $"monto S/ {orden.TotalCompra:N2}).");
-            }
         }
     }
 }
