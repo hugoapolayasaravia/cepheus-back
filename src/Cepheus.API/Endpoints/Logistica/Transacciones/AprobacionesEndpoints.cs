@@ -26,7 +26,7 @@ namespace Cepheus.API.Endpoints.Logistica.Transacciones
                 return Results.Ok(result);
             })
             .WithName("GetAprobacionesResumen")
-            .RequireAuthorization("APROBACIONES.VIEW");
+            .RequireAuthorization("APROBARTRANSACCIONES.VIEW");
 
             // Todo lo pendiente (legacy: Usuario_Res = 'T').
             group.MapGet("/resumen/todos", async (ISender sender) =>
@@ -35,7 +35,7 @@ namespace Cepheus.API.Endpoints.Logistica.Transacciones
                 return Results.Ok(result);
             })
             .WithName("GetAprobacionesResumenTodos")
-            .RequireAuthorization("APROBACIONES.VIEW");
+            .RequireAuthorization("APROBARTRANSACCIONES.VIEW");
 
             // Mis pendientes de un tipo: SC, OC, OS, VS, VC.
             group.MapGet("/{tipo}/pendientes", async (
@@ -47,7 +47,7 @@ namespace Cepheus.API.Endpoints.Logistica.Transacciones
                 return Results.Ok(result);
             })
             .WithName("GetAprobacionesPendientes")
-            .RequireAuthorization("APROBACIONES.VIEW");
+            .RequireAuthorization("APROBARTRANSACCIONES.VIEW");
 
             group.MapGet("/{tipo}/pendientes/todos", async (
                 string tipo,
@@ -58,7 +58,7 @@ namespace Cepheus.API.Endpoints.Logistica.Transacciones
                 return Results.Ok(result);
             })
             .WithName("GetAprobacionesPendientesTodos")
-            .RequireAuthorization("APROBACIONES.VIEW");
+            .RequireAuthorization("APROBARTRANSACCIONES.VIEW");
 
             // Quiénes pueden aprobar hoy un documento.
             group.MapGet("/{tipo}/{codigoPlanta}/{codigo}/aprobadores", async (

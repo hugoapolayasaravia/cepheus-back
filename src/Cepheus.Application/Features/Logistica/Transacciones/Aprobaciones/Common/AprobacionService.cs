@@ -37,6 +37,29 @@ public sealed class AprobacionService : IAprobacionService
 
     public async Task<AprobadorIdentificado> VerificarCredencialesAsync(string? login, string? clave, CancellationToken ct)
     {
+        // Sin credenciales = el usuario de la sesión (bandeja «Aprobar transacciones» del legacy: aprueba quien está logueado).
+        if (string.IsNullOrWhiteSpace(login) && string.IsNullOrEmpty(clave))
+        {
+            if (_currentUser.UserId is null)
+            {
+                throw new InvalidOperationException("No se pudo identificar al usuario autenticado.");
+            }
+
+            var actual = await _uow.Administracion.Users
+                .Query()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == _currentUser.UserId.Value, ct)
+                ?? throw new InvalidOperationException("No se pudo identificar al usuario autenticado.");
+
+            if (!actual.IsActive)
+            {
+                throw new InvalidOperationException("El usuario se encuentra inactivo.");
+            }
+
+            return new AprobadorIdentificado(
+                actual.Id, actual.Login, $"{actual.FirstName} {actual.LastName}".Trim(), actual.TrabajadorCode, null, null);
+        }
+
         if (string.IsNullOrWhiteSpace(login) || string.IsNullOrEmpty(clave))
         {
             throw new InvalidOperationException("Ingrese el usuario y la clave del aprobador.");

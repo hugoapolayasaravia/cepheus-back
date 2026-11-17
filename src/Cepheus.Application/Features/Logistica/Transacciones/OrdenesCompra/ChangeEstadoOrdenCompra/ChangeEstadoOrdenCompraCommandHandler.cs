@@ -14,7 +14,7 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.OrdenesCompra.Cha
         private static readonly Dictionary<EstadoOrdenCompra, EstadoOrdenCompra[]> ValidTransitions = new()
         {
             [EstadoOrdenCompra.Pendiente] = new[] { EstadoOrdenCompra.Aprobado, EstadoOrdenCompra.Anulado },
-            [EstadoOrdenCompra.Aprobado] = new[] { EstadoOrdenCompra.EntregaParcial, EstadoOrdenCompra.Cerrado, EstadoOrdenCompra.Anulado },
+            [EstadoOrdenCompra.Aprobado] = new[] { EstadoOrdenCompra.Pendiente, EstadoOrdenCompra.EntregaParcial, EstadoOrdenCompra.Cerrado, EstadoOrdenCompra.Anulado },
             [EstadoOrdenCompra.EntregaParcial] = new[] { EstadoOrdenCompra.Cerrado },
             [EstadoOrdenCompra.Cerrado] = Array.Empty<EstadoOrdenCompra>(),
             [EstadoOrdenCompra.Anulado] = Array.Empty<EstadoOrdenCompra>()
@@ -62,6 +62,24 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.OrdenesCompra.Cha
                 await ValidarAprobadorAsync(orden, cancellationToken);
                 orden.AprobadoPor = _currentUser.Login;
                 orden.FechaAprobacion = DateTime.Now;
+            }
+
+            if (orden.Estado == EstadoOrdenCompra.Aprobado && nuevoEstado == EstadoOrdenCompra.Pendiente)
+            {
+                // Legacy (w_log_aprobacion_tra): solo quien aprobó puede devolverla a Pendiente, y sin entregas.
+                if (!string.Equals(orden.AprobadoPor, _currentUser.Login, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException(
+                        $"Usuario es diferente al que aprobó la transacción. Solo el usuario {orden.AprobadoPor} puede volverla a Pendiente.");
+                }
+
+                if (orden.Detalles.Any(d => d.CantidadEntregada > 0))
+                {
+                    throw new InvalidOperationException("La Orden de Compra tiene entregas, no se puede volver a Pendiente.");
+                }
+
+                orden.AprobadoPor = null;
+                orden.FechaAprobacion = null;
             }
 
             orden.Estado = nuevoEstado;

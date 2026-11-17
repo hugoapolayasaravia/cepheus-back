@@ -14,7 +14,7 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.OrdenesServicio.C
 /// <summary>
 /// Transiciones:
 ///   Pendiente -> Aprobado | Anulado
-///   Aprobado  -> Anulado            (a Procesado se pasa con la acción Procesar)
+///   Aprobado  -> Pendiente | Anulado (a Procesado se pasa con la acción Procesar; a Pendiente solo quien la aprobó)
 ///   Procesado -> Cerrado | Anulado
 ///   Cerrado y Anulado son finales.
 ///
@@ -32,7 +32,7 @@ public sealed class ChangeEstadoOrdenServicioCommandHandler
     private static readonly Dictionary<EstadoOrdenServicio, EstadoOrdenServicio[]> ValidTransitions = new()
     {
         [EstadoOrdenServicio.Pendiente] = new[] { EstadoOrdenServicio.Aprobado, EstadoOrdenServicio.Anulado },
-        [EstadoOrdenServicio.Aprobado] = new[] { EstadoOrdenServicio.Anulado },
+        [EstadoOrdenServicio.Aprobado] = new[] { EstadoOrdenServicio.Pendiente, EstadoOrdenServicio.Anulado },
         [EstadoOrdenServicio.Procesado] = new[] { EstadoOrdenServicio.Cerrado, EstadoOrdenServicio.Anulado },
         [EstadoOrdenServicio.Cerrado] = Array.Empty<EstadoOrdenServicio>(),
         [EstadoOrdenServicio.Anulado] = Array.Empty<EstadoOrdenServicio>()
@@ -82,6 +82,15 @@ public sealed class ChangeEstadoOrdenServicioCommandHandler
                 await ValidarAprobadorAsync(os, ct);
                 os.AprobadoPor = _currentUser.Login;
                 os.FechaAprobacion = DateTime.Now;
+                break;
+
+            case EstadoOrdenServicio.Pendiente:
+                // Legacy (w_log_aprobacion_tra): solo quien aprobó puede devolverla a Pendiente.
+                if (!string.Equals(os.AprobadoPor, _currentUser.Login, StringComparison.OrdinalIgnoreCase))
+                    throw new InvalidOperationException(
+                        $"Usuario es diferente al que aprobó la transacción. Solo el usuario {os.AprobadoPor} puede volverla a Pendiente.");
+                os.AprobadoPor = null;
+                os.FechaAprobacion = null;
                 break;
 
             case EstadoOrdenServicio.Anulado:
