@@ -11,6 +11,7 @@ using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.PedidoDetalle
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.PedidoDetalles.GetPedidoDetalles;
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.PedidoDetalles.UpdatePedidoDetalle;
 using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.UpdatePedido;
+using Cepheus.Application.Features.Logistica.Transacciones.Pedidos.ValidarAprobacion;
 using MediatR;
 
 namespace Cepheus.API.Endpoints.Logistica.Transacciones
@@ -103,10 +104,21 @@ namespace Cepheus.API.Endpoints.Logistica.Transacciones
             group.MapPatch("/{codigoPlanta}/{codigo}/estado", async (
                 string codigoPlanta, string codigo, ChangeEstadoBody body, ISender sender) =>
             {
-                var result = await sender.Send(new ChangeEstadoPedidoCommand(codigoPlanta, codigo, body.NuevoEstado));
+                var result = await sender.Send(new ChangeEstadoPedidoCommand(
+                    codigoPlanta, codigo, body.NuevoEstado, body.AprobadorLogin, body.AprobadorClave));
                 return Results.Ok(result);
             })
             .WithName("ChangeEstadoPedido")
+            .RequireAuthorization("PEDIDOS.UPDATE");
+
+            // Cuadro «Aprobación por usuario»: valida login/clave y que ese usuario pueda aprobar (no modifica nada).
+            group.MapPost("/{codigoPlanta}/{codigo}/aprobacion/validar", async (
+                string codigoPlanta, string codigo, ValidarAprobacionBody body, ISender sender) =>
+            {
+                var result = await sender.Send(new ValidarAprobacionPedidoQuery(codigoPlanta, codigo, body.Login, body.Clave));
+                return Results.Ok(result);
+            })
+            .WithName("ValidarAprobacionPedido")
             .RequireAuthorization("PEDIDOS.UPDATE");
 
             // Líneas de detalle: reusan los permisos de Pedidos (mismo
@@ -180,7 +192,9 @@ namespace Cepheus.API.Endpoints.Logistica.Transacciones
 
         }
 
-        public record ChangeEstadoBody(string NuevoEstado);
+        public record ChangeEstadoBody(string NuevoEstado, string? AprobadorLogin = null, string? AprobadorClave = null);
+
+        public record ValidarAprobacionBody(string? Login, string? Clave);
 
         public record CreatePedidoDetalleLineaBody(
             string? ArticuloCode,

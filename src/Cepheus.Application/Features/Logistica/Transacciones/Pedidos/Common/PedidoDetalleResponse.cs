@@ -20,6 +20,12 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.Pedidos.Common
         public string? OrdenCompraCode { get; set; }
         public string? ProveedorCode { get; set; }
 
+        /// <summary>Cantidad ya tomada por cotizaciones (informativa).</summary>
+        public decimal CantidadCotizada { get; set; }
+
+        /// <summary>Cantidad ya tomada por órdenes de compra. Saldo por comprar = CantidadArticulo - CantidadEnCompra.</summary>
+        public decimal CantidadEnCompra { get; set; }
+
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public byte[] RowVersion { get; set; } = default!;

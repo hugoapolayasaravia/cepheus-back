@@ -66,10 +66,19 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.Pedidos.ChangeEst
                     $"{string.Join(", ", ValidTransitions[pedido.EstadoPedido])}.");
             }
 
+            string? loginAprobador = null;
+
             if (nuevoEstado == EstadoPedido.Aprobado)
             {
-                // Regla única de aprobación (nivel asignado + límites diario/mensual por FechaAprobacion).
-                await _aprobacion.AsegurarAprobadorActualAsync(
+                if (pedido.Detalles.Count == 0)
+                {
+                    throw new InvalidOperationException(
+                        "La Orden de Requisición no tiene detalle. Agregue al menos una línea para aprobarla.");
+                }
+
+                // Regla única de aprobación (nivel asignado + límites diario/mensual por FechaAprobacion),
+                // evaluada para el usuario que se identificó con login y clave (no para el de la sesión).
+                var aprobador = await _aprobacion.ValidarAprobadorAsync(
                     new DocumentoAprobable(
                         AprobacionTipos.Pedido,
                         pedido.PlantaCode,
@@ -77,14 +86,19 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.Pedidos.ChangeEst
                         pedido.UnidadNegocioCode,
                         AprobacionTipos.MonedaSoles,
                         pedido.TotalPedido),
+                    request.AprobadorLogin,
+                    request.AprobadorClave,
                     cancellationToken);
-            }
-            else if (nuevoEstado == EstadoPedido.Pendiente)
-            {
-                // Aprobado -> Pendiente: solo lo devuelve quien lo aprobó (legacy: desaprobar).
-                var aprobo = string.Equals(pedido.AprobadoPor, _currentUser.Login, StringComparison.OrdinalIgnoreCase);
 
-                if (!aprobo)
+                loginAprobador = aprobador.Login;
+            }
+            else if (nuevoEstado == EstadoPedido.Pendiente && pedido.EstadoPedido == EstadoPedido.Aprobado)
+            {
+                // Aprobado -> Pendiente: solo lo devuelve quien lo aprobó (legacy: desaprobar), con su clave.
+                var identificado = await _aprobacion.VerificarCredencialesAsync(
+                    request.AprobadorLogin, request.AprobadorClave, cancellationToken);
+
+                if (!string.Equals(pedido.AprobadoPor, identificado.Login, StringComparison.OrdinalIgnoreCase))
                 {
                     throw new InvalidOperationException(
                         "Solo el usuario que aprobó el pedido puede devolverlo a Pendiente.");
@@ -95,7 +109,7 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.Pedidos.ChangeEst
 
             if (nuevoEstado == EstadoPedido.Aprobado)
             {
-                pedido.AprobadoPor = _currentUser.Login;
+                pedido.AprobadoPor = loginAprobador;
                 pedido.FechaAprobacion = DateTime.Now;
             }
             else if (nuevoEstado == EstadoPedido.Pendiente)

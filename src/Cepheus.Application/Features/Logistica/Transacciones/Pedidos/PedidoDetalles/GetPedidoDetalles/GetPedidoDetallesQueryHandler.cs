@@ -43,6 +43,8 @@ public sealed class GetPedidoDetallesQueryHandler
                 d.ItemNumber,
                 d.EstadoPedidoDetalle,
                 d.OrdenCompraCode,
+                d.CantidadCotizada,
+                d.CantidadEnCompra,
                 NombreProveedor = d.Proveedor == null
                     ? null
                     : !string.IsNullOrWhiteSpace(d.Proveedor.TradeName)
@@ -116,7 +118,9 @@ public sealed class GetPedidoDetallesQueryHandler
                 OrdenCompraCode: detalle.OrdenCompraCode,
                 NombreProveedor: detalle.NombreProveedor,
                 Stock: 0m,
-                Pendiente: pendiente
+                Pendiente: pendiente,
+                CantidadCotizada: detalle.CantidadCotizada,
+                CantidadEnCompra: detalle.CantidadEnCompra
             ));
         }
 

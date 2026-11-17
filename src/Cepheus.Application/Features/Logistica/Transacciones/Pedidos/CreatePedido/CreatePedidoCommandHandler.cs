@@ -143,6 +143,8 @@ namespace Cepheus.Application.Features.Logistica.Transacciones.Pedidos.CreatePed
                 EstadoPedidoDetalle = d.EstadoPedidoDetalle.ToString(),
                 OrdenCompraCode = d.OrdenCompraCode,
                 ProveedorCode = d.ProveedorCode,
+                CantidadCotizada = d.CantidadCotizada,
+                CantidadEnCompra = d.CantidadEnCompra,
                 CreatedAt = d.CreatedAt,
                 UpdatedAt = d.UpdatedAt,
                 RowVersion = d.RowVersion

@@ -17,8 +17,7 @@ namespace Cepheus.Application.Features.Logistica.Catalogos.TiposVale.CreateTipoV
 
         public async Task<TipoValeResponse> Handle(CreateTipoValeCommand request, CancellationToken cancellationToken)
         {
-            var code = await SequentialCodeGenerator.NextAsync(
-                _uow.Logistica.Catalogos.TiposVale.Query().Select(t => t.Code), length: 3, entityLabel: "Tipos de Vale", cancellationToken);
+            var code = request.Code.Trim().ToUpperInvariant();
 
             var tipoVale = new TipoVale
             {

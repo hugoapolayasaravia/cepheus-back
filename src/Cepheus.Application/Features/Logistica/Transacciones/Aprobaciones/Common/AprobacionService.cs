@@ -17,6 +17,7 @@ public sealed class AprobacionService : IAprobacionService
 
     private readonly IUnitOfWork _uow;
     private readonly ICurrentUserService _currentUser;
+    private readonly IPasswordHasher _passwordHasher;
 
     private List<RangoAprobacion>? _rangos;
     private List<AprobadorAsignado>? _aprobadores;
@@ -27,10 +28,74 @@ public sealed class AprobacionService : IAprobacionService
 
     private sealed record MontoAprobado(DateTime Fecha, decimal Monto, string MonedaCode);
 
-    public AprobacionService(IUnitOfWork uow, ICurrentUserService currentUser)
+    public AprobacionService(IUnitOfWork uow, ICurrentUserService currentUser, IPasswordHasher passwordHasher)
     {
         _uow = uow;
         _currentUser = currentUser;
+        _passwordHasher = passwordHasher;
+    }
+
+    public async Task<AprobadorIdentificado> VerificarCredencialesAsync(string? login, string? clave, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(login) || string.IsNullOrEmpty(clave))
+        {
+            throw new InvalidOperationException("Ingrese el usuario y la clave del aprobador.");
+        }
+
+        var loginNormalizado = login.Trim().ToLower();
+
+        var usuario = await _uow.Administracion.Users
+            .Query()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Login.ToLower() == loginNormalizado, ct);
+
+        // Mismo mensaje para usuario inexistente y clave errónea (no revela cuál falló).
+        if (usuario is null || !_passwordHasher.Verify(clave, usuario.PasswordHash))
+        {
+            throw new InvalidOperationException("Usuario o contraseña inválidos, vuelva a intentar.");
+        }
+
+        if (!usuario.IsActive)
+        {
+            throw new InvalidOperationException("El usuario se encuentra inactivo.");
+        }
+
+        return new AprobadorIdentificado(
+            usuario.Id,
+            usuario.Login,
+            $"{usuario.FirstName} {usuario.LastName}".Trim(),
+            usuario.TrabajadorCode,
+            null,
+            null);
+    }
+
+    public async Task<AprobadorIdentificado> ValidarAprobadorAsync(
+        DocumentoAprobable documento, string? login, string? clave, CancellationToken ct)
+    {
+        var aprobador = await VerificarCredencialesAsync(login, clave, ct);
+
+        if (string.IsNullOrWhiteSpace(aprobador.TrabajadorCode))
+        {
+            throw new InvalidOperationException(
+                $"El usuario {aprobador.Login} no tiene un Trabajador de RRHH vinculado — no puede aprobar.");
+        }
+
+        var resultado = await ObtenerHabilitadosAsync(documento, ct);
+        var habilitado = resultado.Habilitados.FirstOrDefault(h => h.TrabajadorCode == aprobador.TrabajadorCode);
+
+        if (habilitado is null)
+        {
+            var detalle = resultado.Observaciones.Count > 0
+                ? " " + string.Join(" ", resultado.Observaciones)
+                : string.Empty;
+
+            throw new InvalidOperationException(
+                $"El usuario {aprobador.Login} no está autorizado para aprobar este documento " +
+                $"({documento.TipoTransaccion} {documento.PlantaCode}/{documento.Code}, " +
+                $"monto {documento.MonedaCode} {documento.Monto:N2}).{detalle}");
+        }
+
+        return aprobador with { NivelCode = habilitado.NivelCode, Rol = habilitado.Rol };
     }
 
     public async Task<string?> ObtenerTrabajadorActualAsync(CancellationToken ct)

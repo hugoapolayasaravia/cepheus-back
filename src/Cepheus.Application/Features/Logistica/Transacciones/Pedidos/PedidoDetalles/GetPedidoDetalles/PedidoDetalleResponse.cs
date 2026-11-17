@@ -14,5 +14,7 @@ public sealed record PedidoDetalleResponse(
     string? OrdenCompraCode,
     string? NombreProveedor,
     decimal Stock,
-    decimal Pendiente
+    decimal Pendiente,
+    decimal CantidadCotizada = 0m,
+    decimal CantidadEnCompra = 0m
 );

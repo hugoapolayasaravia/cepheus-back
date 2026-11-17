@@ -17,8 +17,7 @@ namespace Cepheus.Application.Features.Logistica.Catalogos.Tramites.CreateTramit
 
         public async Task<TramiteResponse> Handle(CreateTramiteCommand request, CancellationToken cancellationToken)
         {
-            var code = await SequentialCodeGenerator.NextAsync(
-                _uow.Logistica.Catalogos.Tramites.Query().Select(f => f.Code), length: 1, entityLabel: "Tramites", cancellationToken);
+            var code = request.Code.Trim().ToUpperInvariant();
 
 
             var tramite = new Tramite

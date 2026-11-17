@@ -8,6 +8,7 @@ using Cepheus.Application.Features.Logistica.Transacciones.CotizacionProveedores
 using Cepheus.Application.Features.Logistica.Transacciones.Cotizaciones.ChangeEstadoCotizacion;
 using Cepheus.Application.Features.Logistica.Transacciones.Cotizaciones.CopyCotizacion;
 using Cepheus.Application.Features.Logistica.Transacciones.Cotizaciones.CreateCotizacion;
+using Cepheus.Application.Features.Logistica.Transacciones.Cotizaciones.GenerarOrdenCompra;
 using Cepheus.Application.Features.Logistica.Transacciones.Cotizaciones.GetCotizacionByCode;
 using Cepheus.Application.Features.Logistica.Transacciones.Cotizaciones.GetCotizacionesPaginated;
 using Cepheus.Application.Features.Logistica.Transacciones.Cotizaciones.UpdateCotizacion;
@@ -120,6 +121,22 @@ namespace Cepheus.API.Endpoints.Logistica.Transacciones
             .WithName("SeleccionarProveedor")
             .RequireAuthorization("COTIZACIONES.UPDATE");
 
+            // Genera la Orden de Compra del proveedor seleccionado (precios y orígenes salen de la cotización).
+            group.MapPost("/{codigoPlanta}/{codigoCotizacion}/proveedores/{codigoProveedor}/generar-orden-compra", async (
+                string codigoPlanta, string codigoCotizacion, string codigoProveedor,
+                GenerarOrdenCompraBody body, ISender sender) =>
+            {
+                var result = await sender.Send(new GenerarOrdenCompraDesdeCotizacionCommand(
+                    codigoPlanta, codigoCotizacion, codigoProveedor,
+                    body.TipoCompraCode, body.ComprobantePagoCode, body.FechaEntrega, body.CompradorCode,
+                    body.LugarEnvioCode, body.FormaPagoCode, body.TramiteCode, body.UnidadNegocioCode,
+                    body.SubCentroCostoCode, body.Observaciones1, body.Observaciones2, body.NotaCompraCode,
+                    body.EnviarCorreoProveedor));
+                return Results.Created($"/api/logistica/transacciones/ordenes-compra/{result.PlantaCode}/{result.Code}", result);
+            })
+            .WithName("GenerarOrdenCompraDesdeCotizacion")
+            .RequireAuthorization("ORDENESCOMPRA.CREATE");
+
             group.MapPatch("/{codigoPlanta}/{codigoCotizacion}/proveedores/{codigoProveedor}/descartar", async (
                 string codigoPlanta, string codigoCotizacion, string codigoProveedor, ISender sender) =>
                 Results.Ok(await sender.Send(new DescartarProveedorCommand(codigoPlanta, codigoCotizacion, codigoProveedor))))
@@ -128,6 +145,11 @@ namespace Cepheus.API.Endpoints.Logistica.Transacciones
         }
 
         public record ChangeEstadoBody(string NuevoEstado);
+        public record GenerarOrdenCompraBody(
+            string TipoCompraCode, string ComprobantePagoCode, DateTime FechaEntrega, string CompradorCode,
+            string LugarEnvioCode, string FormaPagoCode, string TramiteCode, string UnidadNegocioCode,
+            string SubCentroCostoCode, string? Observaciones1, string? Observaciones2, string? NotaCompraCode,
+            bool EnviarCorreoProveedor);
         public record CopyCotizacionBody(DateTime NuevaFechaLimite);
         public record InvitarProveedorBody(string ProveedorCode, string MonedaCode, string? Observaciones);
         public record RegistrarRespuestaBody(List<RegistrarRespuestaLineaInput> Lineas);

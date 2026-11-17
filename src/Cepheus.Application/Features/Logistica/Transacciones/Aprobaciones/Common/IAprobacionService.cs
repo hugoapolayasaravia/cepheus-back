@@ -15,6 +15,15 @@ public sealed record AprobadorHabilitado(
     string Rol,
     string TrabajadorCode);
 
+/// <summary>Usuario que se identificó con login y clave en el cuadro «Aprobación por usuario».</summary>
+public sealed record AprobadorIdentificado(
+    int UserId,
+    string Login,
+    string NombreCompleto,
+    string? TrabajadorCode,
+    string? NivelCode,
+    string? Rol);
+
 public sealed record ResultadoHabilitados(
     IReadOnlyList<AprobadorHabilitado> Habilitados,
     IReadOnlyList<string> Observaciones);
@@ -39,4 +48,16 @@ public interface IAprobacionService
 
     /// <summary>Lanza InvalidOperationException si el usuario autenticado no puede aprobar el documento.</summary>
     Task AsegurarAprobadorActualAsync(DocumentoAprobable documento, CancellationToken ct);
+
+    /// <summary>
+    /// «Aprobación por usuario» del legacy: comprueba login y clave (usuario existente, clave correcta y activo).
+    /// No cambia la sesión de quien llama. Lanza InvalidOperationException con el mensaje a mostrar.
+    /// </summary>
+    Task<AprobadorIdentificado> VerificarCredencialesAsync(string? login, string? clave, CancellationToken ct);
+
+    /// <summary>
+    /// Verifica las credenciales y además que ese usuario pueda aprobar el documento (nivel asignado,
+    /// límite por documento y acumulados diario/mensual). No modifica nada.
+    /// </summary>
+    Task<AprobadorIdentificado> ValidarAprobadorAsync(DocumentoAprobable documento, string? login, string? clave, CancellationToken ct);
 }
